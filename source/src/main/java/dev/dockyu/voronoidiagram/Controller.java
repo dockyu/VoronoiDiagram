@@ -3,6 +3,7 @@ package dev.dockyu.voronoidiagram;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 
 public class Controller {
     private Model model;
@@ -60,7 +61,15 @@ public class Controller {
     }
 
     @FXML
-    protected void addPoint() {
-        System.out.println("canvas click");
+    protected void addPoint(MouseEvent event) {
+        // 從事件中獲取點擊的X和Y座標
+        double clickedX = event.getX();
+        double clickedY = event.getY();
+
+        // 轉換Y座標，因為Canvas的原點在左上角，而我們希望它在左下角
+        double canvasHeight = canvas.getHeight();
+        double convertedY = canvasHeight - clickedY;
+
+        System.out.println("Clicked position: (" + clickedX + ", " + convertedY + ")");
     }
 }

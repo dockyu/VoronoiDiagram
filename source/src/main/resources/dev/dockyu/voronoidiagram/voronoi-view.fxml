@@ -16,7 +16,7 @@
       <StackPane layoutX="212.0" layoutY="31.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: #A6FFA6;">
 
          <children>
-            <Canvas fx:id="canvas" height="600.0" width="600.0" />
+            <Canvas fx:id="canvas" height="600.0" onMouseClicked="#addPoint" width="600.0" />
          </children>
       </StackPane>
    </children>
