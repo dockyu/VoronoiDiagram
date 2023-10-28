@@ -20,7 +20,7 @@
             <Canvas fx:id="canvas" height="600.0" onMouseClicked="#addPoint" onMouseMoved="#showMouseCoordinate" width="600.0" />
          </children>
       </StackPane>
-      <TextArea fx:id="mouse_coordinate" layoutX="28.0" layoutY="573.0" prefHeight="29.0" prefWidth="170.0" />
-      <TextArea fx:id="taskPoints_coordinate" layoutX="839.0" layoutY="56.0" prefHeight="569.0" prefWidth="157.0" />
+      <TextArea fx:id="cursorCoordinateArea" layoutX="28.0" layoutY="573.0" prefHeight="29.0" prefWidth="170.0" />
+      <TextArea fx:id="taskPointsArea" layoutX="839.0" layoutY="56.0" prefHeight="569.0" prefWidth="157.0" />
    </children>
 </Pane>

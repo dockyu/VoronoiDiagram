@@ -31,9 +31,9 @@ public class Controller {
     private Canvas canvas;
 
     @FXML
-    private TextArea mouse_coordinate;
+    private TextArea cursorCoordinateArea; // 畫鼠座標顯示區
     @FXML
-    private TextArea taskPoints_coordinate;
+    private TextArea taskPointsArea; // taskPoints顯示區
 
     // 以下是元件被觸發會做的事
     @FXML
@@ -59,12 +59,19 @@ public class Controller {
     @FXML
     protected void step() {
         System.out.println("step button click");
-        Draw.drawVoronoi(canvas, model.getvoronoiDiagram());
+        CanvasAction.drawVoronoi(canvas, model.getvoronoiDiagram());
     }
 
     @FXML
     protected void clear() {
         System.out.println("clear button click");
+        // 清空taskPoints、taskState
+        this.model.taskPoints.clear();
+        this.model.taskState.clear();
+        // 清空canvas
+        CanvasAction.clear(this.canvas);
+        // 更新taskPoints顯示區
+        this.updateTaskPointsArea();
     }
 
     @FXML
@@ -80,12 +87,11 @@ public class Controller {
         GeneratorPoint clickPoint = new GeneratorPoint(clickedX, clickedY);
         this.model.taskPoints.add(clickPoint);
 
-        // 顯示taskPoints中的所有點
-        StringBuilder sb = new StringBuilder();
-        for (GeneratorPoint generatorPoint : this.model.taskPoints) {
-            sb.append("(").append(generatorPoint.getX()).append(",").append(generatorPoint.getY()).append(")\n");
-        }
-        taskPoints_coordinate.setText(sb.toString());
+        // 畫出點擊的點
+        CanvasAction.drawGeneratorPoints(this.canvas, clickPoint);
+
+        // 顯示目前taskPoints中的所有點
+        this.updateTaskPointsArea();
 
     }
 
@@ -94,6 +100,18 @@ public class Controller {
     protected  void showMouseCoordinate(MouseEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
-        mouse_coordinate.setText("X: " + x + ", Y: " + y);
+        cursorCoordinateArea.setText("X: " + x + ", Y: " + y);
+    }
+
+
+    // 功能組件
+
+    // taskPoints顯示區，在textarea顯示taskPoints中的所有generator points
+    void updateTaskPointsArea() {
+        StringBuilder sb = new StringBuilder();
+        for (GeneratorPoint generatorPoint : this.model.taskPoints) {
+            sb.append("(").append(generatorPoint.getX()).append(",").append(generatorPoint.getY()).append(")\n");
+        }
+        taskPointsArea.setText(sb.toString());
     }
 }
