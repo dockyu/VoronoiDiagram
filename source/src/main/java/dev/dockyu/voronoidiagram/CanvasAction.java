@@ -6,6 +6,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.LinkedList;
+
 public class CanvasAction {
     // 常數，畫圖的設定
     public static final int GENERATOR_POINT_RADIUS = 3; // generator point 的半徑
@@ -28,15 +30,19 @@ public class CanvasAction {
     }
 
     // 畫出一個generator point
-    public static void drawGeneratorPoints(Canvas canvas, GeneratorPoint generatorPoint) {
+    public static void drawGeneratorPoint(Canvas canvas, GeneratorPoint generatorPoint) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
         // 設定點的顏色
         gc.setFill(GENERATOR_POINT_COLOR);
-
         // 畫出點（這裡以3x3的大小為例）
         gc.fillOval(generatorPoint.getX(), generatorPoint.getY(), GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
-//        gc.fillOval(generatorPoint.getX() - GENERATOR_POINT_RADIUS, generatorPoint.getY() - GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS * 2, GENERATOR_POINT_RADIUS * 2);
+    }
+
+    // 畫出多個generator point
+    public static void drawGeneratorPoints(Canvas canvas, LinkedList<GeneratorPoint> generatorPointList) {
+        for (GeneratorPoint generatorPoint : generatorPointList) {
+            drawGeneratorPoint(canvas, generatorPoint);
+        }
     }
 
     // 清空canvas
