@@ -15,18 +15,11 @@ public class CanvasAction {
 
     // 靜態方法，不需要實例就可以呼叫
 
-    // 測試，會刪掉
-    public static void drawVoronoi(Canvas canvas, VoronoiDiagram voronoiDiagram) {
-        System.out.println("drawVoronoi");
 
-        // 獲取用於繪圖的GraphicsContext
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    public static void drawTaskState(Canvas canvas, LinkedList<VoronoiDiagram> taskState) {
+        System.out.println("draw task state");
 
-        // 設置畫筆顏色
-        gc.setFill(Color.RED);
 
-        // 畫一個矩形來模擬Voronoi區域
-        gc.fillRect(50, 50, 100, 100);
     }
 
     // 畫出一個generator point

@@ -6,7 +6,6 @@ import java.util.LinkedList; // LinkedList實現Queue
 import java.util.Queue; // 導入Queue接口，讓LinkedList實現Queue
 
 public class Model {
-    VoronoiDiagram voronoiDiagram; // 測試，之後刪掉
     LinkedList<LinkedList<GeneratorPoint>> tasks; // 未來所有任務的 生成點 點集
     LinkedList<GeneratorPoint> taskPoints; // 目前任務的 生成點 點集
     LinkedList<VoronoiDiagram> taskState; // 目前任務狀態，Queue
@@ -19,13 +18,6 @@ public class Model {
     }
 
 
-
-
-
-
-    public VoronoiDiagram getvoronoiDiagram() { // 測試，之後刪掉
-        return voronoiDiagram;
-    }
 
     // other methods related to your business logic
 }
