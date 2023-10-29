@@ -59,29 +59,10 @@ public class VoronoiAlgo {
     }
 
 
-
-
-    // base case 直接建構 小voronoi diagram
-    private static VoronoiDiagram createOnePointVD(GeneratorPoint p1) {
-        VoronoiDiagram voronoiDiagram = new VoronoiDiagram();
-        // 沒有vertex
-        // 一條edge
-        // 只有兩個polygon P無限
-        // convex hull
-        return voronoiDiagram;
-    }
-
-
     // merge 總共4個點或以上的voronoi diagram
     private static VoronoiDiagram mergeMultiPointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         return VDmerge;
-    }
-
-    // 建立1個點的voronoi diagram
-    private static VoronoiDiagram createTwoPointVD(GeneratorPoint p1, GeneratorPoint p2) {
-        VoronoiDiagram voronoiDiagram = new VoronoiDiagram();
-        return voronoiDiagram;
     }
 
     // merge 總共2個點的voronoi diagram
@@ -94,5 +75,21 @@ public class VoronoiAlgo {
     private static VoronoiDiagram mergeThreePointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         return VDmerge;
+    }
+
+    // base case 直接建構 小voronoi diagram
+    private static VoronoiDiagram createOnePointVD(GeneratorPoint p1) {
+        VoronoiDiagram VD = new VoronoiDiagram();
+        // generator point
+        VD.generatorPoints.add(p1);
+        // 沒有vertex
+        // 沒有edge
+        // 沒有polygon
+        // convex hull
+        VD.convexHull.hull.add(p1);
+        VD.convexHull.left.valueOf(0);
+        VD.convexHull.right.valueOf(0);
+
+        return VD;
     }
 }
