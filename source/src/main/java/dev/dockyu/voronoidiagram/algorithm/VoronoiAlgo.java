@@ -62,18 +62,27 @@ public class VoronoiAlgo {
     // merge 總共4個點或以上的voronoi diagram
     private static VoronoiDiagram mergeMultiPointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
+        // 測試
+        showMergeInformation(VDleft, VDright);
+
         return VDmerge;
     }
 
     // merge 總共2個點的voronoi diagram
     private static VoronoiDiagram mergeTwoPointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
+        // 測試
+        showMergeInformation(VDleft, VDright);
+
         return VDmerge;
     }
 
     // merge 總共3個點的voronoi diagram
     private static VoronoiDiagram mergeThreePointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
+        // 測試
+        showMergeInformation(VDleft, VDright);
+
         return VDmerge;
     }
 
@@ -91,5 +100,19 @@ public class VoronoiAlgo {
         VD.convexHull.right.valueOf(0);
 
         return VD;
+    }
+
+    // 測試用
+    private static void showMergeInformation(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+        // 印出數量
+        System.out.print("merge 左: " + VDleft.generatorPoints.size() + " 右: " + VDright.generatorPoints.size() + "\n");
+        // 印出左邊的 generator points
+        for (GeneratorPoint point : VDleft.generatorPoints) {
+            System.out.println("左:(" + point.getX() + "," + point.getY() + ")");
+        }
+        // 印出右邊的 generator points
+        for (GeneratorPoint point : VDright.generatorPoints) {
+            System.out.println("右:(" + point.getX() + "," + point.getY() + ")");
+        }
     }
 }
