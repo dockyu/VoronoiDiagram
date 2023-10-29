@@ -8,7 +8,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1015.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button fx:id="importInput" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" onAction="#importPoints" text="import input file" />
+      <Button fx:id="importInput" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" onAction="#importTasks" text="import input file" />
       <Button fx:id="importVoronoi" layoutX="13.0" layoutY="72.0" mnemonicParsing="false" onAction="#importVoronoi" text="import ouput file" />
       <Button fx:id="run" layoutX="14.0" layoutY="219.0" mnemonicParsing="false" onAction="#run" text="run" />
       <Button fx:id="step" layoutX="16.0" layoutY="281.0" mnemonicParsing="false" onAction="#step" text="step by step" />
@@ -17,7 +17,7 @@
       <StackPane layoutX="212.0" layoutY="31.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: #A6FFA6;">
 
          <children>
-            <Canvas fx:id="canvas" height="600.0" onMouseClicked="#addPoint" onMouseMoved="#showMouseCoordinate" width="600.0" />
+            <Canvas fx:id="canvas" height="600.0" onMouseClicked="#addPoint" onMouseMoved="#updateCursorCoordinateArea" width="600.0" />
          </children>
       </StackPane>
       <TextArea fx:id="cursorCoordinateArea" layoutX="28.0" layoutY="573.0" prefHeight="29.0" prefWidth="170.0" />

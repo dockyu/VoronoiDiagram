@@ -46,7 +46,7 @@ public class Controller {
 
     // 以下是元件被觸發會做的事
     @FXML
-    protected void importPoints() {
+    protected void importTasks() {
         System.out.println("importInput button click");
 
         FileChooser fileChooser = new FileChooser(); // 用來打開檔案選擇對話框
@@ -150,12 +150,11 @@ public class Controller {
 
     @FXML
     // 滑鼠在畫布上移動時顯示滑鼠座標
-    protected  void showMouseCoordinate(MouseEvent event) {
+    protected  void updateCursorCoordinateArea(MouseEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
         cursorCoordinateArea.setText("X: " + x + ", Y: " + y);
     }
-
 
     // 功能組件
 
