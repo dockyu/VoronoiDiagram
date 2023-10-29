@@ -39,17 +39,21 @@ public class VoronoiAlgo {
     public static void merge(LinkedList<VoronoiDiagram> voronoiTaskState) {
         VoronoiDiagram VDleft = voronoiTaskState.poll();
         VoronoiDiagram VDright = voronoiTaskState.poll();
-        VoronoiDiagram VDmerge;
+        VoronoiDiagram VDmerge = null;
         // merge開始
-        // 暴力解 merge兩個一個點的VD
-        VDmerge = mergeOneOneVD(VDleft, VDright);
-        // 暴力解 merge一個兩個點的VD和一個一個點的VD
-        VDmerge = mergeTwoOneVD(VDleft, VDright);
-        // 2,2以上
-
-
-
-
+        // 暴力解，merge總共2個點的voronoi diagram
+        if ( VDleft.generatorPoints.size()+VDright.generatorPoints.size() == 2 ) {
+            VDmerge = mergeTwoPointVD(VDleft, VDright);
+        }
+        // 暴力解，merge總共3個點的voronoi diagram
+        if ( VDleft.generatorPoints.size()+VDright.generatorPoints.size() == 3 ) {
+            VDmerge = mergeThreePointVD(VDleft, VDright);
+        }
+        // merge總共4個點或以上
+        if ( VDleft.generatorPoints.size()+VDright.generatorPoints.size() > 3 ) {
+            VDmerge = mergeMultiPointVD(VDleft, VDright);
+        }
+        
         // merge完成
         voronoiTaskState.add(VDmerge);
     }
@@ -66,15 +70,28 @@ public class VoronoiAlgo {
         // convex hull
         return voronoiDiagram;
     }
+
+
+    // merge 總共4個點或以上的voronoi diagram
+    private static VoronoiDiagram mergeMultiPointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+        VoronoiDiagram VDmerge = new VoronoiDiagram();
+        return VDmerge;
+    }
+
+    // 建立1個點的voronoi diagram
     private static VoronoiDiagram createTwoPointVD(GeneratorPoint p1, GeneratorPoint p2) {
         VoronoiDiagram voronoiDiagram = new VoronoiDiagram();
         return voronoiDiagram;
     }
-    private static VoronoiDiagram mergeOneOneVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+
+    // merge 總共2個點的voronoi diagram
+    private static VoronoiDiagram mergeTwoPointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         return VDmerge;
     }
-    private static VoronoiDiagram mergeTwoOneVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+
+    // merge 總共3個點的voronoi diagram
+    private static VoronoiDiagram mergeThreePointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         return VDmerge;
     }

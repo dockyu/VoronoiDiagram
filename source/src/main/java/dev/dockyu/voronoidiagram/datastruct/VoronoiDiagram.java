@@ -4,13 +4,21 @@ import java.util.ArrayList;
 
 public class VoronoiDiagram {
     // generator point
-    ArrayList<GeneratorPoint> generatorPoints = new ArrayList<>();
+    public ArrayList<GeneratorPoint> generatorPoints;
     // winged-edge data struct
-    ArrayList<Polygon> polygons = new ArrayList<>();
-    ArrayList<Vertex> vertices = new ArrayList<>();
-    ArrayList<Edge> edges = new ArrayList<>();
+    public ArrayList<Polygon> polygons;
+    public ArrayList<Vertex> vertices;
+    public ArrayList<Edge> edges;
     // convex hull
-    ConvexHull convexHull = new ConvexHull();
+    public ConvexHull convexHull;
+
+    public VoronoiDiagram() {
+        this.generatorPoints = new ArrayList<>();
+        this.polygons = new ArrayList<>();
+        this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
+        this.convexHull = new ConvexHull();
+    }
 
 }
 
