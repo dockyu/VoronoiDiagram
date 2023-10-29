@@ -15,13 +15,15 @@ public class VoronoiAlgo {
         if (pointNum == 1) { // 一個生成點
             VoronoiDiagram onePointVD = createOnePointVD(Points.get(0)); // 生成VD
             voronoiTaskState.add(onePointVD); // 加入初始狀態
-        }else if (pointNum == 2) { // 兩個生成點
-            VoronoiDiagram twoPointVD = createTwoPointVD(Points.get(0), Points.get(1));
-            voronoiTaskState.add(twoPointVD);
-        }else if (pointNum == 3) { // 三個生成點
-            VoronoiDiagram threePointVD = createThreePointVD(Points.get(0), Points.get(1), Points.get(2));
-            voronoiTaskState.add(threePointVD);
-        }else if (pointNum > 3) { // 要繼續切
+        }
+//        else if (pointNum == 2) { // 兩個生成點
+//            VoronoiDiagram twoPointVD = createTwoPointVD(Points.get(0), Points.get(1));
+//            voronoiTaskState.add(twoPointVD);
+//        }else if (pointNum == 3) { // 三個生成點
+//            VoronoiDiagram threePointVD = createThreePointVD(Points.get(0), Points.get(1), Points.get(2));
+//            voronoiTaskState.add(threePointVD);
+//        }
+        else if (pointNum > 1) { // 要繼續切
             int midIndex = pointNum / 2;
             LinkedList<GeneratorPoint> leftPoints = new LinkedList<>(Points.subList(0, midIndex));
             LinkedList<GeneratorPoint> rightPoints = new LinkedList<>(Points.subList(midIndex, pointNum));
@@ -37,8 +39,13 @@ public class VoronoiAlgo {
     public static void merge(LinkedList<VoronoiDiagram> voronoiTaskState) {
         VoronoiDiagram VDleft = voronoiTaskState.poll();
         VoronoiDiagram VDright = voronoiTaskState.poll();
-        VoronoiDiagram VDmerge = new VoronoiDiagram();
+        VoronoiDiagram VDmerge;
         // merge開始
+        // 暴力解 merge兩個一個點的VD
+        VDmerge = mergeOneOneVD(VDleft, VDright);
+        // 暴力解 merge一個兩個點的VD和一個一個點的VD
+        VDmerge = mergeTwoOneVD(VDleft, VDright);
+        // 2,2以上
 
 
 
@@ -63,8 +70,12 @@ public class VoronoiAlgo {
         VoronoiDiagram voronoiDiagram = new VoronoiDiagram();
         return voronoiDiagram;
     }
-    private static VoronoiDiagram createThreePointVD(GeneratorPoint p1, GeneratorPoint p2, GeneratorPoint p3) {
-        VoronoiDiagram voronoiDiagram = new VoronoiDiagram();
-        return voronoiDiagram;
+    private static VoronoiDiagram mergeOneOneVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+        VoronoiDiagram VDmerge = new VoronoiDiagram();
+        return VDmerge;
+    }
+    private static VoronoiDiagram mergeTwoOneVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+        VoronoiDiagram VDmerge = new VoronoiDiagram();
+        return VDmerge;
     }
 }
