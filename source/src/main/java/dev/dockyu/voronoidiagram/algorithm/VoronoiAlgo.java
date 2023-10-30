@@ -33,6 +33,11 @@ public class VoronoiAlgo {
     public static void merge(LinkedList<VoronoiDiagram> voronoiTaskState) {
         VoronoiDiagram VDleft = voronoiTaskState.poll();
         VoronoiDiagram VDright = voronoiTaskState.poll();
+        if (VDleft.generatorPoints.get(0).getX() > VDright.generatorPoints.get(0).getX()) { // VDleft換成左邊
+            VoronoiDiagram temp = VDleft;
+            VDleft = VDright;
+            VDright = temp;
+        }
         VoronoiDiagram VDmerge = null;
         // merge開始
         // 暴力解，merge總共2個點的voronoi diagram
@@ -145,11 +150,11 @@ public class VoronoiAlgo {
         VDmerge.vertexs.add(vertex1);
 
         // 3條edge
-        Edge edge0 = new Edge(true, 0, 1, 0, 1,
+        Edge edge0 = new Edge(true, 1, 0, 0, 1,
                 1, 2, 2, 1);
-        Edge edge1 = new Edge(false, 0, 3, 1, 0,
+        Edge edge1 = new Edge(false, 1, 2, 1, 0,
                 0, 2, 2, 0);
-        Edge edge2 = new Edge(false, 3, 1, 1, 0,
+        Edge edge2 = new Edge(false, 2, 0, 1, 0,
                 1, 0, 0, 1);
         VDmerge.edges.add(edge0);
         VDmerge.edges.add(edge1);
@@ -190,6 +195,8 @@ public class VoronoiAlgo {
             point2 = VDright.generatorPoints.get(1);
         }
 
+        sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+
         // merge generatorPoint
         VDmerge.generatorPoints.add(point0);
         VDmerge.generatorPoints.add(point1);
@@ -206,7 +213,7 @@ public class VoronoiAlgo {
             // case1: 三點垂直共線
             // 三點在垂直線上，y座標有變動，x座標不變
             // 做水平中垂線
-            sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+
             // 求point0, point1的中點
             float midPoint01X = (point0.getX() + point1.getX()) / 2;
             float midPoint01Y = (point0.getY() + point1.getY()) / 2;
@@ -277,7 +284,7 @@ public class VoronoiAlgo {
             // case2: 三點水平共線
             // 三點在水平線上，x座標有變動，y座標不變
             // 做垂直中垂線
-            sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+
 
             // 求point0, point1的中點
             float midPoint01X = (point0.getX() + point1.getX()) / 2;
@@ -348,7 +355,7 @@ public class VoronoiAlgo {
 
         } else if (Math.abs(area) < 1e-9) { // 使用一個小數值來避免浮點數不精確的問題
             // case3: 三點共線，但不是垂直或水平
-            sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+
 
             // 計算中點
             float midPoint01X = (point0.getX() + point1.getX()) / 2;
