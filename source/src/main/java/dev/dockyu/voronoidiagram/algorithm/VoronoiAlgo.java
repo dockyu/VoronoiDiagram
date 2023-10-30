@@ -1,7 +1,9 @@
 package dev.dockyu.voronoidiagram.algorithm;
 
 import dev.dockyu.voronoidiagram.datastruct.*;
+import javafx.application.Platform;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class VoronoiAlgo {
@@ -174,32 +176,269 @@ public class VoronoiAlgo {
         // 測試
         showMergeInformation(VDleft, VDright);
 
+        GeneratorPoint point0;
         GeneratorPoint point1;
         GeneratorPoint point2;
-        GeneratorPoint point3;
 
         if (VDleft.generatorPoints.size() == 2) {
-            point1 = VDleft.generatorPoints.get(0);
-            point2 = VDleft.generatorPoints.get(1);
-            point3 = VDright.generatorPoints.get(0);
-        }else {
-            point1 = VDleft.generatorPoints.get(0);
+            point0 = VDleft.generatorPoints.get(0);
+            point1 = VDleft.generatorPoints.get(1);
             point2 = VDright.generatorPoints.get(0);
-            point3 = VDright.generatorPoints.get(1);
+        }else {
+            point0 = VDleft.generatorPoints.get(0);
+            point1 = VDright.generatorPoints.get(0);
+            point2 = VDright.generatorPoints.get(1);
         }
 
+        // merge generatorPoint
+        VDmerge.generatorPoints.add(point0);
+        VDmerge.generatorPoints.add(point1);
+        VDmerge.generatorPoints.add(point2);
+
+        // 計算三角形面積，如果面積為0，則點共線
+        float area = point0.getX() * (point1.getY() - point2.getY()) +
+                point1.getX() * (point2.getY() - point0.getY()) +
+                point2.getX() * (point0.getY() - point1.getY());
+
+        float delta = 10f; // 距離中點的距離
         // 判斷各種情況
+        if (point0.getX() == point1.getX() && point1.getX() == point2.getX()) {
+            // case1: 三點垂直共線
+            // 三點在垂直線上，y座標有變動，x座標不變
+            // 做水平中垂線
+            sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+            // 求point0, point1的中點
+            float midPoint01X = (point0.getX() + point1.getX()) / 2;
+            float midPoint01Y = (point0.getY() + point1.getY()) / 2;
+
+            // 中點向左10f
+            float v0_X = midPoint01X - delta;
+            float v0_Y = midPoint01Y;
+
+            // 中點向右10f
+            float v1_X = midPoint01X + delta;
+            float v1_Y = midPoint01Y;
+
+            // 求point1, point2的中點
+            float midPoint12X = (point1.getX() + point2.getX()) / 2;
+            float midPoint12Y = (point1.getY() + point2.getY()) / 2;
+
+            // 中點向左10f
+            float v2_X = midPoint12X - delta;
+            float v2_Y = midPoint12Y;
+
+            // 中點向右10f
+            float v3_X = midPoint12X + delta;
+            float v3_Y = midPoint12Y;
+
+            // merge vertex
+            Vertex v0 = new Vertex(0, true, v0_X, v0_Y);
+            Vertex v1 = new Vertex(0, true, v1_X, v1_Y);
+            Vertex v2 = new Vertex(1, true, v2_X, v2_Y);
+            Vertex v3 = new Vertex(1, true, v3_X, v3_Y);
+            VDmerge.vertexs.add(v0);
+            VDmerge.vertexs.add(v1);
+            VDmerge.vertexs.add(v2);
+            VDmerge.vertexs.add(v3);
+
+            // merge edge
+            Edge e0 = new Edge(true, 0, 1, 0, 1, 4, 3, 5, 4);
+            Edge e1 = new Edge(true, 1, 2, 2, 3, 3, 2, 2, 5);
+            Edge e2 = new Edge(false, 3, 2, 3, 2, 5, 1, 1, 3);
+            Edge e3 = new Edge(false, 3, 1, 2, 0, 2, 1, 0, 4);
+            Edge e4 = new Edge(false, 0, 3, 1, 0, 0, 5, 3, 0);
+            Edge e5 = new Edge(false, 3, 1, 1, 3, 4, 0, 1, 2);
+            VDmerge.edges.add(e0);
+            VDmerge.edges.add(e1);
+            VDmerge.edges.add(e2);
+            VDmerge.edges.add(e3);
+            VDmerge.edges.add(e4);
+            VDmerge.edges.add(e5);
+
+            // merge polygon
+            Polygon p0 = new Polygon(4);
+            Polygon p1 = new Polygon(0);
+            Polygon p2 = new Polygon(1);
+            Polygon p3 = new Polygon(5);
+            VDmerge.polygons.add(p0);
+            VDmerge.polygons.add(p1);
+            VDmerge.polygons.add(p2);
+            VDmerge.polygons.add(p3);
+
+            // merge convex hull
+            ConvexHull convexHull = new ConvexHull();
+            convexHull.hull.add(point2);
+            convexHull.hull.add(point1);
+            convexHull.hull.add(point0);
+            convexHull.left = 1;
+            convexHull.right = 1;
+
+        } else if (point0.getY() == point1.getY() && point1.getY() == point2.getY()) {
+            // case2: 三點水平共線
+            // 三點在水平線上，x座標有變動，y座標不變
+            // 做垂直中垂線
+            sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+
+            // 求point0, point1的中點
+            float midPoint01X = (point0.getX() + point1.getX()) / 2;
+            float midPoint01Y = (point0.getY() + point1.getY()) / 2;
+
+            // 中點向上delta
+            float v0_X = midPoint01X;
+            float v0_Y = midPoint01Y + delta;
+
+            // 中點向下delta
+            float v1_X = midPoint01X;
+            float v1_Y = midPoint01Y - delta;
+
+            // 求point1, point2的中點
+            float midPoint12X = (point1.getX() + point2.getX()) / 2;
+            float midPoint12Y = (point1.getY() + point2.getY()) / 2;
+
+            // 中點向上delta
+            float v2_X = midPoint12X;
+            float v2_Y = midPoint12Y + delta;
+
+            // 中點向下delta
+            float v3_X = midPoint12X;
+            float v3_Y = midPoint12Y - delta;
+
+            // merge vertex
+            Vertex v0 = new Vertex(0, true, v0_X, v0_Y);
+            Vertex v1 = new Vertex(0, true, v1_X, v1_Y);
+            Vertex v2 = new Vertex(1, true, v2_X, v2_Y);
+            Vertex v3 = new Vertex(1, true, v3_X, v3_Y);
+            VDmerge.vertexs.add(v0);
+            VDmerge.vertexs.add(v1);
+            VDmerge.vertexs.add(v2);
+            VDmerge.vertexs.add(v3);
+
+            // merge edge
+            Edge e0 = new Edge(true, 0, 1, 0, 1, 4, 3, 5, 4);
+            Edge e1 = new Edge(true, 1, 2, 2, 3, 3, 2, 2, 5);
+            Edge e2 = new Edge(false, 3, 2, 3, 2, 5, 1, 1, 3);
+            Edge e3 = new Edge(false, 3, 1, 2, 0, 2, 1, 0, 4);
+            Edge e4 = new Edge(false, 0, 3, 1, 0, 0, 5, 3, 0);
+            Edge e5 = new Edge(false, 3, 1, 1, 3, 4, 0, 1, 2);
+            VDmerge.edges.add(e0);
+            VDmerge.edges.add(e1);
+            VDmerge.edges.add(e2);
+            VDmerge.edges.add(e3);
+            VDmerge.edges.add(e4);
+            VDmerge.edges.add(e5);
+
+            // merge polygon
+            Polygon p0 = new Polygon(4);
+            Polygon p1 = new Polygon(0);
+            Polygon p2 = new Polygon(1);
+            Polygon p3 = new Polygon(5);
+            VDmerge.polygons.add(p0);
+            VDmerge.polygons.add(p1);
+            VDmerge.polygons.add(p2);
+            VDmerge.polygons.add(p3);
+
+            // merge convex hull
+            ConvexHull convexHull = new ConvexHull();
+            convexHull.hull.add(point0);
+            convexHull.hull.add(point1);
+            convexHull.hull.add(point2);
+            convexHull.left = 0;
+            convexHull.right = 2;
+
+
+        } else if (Math.abs(area) < 1e-9) { // 使用一個小數值來避免浮點數不精確的問題
+            // case3: 三點共線，但不是垂直或水平
+            sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+
+            // 計算中點
+            float midPoint01X = (point0.getX() + point1.getX()) / 2;
+            float midPoint01Y = (point0.getY() + point1.getY()) / 2;
+
+            float midPoint12X = (point1.getX() + point2.getX()) / 2;
+            float midPoint12Y = (point1.getY() + point2.getY()) / 2;
+
+            // 計算第一個中垂線的斜率
+            float slope1 = (point1.getY() - point0.getY()) / (point1.getX() - point0.getX());
+            float perpendicularSlope1 = -1 / slope1; // point0,1 中垂線 斜率
+            double angle1 = Math.atan(perpendicularSlope1);
+
+            // 計算新的點
+            float v0_X = (float) (midPoint01X + delta * Math.cos(angle1));
+            float v0_Y = (float) (midPoint01Y + delta * Math.sin(angle1));
+
+            float v1_X = (float) (midPoint01X - delta * Math.cos(angle1));
+            float v1_Y = (float) (midPoint01Y - delta * Math.sin(angle1));
+
+            // 計算第二個中垂線的斜率
+            float slope2 = (point2.getY() - point1.getY()) / (point2.getX() - point1.getX());
+            float perpendicularSlope2 = -1 / slope2;
+            double angle2 = Math.atan(perpendicularSlope2);
+
+            // 計算新的點
+            float v2_X = (float) (midPoint12X + delta * Math.cos(angle2));
+            float v2_Y = (float) (midPoint12Y + delta * Math.sin(angle2));
+
+            float v3_X = (float) (midPoint12X - delta * Math.cos(angle2));
+            float v3_Y = (float) (midPoint12Y - delta * Math.sin(angle2));
+
+            // merge vertex
+            Vertex v0 = new Vertex(0, true, v0_X, v0_Y);
+            Vertex v1 = new Vertex(0, true, v1_X, v1_Y);
+            Vertex v2 = new Vertex(1, true, v2_X, v2_Y);
+            Vertex v3 = new Vertex(1, true, v3_X, v3_Y);
+            VDmerge.vertexs.add(v0);
+            VDmerge.vertexs.add(v1);
+            VDmerge.vertexs.add(v2);
+            VDmerge.vertexs.add(v3);
+
+            // merge edge
+            Edge e0 = new Edge(true, 0, 1, 0, 1, 4, 3, 5, 4);
+            Edge e1 = new Edge(true, 1, 2, 2, 3, 3, 2, 2, 5);
+            Edge e2 = new Edge(false, 3, 2, 3, 2, 5, 1, 1, 3);
+            Edge e3 = new Edge(false, 3, 1, 2, 0, 2, 1, 0, 4);
+            Edge e4 = new Edge(false, 0, 3, 1, 0, 0, 5, 3, 0);
+            Edge e5 = new Edge(false, 3, 1, 1, 3, 4, 0, 1, 2);
+            VDmerge.edges.add(e0);
+            VDmerge.edges.add(e1);
+            VDmerge.edges.add(e2);
+            VDmerge.edges.add(e3);
+            VDmerge.edges.add(e4);
+            VDmerge.edges.add(e5);
+
+            // merge polygon
+            Polygon p0 = new Polygon(4);
+            Polygon p1 = new Polygon(0);
+            Polygon p2 = new Polygon(1);
+            Polygon p3 = new Polygon(5);
+            VDmerge.polygons.add(p0);
+            VDmerge.polygons.add(p1);
+            VDmerge.polygons.add(p2);
+            VDmerge.polygons.add(p3);
+
+            // merge convex hull
+            ConvexHull convexHull = new ConvexHull();
+            convexHull.hull.add(point0);
+            convexHull.hull.add(point1);
+            convexHull.hull.add(point2);
+            convexHull.left = 0;
+            convexHull.right = 2;
+
+        }else {
+            // case4: 三點不共線
+
+        }
+
 
 
         // generatorPoints
 
-        // vertex
+        // merge vertex
 
-        // edge
+        // merge edge
 
-        // polygon
+        // merge polygon
 
-        // convex hull
+        // merge convex hull
 
         return VDmerge;
     }
@@ -234,5 +473,21 @@ public class VoronoiAlgo {
         }
     }
 
+    private static void sortThreeGeneratorPoint(GeneratorPoint point0, GeneratorPoint point1, GeneratorPoint point2) {
+        // 暴力解三個點的VD時使用
+        // 由左到右，由下到上排序三個點
+        GeneratorPoint[] points = {point0, point1, point2};
+        Arrays.sort(points, (p1, p2) -> {
+            if (p1.getX() == p2.getX()) {
+                return Float.compare(p1.getY(), p2.getY());
+            }
+            return Float.compare(p1.getX(), p2.getX());
+        });
+
+        // 從排序後的陣列取出點
+        point0 = points[0];
+        point1 = points[1];
+        point2 = points[2];
+    }
 
 }
