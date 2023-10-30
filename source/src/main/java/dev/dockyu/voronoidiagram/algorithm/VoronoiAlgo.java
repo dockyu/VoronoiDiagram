@@ -1,7 +1,6 @@
 package dev.dockyu.voronoidiagram.algorithm;
 
 import dev.dockyu.voronoidiagram.datastruct.*;
-import javafx.application.Platform;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -195,7 +194,10 @@ public class VoronoiAlgo {
             point2 = VDright.generatorPoints.get(1);
         }
 
-        sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+        GeneratorPoint[] sortedPoints = sortThreeGeneratorPoint(point0, point1, point2); // 排序三個點
+        point0 = sortedPoints[0];
+        point1 = sortedPoints[1];
+        point2 = sortedPoints[2];
 
         // merge generatorPoint
         VDmerge.generatorPoints.add(point0);
@@ -432,6 +434,35 @@ public class VoronoiAlgo {
 
         }else {
             // case4: 三點不共線
+            GeneratorPoint[] sortedClockwisePoints = sortClockwise(point0, point1, point2); // 順時針排序，0->1->2
+            point0 = sortedClockwisePoints[0];
+            point1 = sortedClockwisePoints[1];
+            point2 = sortedClockwisePoints[2];
+
+            // 求三點外心
+            float[] circumcenter = calculateCircumcenter(point0, point1, point2);
+            float circumcenterX = circumcenter[0];
+            float circumcenterY = circumcenter[1];
+
+            // 01 法向量
+            float[] normal01 = calculateNormalVector(point0, point1);
+            float normal01X = normal01[0];
+            float normal01Y = normal01[1];
+            // 12 法向量
+            float[] normal12 = calculateNormalVector(point1, point2);
+            float normal12X = normal12[0];
+            float normal12Y = normal12[1];
+            // 20 法向量
+            float[] normal20 = calculateNormalVector(point2, point0);
+            float normal20X = normal20[0];
+            float normal20Y = normal20[1];
+
+//            System.out.println("point0:("+point0.getX()+","+point0.getY()+")"+"point1:("+point1.getX()+","+point1.getY()+")");
+//            System.out.println("normal01:("+normal01X+","+normal01Y+")");
+//            System.out.println("point1:("+point1.getX()+","+point1.getY()+")"+"point2:("+point2.getX()+","+point2.getY()+")");
+//            System.out.println("normal12:("+normal12X+","+normal12Y+")");
+//            System.out.println("point2:("+point2.getX()+","+point2.getY()+")"+"point0:("+point0.getX()+","+point0.getY()+")");
+//            System.out.println("normal20:("+normal20X+","+normal20Y+")");
 
         }
 
@@ -480,7 +511,7 @@ public class VoronoiAlgo {
         }
     }
 
-    private static void sortThreeGeneratorPoint(GeneratorPoint point0, GeneratorPoint point1, GeneratorPoint point2) {
+    private static GeneratorPoint[] sortThreeGeneratorPoint(GeneratorPoint point0, GeneratorPoint point1, GeneratorPoint point2) {
         // 暴力解三個點的VD時使用
         // 由左到右，由下到上排序三個點
         GeneratorPoint[] points = {point0, point1, point2};
@@ -492,9 +523,63 @@ public class VoronoiAlgo {
         });
 
         // 從排序後的陣列取出點
-        point0 = points[0];
-        point1 = points[1];
-        point2 = points[2];
+        return points;
+    }
+
+    // 排序三個點為順時針順序
+    public static GeneratorPoint[] sortClockwise(GeneratorPoint point0, GeneratorPoint point1, GeneratorPoint point2) {
+        float x1 = point0.getX();
+        float y1 = point0.getY();
+        float x2 = point1.getX();
+        float y2 = point1.getY();
+        float x3 = point2.getX();
+        float y3 = point2.getY();
+
+        float crossProduct = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+
+        if (crossProduct > 0) {
+            return new GeneratorPoint[] {point0, point2, point1};
+        } else {
+            return new GeneratorPoint[] {point0, point1, point2};
+        }
+    }
+
+    // 計算外心
+    public static float[] calculateCircumcenter(GeneratorPoint A, GeneratorPoint B, GeneratorPoint C) {
+        float x1 = A.getX(), y1 = A.getY();
+        float x2 = B.getX(), y2 = B.getY();
+        float x3 = C.getX(), y3 = C.getY();
+
+        // 計算三個邊的長度
+        float a = (float)Math.sqrt((x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3));
+        float b = (float)Math.sqrt((x3 - x1) * (x3 - x1) + (y3 - y1) * (y3 - y1));
+        float c = (float)Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+
+        // 計算面積
+        float K = 0.5f * Math.abs(x1*(y2-y3) + x2*(y3-y1) + x3*(y1-y2));
+
+        // 計算外心坐標
+        float x = ((a*a*(b*b + c*c - a*a) * y1) + (b*b*(c*c + a*a - b*b) * y2) + (c*c*(a*a + b*b - c*c) * y3)) / (4 * K * K);
+        float y = ((a*a*(b*b + c*c - a*a) * x1) + (b*b*(c*c + a*a - b*b) * x2) + (c*c*(a*a + b*b - c*c) * x3)) / (4 * K * K);
+
+        float[] circumcenter = new float[2];
+        circumcenter[0] = x; // 新的x坐標
+        circumcenter[1] = y;  // 新的y坐標
+
+        return circumcenter;
+    }
+
+    // start點到end點的法向量
+    public static float[] calculateNormalVector(GeneratorPoint start, GeneratorPoint end) {
+        float dx = end.getX() - start.getX(); // 計算方向向量的x分量
+        float dy = end.getY() - start.getY(); // 計算方向向量的y分量
+
+        // 計算左側法線（逆時針旋轉90度）
+        float[] normal = new float[2];
+        normal[0] = -dy; // 新的x坐標
+        normal[1] = dx;  // 新的y坐標
+
+        return normal;
     }
 
 }
