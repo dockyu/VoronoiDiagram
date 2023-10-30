@@ -1,7 +1,7 @@
 package dev.dockyu.voronoidiagram.datastruct;
 
 public class Edge {
-    public boolean real; // 是否是真實存在的點
+    public boolean real; // 是否是真實存在
     public int right_polygon; // 邊的右邊的polygon
     public int left_polygon; // 邊的左邊的polygon
     public int start_vertex; // 邊的起始點

@@ -62,29 +62,18 @@ public class VoronoiAlgo {
 
     // merge 總共2個點的voronoi diagram
     private static VoronoiDiagram mergeTwoPointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+        System.out.println("mergeTwoPointVD");
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         // 測試
         showMergeInformation(VDleft, VDright);
 
-        // 合併generatorPoints
-        // 合併左邊的 generator points 到 VDmerge
-        for (GeneratorPoint point : VDleft.generatorPoints) {
-            VDmerge.generatorPoints.add(point);
-        }
-        // 合併右邊的 generator points 到 VDmerge
-        for (GeneratorPoint point : VDright.generatorPoints) {
-            VDmerge.generatorPoints.add(point);
-        }
-
-
-
-        GeneratorPoint p1 = VDleft.generatorPoints.get(0);
-        GeneratorPoint p2 = VDright.generatorPoints.get(0);
-        // 取得 p1 和 p2 的座標
-        float p1_x = (float)p1.getX();
-        float p1_y = (float)p1.getY();
-        float p2_x = (float)p2.getX();
-        float p2_y = (float)p2.getY();
+        GeneratorPoint leftPoint = VDleft.generatorPoints.get(0); // VDleft的唯一一個生成點
+        GeneratorPoint rightPoint = VDright.generatorPoints.get(0); // VDright的唯一一個生成點
+        // 取得 leftPoint 和 rightPoint 的座標
+        float p1_x = (float)leftPoint.getX();
+        float p1_y = (float)leftPoint.getY();
+        float p2_x = (float)rightPoint.getX();
+        float p2_y = (float)rightPoint.getY();
         // 計算中點座標
         float midpoint_x = (p1_x + p2_x) / 2;
         float midpoint_y = (p1_y + p2_y) / 2;
@@ -141,9 +130,17 @@ public class VoronoiAlgo {
             }
         }
 
+        // 兩個 generatorPoints
+        GeneratorPoint point0 = VDleft.generatorPoints.get(0); // VDleft的唯一一個生成點
+        GeneratorPoint point1 = VDright.generatorPoints.get(0); // VDright的唯一一個生成點
+        VDmerge.generatorPoints.add(point0);
+        VDmerge.generatorPoints.add(point1);
+
         // 2個vertex
         Vertex vertex0 = new Vertex(0, true, vertex0_x, vertex0_y);
         Vertex vertex1 = new Vertex(0, true, vertex1_x, vertex1_y);
+        VDmerge.vertexs.add(vertex0);
+        VDmerge.vertexs.add(vertex1);
 
         // 3條edge
         Edge edge0 = new Edge(true, 0, 1, 0, 1,
@@ -152,13 +149,20 @@ public class VoronoiAlgo {
                 0, 2, 2, 0);
         Edge edge2 = new Edge(false, 3, 1, 1, 0,
                 1, 0, 0, 1);
+        VDmerge.edges.add(edge0);
+        VDmerge.edges.add(edge1);
+        VDmerge.edges.add(edge2);
 
         // 3個polygon
         Polygon polygon0 = new Polygon(0);
         Polygon polygon1 = new Polygon(0);
-        Polygon polygonInf = new Polygon(1);
+        Polygon polygon2 = new Polygon(1);
+        VDmerge.polygons.add(polygon0);
+        VDmerge.polygons.add(polygon1);
+        VDmerge.polygons.add(polygon2);
         // convex hull
-
+        ConvexHull CHmerge = ConvexHullAlgo.mergeTwoPointCH(VDleft.convexHull, VDright.convexHull);
+        VDmerge.convexHull = CHmerge;
 
         return VDmerge;
     }
@@ -173,17 +177,17 @@ public class VoronoiAlgo {
     }
 
     // base case: 直接建構1個點的voronoi diagram
-    private static VoronoiDiagram createOnePointVD(GeneratorPoint p1) {
+    private static VoronoiDiagram createOnePointVD(GeneratorPoint p0) {
         VoronoiDiagram VD = new VoronoiDiagram();
         // generator point
-        VD.generatorPoints.add(p1);
+        VD.generatorPoints.add(p0);
         // 沒有vertex
         // 沒有edge
         // 沒有polygon
         // convex hull
-        VD.convexHull.hull.add(p1);
-        VD.convexHull.left.valueOf(0);
-        VD.convexHull.right.valueOf(0);
+        VD.convexHull.hull.add(p0);
+        VD.convexHull.left = 0;
+        VD.convexHull.right = 0;
 
         return VD;
     }

@@ -320,6 +320,7 @@ public class Controller {
         taskPointsArea.setText(sb.toString());
     }
 
+    // 排序taskPoints
     void sortTaskPointsByX() {
         Collections.sort(this.model.taskPoints, new Comparator<GeneratorPoint>() {
             @Override
@@ -327,5 +328,28 @@ public class Controller {
                 return Integer.compare(p1.getX(), p2.getX());
             }
         });
+        deleteRepeatTaskPoint();
+    }
+
+    // 刪除重複的點
+    void deleteRepeatTaskPoint() {
+        if (this.model.taskPoints == null || this.model.taskPoints.size() < 2) {
+            return;
+        }
+
+        LinkedList<GeneratorPoint> uniquePoints = new LinkedList<>();
+        GeneratorPoint prevPoint = this.model.taskPoints.get(0);
+        uniquePoints.add(prevPoint);
+
+        for (int i = 1; i < this.model.taskPoints.size(); i++) {
+            GeneratorPoint currentPoint = this.model.taskPoints.get(i);
+
+            if (currentPoint.getX() != prevPoint.getX() || currentPoint.getY() != prevPoint.getY()) {
+                uniquePoints.add(currentPoint);
+                prevPoint = currentPoint;
+            }
+        }
+
+        this.model.taskPoints = uniquePoints;
     }
 }
