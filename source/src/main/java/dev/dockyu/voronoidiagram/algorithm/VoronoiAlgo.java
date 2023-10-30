@@ -169,9 +169,37 @@ public class VoronoiAlgo {
 
     // merge 總共3個點的voronoi diagram
     private static VoronoiDiagram mergeThreePointVD(VoronoiDiagram VDleft, VoronoiDiagram VDright) {
+        System.out.println("mergeThreePointVD");
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         // 測試
         showMergeInformation(VDleft, VDright);
+
+        GeneratorPoint point1;
+        GeneratorPoint point2;
+        GeneratorPoint point3;
+
+        if (VDleft.generatorPoints.size() == 2) {
+            point1 = VDleft.generatorPoints.get(0);
+            point2 = VDleft.generatorPoints.get(1);
+            point3 = VDright.generatorPoints.get(0);
+        }else {
+            point1 = VDleft.generatorPoints.get(0);
+            point2 = VDright.generatorPoints.get(0);
+            point3 = VDright.generatorPoints.get(1);
+        }
+
+        // 判斷各種情況
+
+
+        // generatorPoints
+
+        // vertex
+
+        // edge
+
+        // polygon
+
+        // convex hull
 
         return VDmerge;
     }

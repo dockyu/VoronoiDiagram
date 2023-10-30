@@ -23,6 +23,7 @@ public class CanvasAction {
     // 畫出目前task狀態(一堆voronoi diagram)
     public static void drawTaskState(Canvas canvas, LinkedList<VoronoiDiagram> taskState) {
         System.out.println("draw task state");
+        clear(canvas); // 先清空canvas
         // 遍歷taskState並依次畫出所有Voronoi Diagram
         for (VoronoiDiagram voronoiDiagram : taskState) {
             drawVoronoiDiagram(canvas, voronoiDiagram);
@@ -32,7 +33,7 @@ public class CanvasAction {
 
     // 畫出一個voronoi diagram
     public static void drawVoronoiDiagram(Canvas canvas, VoronoiDiagram voronoiDiagram) {
-        clear(canvas); // 先清空canvas
+
         if (voronoiDiagram.generatorPoints.size() == 1) { // 畫出1個點的VD
             drawOnePointVD(canvas, voronoiDiagram);
         }else if (voronoiDiagram.generatorPoints.size() > 1) { // 一個點以上
@@ -57,7 +58,7 @@ public class CanvasAction {
 
 
     // 畫一條edge
-    public static void drawEdge(Canvas canvas, Edge edge, ArrayList<Vertex> vertexs) {
+    public static void drawEdge(Canvas canvas, Edge edge, LinkedList<Vertex> vertexs) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定edge的顏色
         gc.setStroke(EDGE_COLOR);
@@ -127,7 +128,7 @@ public class CanvasAction {
     }
 
     // 畫多條edge
-    public static void drawEdges(Canvas canvas, ArrayList<Edge> edges, ArrayList<Vertex> vertexs) {
+    public static void drawEdges(Canvas canvas, LinkedList<Edge> edges, LinkedList<Vertex> vertexs) {
         for (Edge edge : edges) {
             drawEdge(canvas, edge, vertexs);
         }
