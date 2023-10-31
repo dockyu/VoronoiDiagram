@@ -247,7 +247,7 @@ public class VoronoiBaseCase {
 
         } else {
             // 中垂線斜斜的
-            float slope = (gp1.getY() - gp0.getY()) / (gp1.getY() - gp0.getY());
+            float slope = (gp1.getY() - gp0.getY()) / (gp1.getX() - gp0.getX());
             float perpSlope = -1 / slope; // 中垂線斜率
 
             // 利用三角函數計算v0和v1的座標
