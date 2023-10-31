@@ -60,15 +60,15 @@ public class TwoDPlaneAlgo {
         return normal;
     }
 
-    public static float[] getXYExtendVector(float x, float y, float v_x, float v_y, float delta) {
-        // (x,y)沿著向量(v_x,v_y)延伸length的新座標
+    public static float[] extendWithVector(float x, float y, float dx, float dy, float delta) {
+        // (x,y)沿著向量(dx,dy)延伸length的新座標
 
         // 計算向量的長度
-        float length = (float)Math.sqrt(v_x * v_x + v_y * v_y);
+        float length = (float)Math.sqrt(dx * dx + dy * dy);
 
         // 計算單位向量
-        float unitVector_x = v_x / length;
-        float unitVector_y = v_y / length;
+        float unitVector_x = dx / length;
+        float unitVector_y = dy / length;
 
         // 計算新的座標
         float new_x = x + unitVector_x * delta;
@@ -84,6 +84,17 @@ public class TwoDPlaneAlgo {
     // 計算兩點之間的距離
     private static float distance(float x1, float y1, float x2, float y2) {
         return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    public static float maxDistanceWithRectangle(float x, float y, float rect_left_bound, float rect_right_bound, float rect_down_bound, float rect_up_bound) {
+        // 點和矩形最遠的距離
+        float maxDistanceX = Math.max(Math.abs(x-rect_left_bound),Math.abs(x-rect_right_bound));
+        // 點跟畫布y方向上最遠的距離
+        float maxDistanceY = Math.max(Math.abs(y-rect_down_bound),Math.abs(y-rect_up_bound));
+
+        float distance = (float) Math.sqrt(Math.pow(maxDistanceX, 2)+Math.pow(maxDistanceY, 2));
+
+        return distance;
     }
 
 }

@@ -1,8 +1,12 @@
 package dev.dockyu.voronoidiagram;
 
+import dev.dockyu.voronoidiagram.algorithm.TwoDPlaneAlgo;
 import dev.dockyu.voronoidiagram.algorithm.VoronoiAlgo;
+import dev.dockyu.voronoidiagram.datastruct.Edge;
 import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
 
+import dev.dockyu.voronoidiagram.datastruct.Vertex;
+import dev.dockyu.voronoidiagram.datastruct.VoronoiDiagram;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -117,7 +121,61 @@ public class Controller {
 
     @FXML
     protected void exportVoronoi() {
-        System.out.println("exportOutput button click");
+//        System.out.println("exportOutput button click");
+        System.out.println("Controller.java exportVoronoi()");
+        // 處理生成點
+        // 找所有生成點
+
+        // 排序所有生成點
+
+        // 處理邊
+        int canvasHeight = (int) this.canvas.getHeight(); // 畫布長
+        int canvasWidth = (int) this.canvas.getWidth(); // 畫布寬
+        // 找所有邊
+        for (VoronoiDiagram VD : this.model.taskState) {
+            // 目前狀態的所有sub Voronoi Diagram
+            for (Edge edge : VD.edges) {
+                // sub Voronoi Diagram的所有edge
+                if (edge.real) {
+                    // 真實的邊，才需要輸出
+                    Vertex start = VD.vertexs.get(edge.start_vertex);
+                    Vertex end = VD.vertexs.get(edge.end_vertex);
+                    float start_x = start.x;
+                    float start_y = start.y;
+                    float end_x = end.x;
+                    float end_y = end.y;
+
+                    if (start.terminal) {
+                        // start點是無限延伸
+                        // 與畫布的最長距離
+                        float distance = TwoDPlaneAlgo.maxDistanceWithRectangle(start.x, start.y, 0, canvasWidth, 0, canvasHeight);
+                        // start延伸方向的向量
+                        float dx = start.x - end.x; // x方向的偏量
+                        float dy = start.y - end.y; // y方向的偏量
+                        // start點往(dx,dy)方向延伸distance
+                        float[] newVertex= TwoDPlaneAlgo.extendWithVector(start.x, start.y, dx, dy, distance);
+                        start_x = newVertex[0];
+                        start_y = newVertex[1];
+                    }
+                    if (end.terminal) {
+                        // end點是無限延伸
+                        // 與畫布的最長距離
+                        float distance = TwoDPlaneAlgo.maxDistanceWithRectangle(end.x, end.y, 0, canvasWidth, 0, canvasHeight);
+                        // start延伸方向的向量
+                        float dx = end.x - start.x; // x方向的偏量
+                        float dy = end.y - start.y; // y方向的偏量
+                        // start點往(dx,dy)方向延伸distance
+                        float[] newVertex= TwoDPlaneAlgo.extendWithVector(end.x, end.y, dx, dy, distance);
+                        end_x = newVertex[0];
+                        end_y = newVertex[1];
+                    }
+                    // 已經把所有邊變成封閉邊
+
+                }
+            }
+        }
+
+
     }
 
     @FXML

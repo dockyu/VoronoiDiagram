@@ -142,21 +142,21 @@ public class VoronoiBaseCase {
             float normal01_x = normal01[0];
             float normal01_y = normal01[1];
 
-            float[] v1_coordinate = TwoDPlaneAlgo.getXYExtendVector(circumcenter_x, circumcenter_y, normal01_x, normal01_y, delta);
+            float[] v1_coordinate = TwoDPlaneAlgo.extendWithVector(circumcenter_x, circumcenter_y, normal01_x, normal01_y, delta);
 
             // 計算gp1->gp2向量的法向量
             float[] normal12 = TwoDPlaneAlgo.getNormalVector(gp1, gp2);
             float normal12_x = normal12[0];
             float normal12_y = normal12[1];
 
-            float[] v2_coordinate = TwoDPlaneAlgo.getXYExtendVector(circumcenter_x, circumcenter_y, normal12_x, normal12_y, delta);
+            float[] v2_coordinate = TwoDPlaneAlgo.extendWithVector(circumcenter_x, circumcenter_y, normal12_x, normal12_y, delta);
 
             // 計算gp2->gp0向量的法向量
             float[] normal20 = TwoDPlaneAlgo.getNormalVector(gp2, gp0);
             float normal20_x = normal20[0];
             float normal20_y = normal20[1];
 
-            float[] v3_coordinate = TwoDPlaneAlgo.getXYExtendVector(circumcenter_x, circumcenter_y, normal20_x, normal20_y, delta);
+            float[] v3_coordinate = TwoDPlaneAlgo.extendWithVector(circumcenter_x, circumcenter_y, normal20_x, normal20_y, delta);
 
             // 建構三點共線的Voronoi Diagram
 

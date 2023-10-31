@@ -1,5 +1,6 @@
 package dev.dockyu.voronoidiagram;
 
+import dev.dockyu.voronoidiagram.algorithm.TwoDPlaneAlgo;
 import dev.dockyu.voronoidiagram.datastruct.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -61,62 +62,35 @@ public class CanvasAction {
             double diagonal = Math.sqrt(canvasWidth * canvasWidth + canvasHeight * canvasHeight);
 
             if (start.terminal) { // start 是無限延伸的點
-                // start點跟畫布x方向上最遠的距離
-                float maxDistanceX = Math.max(Math.abs(start_x-0),Math.abs(start_x-canvasWidth));
-                // start點跟畫布y方向上最遠的距離
-                float maxDistanceY = Math.max(Math.abs(start_y-0),Math.abs(start_x-(0-canvasWidth)));
-
-                // 延伸距離
-                double distance = Math.sqrt(Math.pow(maxDistanceX, 2)+Math.pow(maxDistanceY, 2));
-                distance += diagonal;
+                // 與畫布的最長距離
+                float distance = TwoDPlaneAlgo.maxDistanceWithRectangle(start_x, start_y, 0, canvasWidth, 0, canvasHeight);
+//                distance += diagonal;
 
                 // 延伸一個新的 start
                 float dx = start_x - end_x; // x方向的差值
                 float dy = start_y - end_y; // y方向的差值
 
-                // 計算單位向量
-                float magnitude = (float) Math.sqrt(dx * dx + dy * dy);
-                float unit_dx = dx / magnitude;
-                float unit_dy = dy / magnitude;
-
-                // 沿著單位向量方向延伸 diagonal 的距離
-                float new_start_x = start_x + unit_dx * (float) distance;
-                float new_start_y = start_y + unit_dy * (float) distance;
-
+                // start點往(dx,dy)方向延伸distance
+                float[] newVertex= TwoDPlaneAlgo.extendWithVector(start_x, start_y, dx, dy, distance);
+                start_x = newVertex[0];
+                start_y = newVertex[1];
 //                System.out.println("Original Start: (" + start_x + ", " + start_y + ")");  // 輸出原始的 start 座標
 //                System.out.println("New Start: (" + new_start_x + ", " + new_start_y + ")");  // 輸出新計算的 start 座標
-
-                start_x = new_start_x;
-                start_y = new_start_y;
             }
             if (end.terminal) { // end 是無限延伸的點
-                // start點跟畫布x方向上最遠的距離
-                float maxDistanceX = Math.max(Math.abs(end_x-0),Math.abs(end_x-canvasWidth));
-                // start點跟畫布y方向上最遠的距離
-                float maxDistanceY = Math.max(Math.abs(end_y-0),Math.abs(end_x-(0-canvasWidth)));
-
-                // 延伸距離
-                double distance = Math.sqrt(Math.pow(maxDistanceX, 2)+Math.pow(maxDistanceY, 2));
-                distance += diagonal;
+                float distance = TwoDPlaneAlgo.maxDistanceWithRectangle(end_x, end_y, 0, canvasWidth, 0, canvasHeight);
+//                distance += diagonal;
 
                 // 延伸一個新的end
                 float dx = end_x - start_x; // x方向的差值
                 float dy = end_y - start_y; // y方向的差值
 
-                // 計算單位向量
-                float magnitude = (float) Math.sqrt(dx * dx + dy * dy);
-                float unit_dx = dx / magnitude;
-                float unit_dy = dy / magnitude;
-
-                // 沿著單位向量方向延伸 diagonal 的距離
-                float new_end_x = end_x + unit_dx * (float) distance;
-                float new_end_y = end_y + unit_dy * (float) distance;
-
+                // end點往(dx,dy)方向延伸distance
+                float[] newVertex= TwoDPlaneAlgo.extendWithVector(end_x, end_y, dx, dy, distance);
+                end_x = newVertex[0];
+                end_y = newVertex[1];
 //                System.out.println("Original End: (" + end_x + ", " + end_y + ")");  // 輸出原始的 end 座標
 //                System.out.println("New End: (" + new_end_x + ", " + new_end_y + ")");  // 輸出新計算的 end 座標
-
-                end_x = new_end_x;
-                end_y = new_end_y;
             }
 
 //            System.out.println("準備要畫edge: "+start_x+" "+start_y+" "+end_x+" "+end_y);
