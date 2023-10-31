@@ -58,7 +58,8 @@ public class VoronoiBaseCase {
                 v3_y = midPoint12_y - delta;
             } else {
                 // case3: 三點共線，但不是垂直或水平
-                float slope = (gp1.getX()-gp0.getX())/(gp1.getY()- gp0.getY()); // gp0, gp1的斜率，等同gp1,gp2的斜率
+                System.out.println("三點共斜線");
+                float slope = (gp1.getY()-gp0.getY())/(gp1.getX()- gp0.getX()); // gp0, gp1的斜率，等同gp1,gp2的斜率
                 float perpendicularSlope = -1 / slope; // gp0, gp1 中垂線的斜率
                 float angle = (float) Math.atan(perpendicularSlope); // 中垂線的角度
 
