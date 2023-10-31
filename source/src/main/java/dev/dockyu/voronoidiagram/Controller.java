@@ -50,7 +50,8 @@ public class Controller {
     // 以下是元件被觸發會做的事
     @FXML
     protected void importTasks() {
-        System.out.println("importInput button click");
+//        System.out.println("importInput button click");
+        System.out.println("Controller.java importTasks()");
 
         FileChooser fileChooser = new FileChooser(); // 用來打開檔案選擇對話框
         File selectedFile = fileChooser.showOpenDialog(null);
@@ -61,13 +62,25 @@ public class Controller {
             try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
+                    // 如果該行是空白行或以#開頭，則跳過
+                    if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                        continue;
+                    }
+
                     int n = Integer.parseInt(line.trim());
                     if (n == 0) {
                         break;
                     }
+
                     LinkedList<GeneratorPoint> task = new LinkedList<>();
                     for (int i = 0; i < n; i++) {
                         line = reader.readLine();
+                        // 如果該行是空白行或以#開頭，則跳過並不增加i
+                        if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                            i--;
+                            continue;
+                        }
+
                         String[] coords = line.split(" ");
                         int x = Integer.parseInt(coords[0]);
                         int y = Integer.parseInt(coords[1]);
