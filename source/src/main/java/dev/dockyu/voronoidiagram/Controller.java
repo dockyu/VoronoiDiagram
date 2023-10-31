@@ -141,6 +141,9 @@ public class Controller {
             System.out.println("狀況4");
             // 剛做完一個task，所以taskPoints有點，且taskState只有一個voronoi diagram，代表已經做完
             // 且沒有下一個任務，所以需要重複做目前任務
+
+            // 清除之前的狀態
+            this.model.taskState.clear();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
@@ -218,6 +221,9 @@ public class Controller {
             System.out.println("狀況4");
             // 剛做完一個task，所以taskPoints有點，且taskState只有一個voronoi diagram，代表已經做完
             // 且沒有下一個任務，所以需要重複做目前任務
+
+            // 清除之前的狀態
+            this.model.taskState.clear();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
