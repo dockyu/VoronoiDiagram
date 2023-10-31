@@ -2,7 +2,6 @@ package dev.dockyu.voronoidiagram.algorithm;
 
 import dev.dockyu.voronoidiagram.datastruct.*;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 public class VoronoiAlgo {
