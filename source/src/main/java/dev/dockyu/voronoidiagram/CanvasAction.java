@@ -1,14 +1,12 @@
 package dev.dockyu.voronoidiagram;
 
-import dev.dockyu.voronoidiagram.datastruct.Edge;
-import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
-import dev.dockyu.voronoidiagram.datastruct.Vertex;
-import dev.dockyu.voronoidiagram.datastruct.VoronoiDiagram;
+import dev.dockyu.voronoidiagram.datastruct.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class CanvasAction {
@@ -16,6 +14,7 @@ public class CanvasAction {
     public static final int GENERATOR_POINT_RADIUS = 3; // generator point 的半徑
     public static final Color GENERATOR_POINT_COLOR = Color.BLUE; // generator point 的顏色
     public static final Color EDGE_COLOR = Color.BLACK; // Voronoi Diagram edge的顏色
+    public static final Color CONVEX_HULL_COLOR = Color.RED; // Convex Hull 的顏色
 
     // 靜態方法，不需要實例就可以呼叫
 
@@ -33,10 +32,12 @@ public class CanvasAction {
 
     // 畫出一個voronoi diagram
     public static void drawVoronoiDiagram(Canvas canvas, VoronoiDiagram voronoiDiagram) {
-        // 畫所有生成點
-        drawGeneratorPoints(canvas, voronoiDiagram.generatorPoints);
         // 畫所有邊
         drawEdges(canvas, voronoiDiagram.edges, voronoiDiagram.vertexs);
+        // 畫convex hull
+        drawConvexHull(canvas, voronoiDiagram.convexHull);
+        // 畫所有生成點
+        drawGeneratorPoints(canvas, voronoiDiagram.generatorPoints);
     }
 
     // 畫一條edge
@@ -148,6 +149,31 @@ public class CanvasAction {
     public static void drawGeneratorPoints(Canvas canvas, LinkedList<GeneratorPoint> generatorPointList) {
         for (GeneratorPoint generatorPoint : generatorPointList) {
             drawGeneratorPoint(canvas, generatorPoint);
+        }
+    }
+
+    // 畫出convexhull
+    public static void drawConvexHull(Canvas canvas, ConvexHull convexHull) {
+        Iterator<GeneratorPoint> iterator = convexHull.hull.circularIterator();
+        if (!iterator.hasNext()) {
+            return; // 空的ConvexHull，直接返回
+        }
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // 設定edge的顏色
+        gc.setStroke(CONVEX_HULL_COLOR);
+
+        // 存儲第一個點以便最後使用
+        GeneratorPoint firstPoint = iterator.next();
+        GeneratorPoint previousPoint = firstPoint;
+
+        for (int i = 0; i < convexHull.hull.size(); i++) {
+            GeneratorPoint currentPoint = iterator.next();
+            // 使用previousPoint和currentPoint來畫線
+            gc.strokeLine(previousPoint.getX(), previousPoint.getY(), currentPoint.getX(), currentPoint.getY());
+
+            // 更新previousPoint為當前點，以供下次迭代使用
+            previousPoint = currentPoint;
         }
     }
 
