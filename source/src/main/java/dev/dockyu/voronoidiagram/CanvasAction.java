@@ -142,7 +142,7 @@ public class CanvasAction {
         // 設定點的顏色
         gc.setFill(GENERATOR_POINT_COLOR);
         // 畫出點（這裡以3x3的大小為例）
-        gc.fillOval(generatorPoint.getX(), generatorPoint.getY(), GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
+        gc.fillOval(generatorPoint.getX()-GENERATOR_POINT_RADIUS/2, generatorPoint.getY()-GENERATOR_POINT_RADIUS/2, GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
     }
 
     // 畫出多個generator point
