@@ -326,13 +326,13 @@ public class Controller {
             @Override
             public int compare(GeneratorPoint p1, GeneratorPoint p2) {
                 // 首先比較 x 座標
-                int xComparison = Integer.compare(p1.getX(), p2.getX());
+                int xComparison = Integer.compare((int) p1.getX(), (int) p2.getX());
                 if (xComparison != 0) {
                     return xComparison;
                 }
 
                 // 如果 x 座標相同，則比較 y 座標
-                return Integer.compare(p1.getY(), p2.getY());
+                return Integer.compare((int) p1.getY(), (int) p2.getY());
             }
         });
         deleteRepeatTaskPoint();

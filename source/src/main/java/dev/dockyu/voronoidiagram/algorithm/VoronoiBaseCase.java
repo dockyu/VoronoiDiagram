@@ -115,7 +115,6 @@ public class VoronoiBaseCase {
             VD.edges.add(e5);
 
             // convex hull
-
             VD.convexHull.hull.add(gp0);
             VD.convexHull.hull.add(gp1);
             VD.convexHull.hull.add(gp2);
@@ -124,10 +123,91 @@ public class VoronoiBaseCase {
 
         } else {
             // 三點不共線
+            System.out.println("三點不共線");
 
+            // 按照順時針排序 gp0,gp1,gp2
+            GeneratorPoint[] cwThreePoints = TwoDPlaneAlgo.sortThreePointClockwise(gp0, gp1, gp2);
+            gp0 = cwThreePoints[0];
+            gp1 = cwThreePoints[1];
+            gp2 = cwThreePoints[2];
+
+            // 算出gp0,gp1,gp2的外心
+            float[] circumcenter = TwoDPlaneAlgo.getThreePointCircumcenter(gp0, gp1, gp2);
+            float circumcenter_x = circumcenter[0]; // 外心的x座標
+            float circumcenter_y = circumcenter[1]; // 外心的y座標
+
+            // 計算gp0->gp1向量的法向量
+            float[] normal01 = TwoDPlaneAlgo.getNormalVector(gp0, gp1);
+            float normal01_x = normal01[0];
+            float normal01_y = normal01[1];
+
+            float[] v1_coordinate = TwoDPlaneAlgo.getXYExtendVector(circumcenter_x, circumcenter_y, normal01_x, normal01_y, delta);
+
+            // 計算gp1->gp2向量的法向量
+            float[] normal12 = TwoDPlaneAlgo.getNormalVector(gp1, gp2);
+            float normal12_x = normal12[0];
+            float normal12_y = normal12[1];
+
+            float[] v2_coordinate = TwoDPlaneAlgo.getXYExtendVector(circumcenter_x, circumcenter_y, normal12_x, normal12_y, delta);
+
+            // 計算gp2->gp0向量的法向量
+            float[] normal20 = TwoDPlaneAlgo.getNormalVector(gp2, gp0);
+            float normal20_x = normal20[0];
+            float normal20_y = normal20[1];
+
+            float[] v3_coordinate = TwoDPlaneAlgo.getXYExtendVector(circumcenter_x, circumcenter_y, normal20_x, normal20_y, delta);
+
+            // 建構三點共線的Voronoi Diagram
+
+            // generator point
+            VD.generatorPoints.add(gp0);
+            VD.generatorPoints.add(gp1);
+            VD.generatorPoints.add(gp2);
+
+            // vertex
+            Vertex v0 = new Vertex(0, false, circumcenter_x, circumcenter_y);
+            Vertex v1 = new Vertex(3, true, v1_coordinate[0], v1_coordinate[1]);
+            Vertex v2 = new Vertex(1, true, v2_coordinate[0], v2_coordinate[1]);
+            Vertex v3 = new Vertex(2, true, v3_coordinate[0], v3_coordinate[1]);
+            VD.vertexs.add(v0);
+            VD.vertexs.add(v1);
+            VD.vertexs.add(v2);
+            VD.vertexs.add(v3);
+
+            System.out.println(v0.x+","+v0.y);
+
+            // polygon
+            Polygon p0 = new Polygon(0);
+            Polygon p1 = new Polygon(1);
+            Polygon p2 = new Polygon(2);
+            Polygon p3 = new Polygon(3);
+            VD.polygons.add(p0);
+            VD.polygons.add(p1);
+            VD.polygons.add(p2);
+            VD.polygons.add(p3);
+
+            // edge
+            Edge e0 = new Edge(true, 1, 0, 0, 1, 1, 2, 5, 3);
+            Edge e1 = new Edge(true, 2, 1, 0, 2, 2, 0, 3, 4);
+            Edge e2 = new Edge(true, 0, 2, 0, 3, 0, 1, 4, 5);
+            Edge e3 = new Edge(false, 1, 3, 1, 2, 0, 5, 4, 1);
+            Edge e4 = new Edge(false, 2, 3, 2, 3, 1, 3, 5, 2);
+            Edge e5 = new Edge(false, 0, 3, 3, 1, 2, 4, 3, 0);
+            VD.edges.add(e0);
+            VD.edges.add(e1);
+            VD.edges.add(e2);
+            VD.edges.add(e3);
+            VD.edges.add(e4);
+            VD.edges.add(e5);
+
+            // convex hull
+            VD.convexHull.hull.add(gp0);
+            VD.convexHull.hull.add(gp1);
+            VD.convexHull.hull.add(gp2);
+            VD.convexHull.left = 0;
+            VD.convexHull.right = 2;
 
         }
-
 
         return VD;
     }
