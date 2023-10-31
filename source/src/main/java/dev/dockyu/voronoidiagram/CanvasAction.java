@@ -33,29 +33,11 @@ public class CanvasAction {
 
     // 畫出一個voronoi diagram
     public static void drawVoronoiDiagram(Canvas canvas, VoronoiDiagram voronoiDiagram) {
-
-        if (voronoiDiagram.generatorPoints.size() == 1) { // 畫出1個點的VD
-            drawOnePointVD(canvas, voronoiDiagram);
-        }else if (voronoiDiagram.generatorPoints.size() > 1) { // 一個點以上
-            drawMultiointVD(canvas, voronoiDiagram);
-        }
-
-    }
-
-    // 畫出1個點的VD
-    public static void drawOnePointVD(Canvas canvas, VoronoiDiagram voronoiDiagram) {
-        drawGeneratorPoint(canvas, voronoiDiagram.generatorPoints.get(0)); // 畫一個生成點
-    }
-
-    // 畫出多個點的VD
-    public static void drawMultiointVD(Canvas canvas, VoronoiDiagram voronoiDiagram) {
         // 畫所有生成點
         drawGeneratorPoints(canvas, voronoiDiagram.generatorPoints);
         // 畫所有邊
         drawEdges(canvas, voronoiDiagram.edges, voronoiDiagram.vertexs);
-
     }
-
 
     // 畫一條edge
     public static void drawEdge(Canvas canvas, Edge edge, LinkedList<Vertex> vertexs) {
