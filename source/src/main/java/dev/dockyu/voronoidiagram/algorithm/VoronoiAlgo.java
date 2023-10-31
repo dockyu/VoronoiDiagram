@@ -12,11 +12,17 @@ public class VoronoiAlgo {
         int pointNum = Points.size();
 
         // Base case，直接做出來
-        if (pointNum == 1) { // 一個生成點
-            VoronoiDiagram onePointVD = createOnePointVD(Points.get(0)); // 生成VD
+        if (pointNum == 3) {
+            VoronoiDiagram threePointVD = VoronoiBaseCase.createThreePointVD(Points.get(0), Points.get(1), Points.get(2));
+            voronoiTaskState.add(threePointVD);
+        } else if (pointNum == 2) {
+            VoronoiDiagram twoPointVD = VoronoiBaseCase.createTwoPointVD(Points.get(0), Points.get(1));
+            voronoiTaskState.add(twoPointVD);
+        } else if (pointNum == 1) { // 一個生成點
+            VoronoiDiagram onePointVD = VoronoiBaseCase.createOnePointVD(Points.get(0)); // 生成VD
             voronoiTaskState.add(onePointVD); // 加入初始狀態
         }
-        else if (pointNum > 1) { // 要繼續切
+        else if (pointNum > 3) { // 要繼續切
             int midIndex = pointNum / 2;
             LinkedList<GeneratorPoint> leftPoints = new LinkedList<>(Points.subList(0, midIndex));
             LinkedList<GeneratorPoint> rightPoints = new LinkedList<>(Points.subList(midIndex, pointNum));
@@ -479,6 +485,20 @@ public class VoronoiAlgo {
         // merge convex hull
 
         return VDmerge;
+    }
+
+    // base case: 直接建構3個點的voronoi diagram
+    private static VoronoiDiagram createThreePointVD(GeneratorPoint gp0, GeneratorPoint gp1, GeneratorPoint gp2) {
+        VoronoiDiagram VD = new VoronoiDiagram();
+
+        return VD;
+    }
+
+    // base case: 直接建構2個點的voronoi diagram
+    private static VoronoiDiagram createTwoPointVD(GeneratorPoint gp0, GeneratorPoint gp1) {
+        VoronoiDiagram VD = new VoronoiDiagram();
+
+        return VD;
     }
 
     // base case: 直接建構1個點的voronoi diagram

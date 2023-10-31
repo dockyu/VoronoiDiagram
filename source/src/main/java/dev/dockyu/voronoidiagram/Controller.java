@@ -129,7 +129,7 @@ public class Controller {
             System.out.println("狀況3");
             // 目前task剛在畫布上點完點，所以taskPoints有點，但是舊的狀態被清空了
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
@@ -142,7 +142,7 @@ public class Controller {
             // 剛做完一個task，所以taskPoints有點，且taskState只有一個voronoi diagram，代表已經做完
             // 且沒有下一個任務，所以需要重複做目前任務
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
@@ -157,7 +157,7 @@ public class Controller {
             // 載入下一個task
             this.model.taskPoints = this.model.tasks.poll();
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
@@ -172,7 +172,7 @@ public class Controller {
             // 載入下一個task
             this.model.taskPoints = this.model.tasks.poll();
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
@@ -205,7 +205,7 @@ public class Controller {
             System.out.println("狀況3");
             // 目前task剛在畫布上點完點，所以taskPoints有點，但是舊的狀態被清空了
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
@@ -219,7 +219,7 @@ public class Controller {
             // 剛做完一個task，所以taskPoints有點，且taskState只有一個voronoi diagram，代表已經做完
             // 且沒有下一個任務，所以需要重複做目前任務
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
@@ -235,7 +235,7 @@ public class Controller {
             // 載入下一個task
             this.model.taskPoints = this.model.tasks.poll();
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
@@ -251,7 +251,7 @@ public class Controller {
             // 載入下一個task
             this.model.taskPoints = this.model.tasks.poll();
             // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPointsByX();
+            this.sortTaskPoints();
             VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
@@ -321,11 +321,18 @@ public class Controller {
     }
 
     // 排序taskPoints
-    void sortTaskPointsByX() {
+    void sortTaskPoints() {
         Collections.sort(this.model.taskPoints, new Comparator<GeneratorPoint>() {
             @Override
             public int compare(GeneratorPoint p1, GeneratorPoint p2) {
-                return Integer.compare(p1.getX(), p2.getX());
+                // 首先比較 x 座標
+                int xComparison = Integer.compare(p1.getX(), p2.getX());
+                if (xComparison != 0) {
+                    return xComparison;
+                }
+
+                // 如果 x 座標相同，則比較 y 座標
+                return Integer.compare(p1.getY(), p2.getY());
             }
         });
         deleteRepeatTaskPoint();
