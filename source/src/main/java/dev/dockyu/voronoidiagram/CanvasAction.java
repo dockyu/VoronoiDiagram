@@ -57,10 +57,9 @@ public class CanvasAction {
             float canvasWidth = (float) canvas.getWidth();  // 獲取畫布寬度
             float canvasHeight = (float) canvas.getHeight();  // 獲取畫布高度
 
-
-
             // 計算畫布的對角線長度
             double diagonal = Math.sqrt(canvasWidth * canvasWidth + canvasHeight * canvasHeight);
+
             if (start.terminal) { // start 是無限延伸的點
                 // start點跟畫布x方向上最遠的距離
                 float maxDistanceX = Math.max(Math.abs(start_x-0),Math.abs(start_x-canvasWidth));
@@ -69,6 +68,7 @@ public class CanvasAction {
 
                 // 延伸距離
                 double distance = Math.sqrt(Math.pow(maxDistanceX, 2)+Math.pow(maxDistanceY, 2));
+                distance += diagonal;
 
                 // 延伸一個新的 start
                 float dx = start_x - end_x; // x方向的差值
@@ -97,6 +97,7 @@ public class CanvasAction {
 
                 // 延伸距離
                 double distance = Math.sqrt(Math.pow(maxDistanceX, 2)+Math.pow(maxDistanceY, 2));
+                distance += diagonal;
 
                 // 延伸一個新的end
                 float dx = end_x - start_x; // x方向的差值
