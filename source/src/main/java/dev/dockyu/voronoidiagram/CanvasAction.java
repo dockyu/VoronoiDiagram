@@ -22,7 +22,7 @@ public class CanvasAction {
 
     // 畫出目前task狀態(一堆voronoi diagram)
     public static void drawTaskState(Canvas canvas, LinkedList<VoronoiDiagram> taskState) {
-        System.out.println("draw task state");
+        System.out.println("CanvasAction.java drawTaskState()");
         clear(canvas); // 先清空canvas
         // 遍歷taskState並依次畫出所有Voronoi Diagram
         for (VoronoiDiagram voronoiDiagram : taskState) {
@@ -70,7 +70,7 @@ public class CanvasAction {
             float start_y = start.y; // 起始點的y座標
             float end_x = end.x; // 結束點的x座標
             float end_y = end.y; // 結束點的y座標
-            System.out.println("資料結構表示edge: "+start_x+" "+start_y+" "+end_x+" "+end_y);
+//            System.out.println("資料結構表示edge: "+start_x+" "+start_y+" "+end_x+" "+end_y);
 
             float canvasWidth = (float) canvas.getWidth();  // 獲取畫布寬度
             float canvasHeight = (float) canvas.getHeight();  // 獲取畫布高度
@@ -91,8 +91,8 @@ public class CanvasAction {
                 float new_start_x = start_x + unit_dx * (float) diagonal;
                 float new_start_y = start_y + unit_dy * (float) diagonal;
 
-                System.out.println("Original Start: (" + start_x + ", " + start_y + ")");  // 輸出原始的 start 座標
-                System.out.println("New Start: (" + new_start_x + ", " + new_start_y + ")");  // 輸出新計算的 start 座標
+//                System.out.println("Original Start: (" + start_x + ", " + start_y + ")");  // 輸出原始的 start 座標
+//                System.out.println("New Start: (" + new_start_x + ", " + new_start_y + ")");  // 輸出新計算的 start 座標
 
                 start_x = new_start_x;
                 start_y = new_start_y;
@@ -111,14 +111,14 @@ public class CanvasAction {
                 float new_end_x = end_x + unit_dx * (float) diagonal;
                 float new_end_y = end_y + unit_dy * (float) diagonal;
 
-                System.out.println("Original End: (" + end_x + ", " + end_y + ")");  // 輸出原始的 end 座標
-                System.out.println("New End: (" + new_end_x + ", " + new_end_y + ")");  // 輸出新計算的 end 座標
+//                System.out.println("Original End: (" + end_x + ", " + end_y + ")");  // 輸出原始的 end 座標
+//                System.out.println("New End: (" + new_end_x + ", " + new_end_y + ")");  // 輸出新計算的 end 座標
 
                 end_x = new_end_x;
                 end_y = new_end_y;
             }
 
-            System.out.println("準備要畫edge: "+start_x+" "+start_y+" "+end_x+" "+end_y);
+//            System.out.println("準備要畫edge: "+start_x+" "+start_y+" "+end_x+" "+end_y);
             // 畫出start到end
             gc.strokeLine(start_x, start_y, end_x, end_y);
 //            gc.strokeLine(50, 700, 250, 460);

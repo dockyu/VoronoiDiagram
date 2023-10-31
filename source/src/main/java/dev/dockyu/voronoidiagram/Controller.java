@@ -109,7 +109,8 @@ public class Controller {
 
     @FXML
     protected void run() {
-        System.out.println("run button click");
+//        System.out.println("run button click");
+        System.out.println("Controller.java run()");
         // 判斷task狀態，確定有工作要給Algorithm包做才會呼叫
         if ( this.model.taskPoints.isEmpty() && this.model.tasks.isEmpty() ) {
             System.out.println("狀況1");
@@ -190,7 +191,8 @@ public class Controller {
 
     @FXML
     protected void step() {
-        System.out.println("step button click");
+//        System.out.println("step button click");
+        System.out.println("Controller.java step()");
         // 判斷task狀態，確定有工作要給Algorithm包做才會呼叫
         if ( this.model.taskPoints.isEmpty() && this.model.tasks.isEmpty() ) {
             System.out.println("狀況1");
@@ -273,7 +275,8 @@ public class Controller {
 
     @FXML
     protected void clear() {
-        System.out.println("clear button click");
+//        System.out.println("clear button click");
+        System.out.println("Controller.java clear()");
         // 清空taskPoints、taskState
         this.model.taskPoints.clear();
         this.model.taskState.clear();
@@ -290,7 +293,7 @@ public class Controller {
         int clickedX = (int) event.getX(); // 點擊的x座標
         int clickedY = (int) event.getY(); // 點擊的y座標
 
-        System.out.println("Clicked position: (" + clickedX + ", " + clickedY + ")"); // 測試用
+//        System.out.println("Clicked position: (" + clickedX + ", " + clickedY + ")"); // 測試用
 
         // 清除taskState，目前task狀態，因為新增一個點舊的狀態就沒用了
         this.model.taskState.clear();

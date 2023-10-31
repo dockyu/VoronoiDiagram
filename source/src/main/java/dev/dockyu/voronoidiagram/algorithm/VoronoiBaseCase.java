@@ -123,7 +123,7 @@ public class VoronoiBaseCase {
 
         } else {
             // 三點不共線
-            System.out.println("三點不共線");
+//            System.out.println("三點不共線");
 
             // 按照順時針排序 gp0,gp1,gp2
             GeneratorPoint[] cwThreePoints = TwoDPlaneAlgo.sortThreePointClockwise(gp0, gp1, gp2);
@@ -173,8 +173,6 @@ public class VoronoiBaseCase {
             VD.vertexs.add(v1);
             VD.vertexs.add(v2);
             VD.vertexs.add(v3);
-
-            System.out.println(v0.x+","+v0.y);
 
             // polygon
             Polygon p0 = new Polygon(0);

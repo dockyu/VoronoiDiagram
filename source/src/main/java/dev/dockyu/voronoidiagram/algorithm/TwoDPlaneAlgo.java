@@ -38,7 +38,7 @@ public class TwoDPlaneAlgo {
                 (x2 - x3) * (x1 * x1 + y1 * y1 - x2 * x2 - y2 * y2)) / D;
 
         // 印出外心座標
-        System.out.println("外心座標 (x, y): (" + x + ", " + y + ")");
+//        System.out.println("外心座標 (x, y): (" + x + ", " + y + ")");
 
         float[] circumcenter = new float[2];
         circumcenter[0] = x; // 新的x坐標
