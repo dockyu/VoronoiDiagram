@@ -1,5 +1,6 @@
 package dev.dockyu.voronoidiagram;
 
+import dev.dockyu.voronoidiagram.algorithm.LexicalOrderAlgo;
 import dev.dockyu.voronoidiagram.algorithm.TwoDPlaneAlgo;
 import dev.dockyu.voronoidiagram.algorithm.VoronoiAlgo;
 import dev.dockyu.voronoidiagram.datastruct.Edge;
@@ -15,10 +16,8 @@ import javafx.scene.input.MouseEvent;
 
 import javafx.stage.FileChooser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -123,10 +122,19 @@ public class Controller {
     protected void exportVoronoi() {
 //        System.out.println("exportOutput button click");
         System.out.println("Controller.java exportVoronoi()");
+
+        ArrayList<float[]> exportEdges = new ArrayList<>(); // 存儲需要輸出的邊，(在畫布內)
+        ArrayList<float[]> exportGeneratorPoints = new ArrayList<>(); // 存儲需要輸出的點，(所有點)
+
         // 處理生成點
         // 找所有生成點
-
+        for (GeneratorPoint point : this.model.taskPoints) {
+            float x = point.getX();
+            float y = point.getY();
+            exportGeneratorPoints.add(new float[]{x, y});
+        }
         // 排序所有生成點
+        LexicalOrderAlgo.sortPointsLexically(exportGeneratorPoints);
 
         // 處理邊
         int canvasHeight = (int) this.canvas.getHeight(); // 畫布長
@@ -170,11 +178,88 @@ public class Controller {
                         end_y = newVertex[1];
                     }
                     // 已經把所有邊變成封閉邊
+                    // 畫布的四個邊
+                    float[][] rectangleEdges = new float[][] {
+                            {0, 0, canvasWidth, 0},  // 下邊
+                            {canvasWidth, 0, canvasWidth, canvasHeight},  // 右邊
+                            {canvasWidth, canvasHeight, 0, canvasHeight},  // 上邊
+                            {0, canvasHeight, 0, 0}  // 左邊
+                    };
+
+                    ArrayList<float[]> intersections = new ArrayList<>(); // 存儲相交點
+                    // 判斷跟畫布所有邊相交的點
+                    for (float[] canvasEdge : rectangleEdges) {
+                        float[] intersection = TwoDPlaneAlgo.intersectionOfTwoClosedLine(canvasEdge[0], canvasEdge[1], canvasEdge[2], canvasEdge[3], start_x, start_y, end_x, end_y);
+                        if (intersection[0] != Float.NEGATIVE_INFINITY) {
+                            // 有交點
+                            // 紀錄相交的點
+                            intersections.add(intersection);
+                        }
+                    }
+                    if ( intersections.size()==2 ) {
+                        // 此edge穿越畫布
+                        System.out.println("exportVoronoi() 狀況1");
+                    } else if (intersections.size()==1) {
+                        // 此edge一點在畫布內
+                        System.out.println("exportVoronoi() 狀況2");
+                        if (TwoDPlaneAlgo.isPointInsideRectangle(start_x, start_y, 0, canvasWidth, 0, canvasHeight)) {
+                            // start點在矩形內
+                            intersections.add(new float[]{start_x, start_y});
+                        } else if (TwoDPlaneAlgo.isPointInsideRectangle(end_x, end_y, 0, canvasWidth, 0, canvasHeight)) {
+                            // end點在矩形內
+                            intersections.add(new float[]{end_x, end_y});
+                        } else {
+                            // 例外情況，相交在角落
+                        }
+                    }else {
+                        // 此edge沒有在畫布內顯示
+                        System.out.println("exportVoronoi() 狀況3");
+                    }
+                    // 已經將此edge要輸出的部分(兩個點)放入intersections
+                    if (intersections.size()==2) {
+                        // 排序線的兩點
+                        float[] exportEdge = LexicalOrderAlgo.sortTwoPoint(intersections.get(0)[0], intersections.get(0)[1], intersections.get(1)[0], intersections.get(1)[1]);
+                        exportEdges.add(exportEdge);
+                    }
 
                 }
             }
         }
+        // 已經找出所有要輸出的edge，在exportEdges裡
+        // 排序所有線
+        LexicalOrderAlgo.sortEdgesLexically(exportEdges);
 
+        // 輸出測試
+        for (float[] point : exportGeneratorPoints) {
+            System.out.println("P "+(int) point[0] + " " + (int) point[1]);
+        }
+        for (float[] edge : exportEdges) {
+            System.out.println("E " + (int) edge[0] + " " + (int) edge[1] + " " + (int) edge[2] + " " + (int) edge[3]);
+        }
+
+        // 輸出檔案
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("save");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            try {
+                PrintWriter writer = new PrintWriter(selectedFile);
+
+                for (float[] point : exportGeneratorPoints) {
+                    writer.println("P " + (int) point[0] + " " + (int) point[1]);
+                }
+
+                for (float[] edge : exportEdges) {
+                    writer.println("E " + (int) edge[0] + " " + (int) edge[1] + " " + (int) edge[2] + " " + (int) edge[3]);
+                }
+
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 

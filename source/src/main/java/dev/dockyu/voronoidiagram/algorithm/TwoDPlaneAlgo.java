@@ -3,6 +3,7 @@ package dev.dockyu.voronoidiagram.algorithm;
 import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
 
 public class TwoDPlaneAlgo {
+    // 將三個生成點順時鐘排序
     public static GeneratorPoint[] sortThreePointClockwise(GeneratorPoint gp0, GeneratorPoint gp1, GeneratorPoint gp2) {
         // 將3個生成點按照順時針方向排序
         float x1 = gp0.getX();
@@ -21,6 +22,7 @@ public class TwoDPlaneAlgo {
         }
     }
 
+    // 計算三點外心
     public static float[] getThreePointCircumcenter(GeneratorPoint A, GeneratorPoint B, GeneratorPoint C) {
         // 創建三個生成點的座標
         float x1 = A.getX(), y1 = A.getY();
@@ -47,6 +49,7 @@ public class TwoDPlaneAlgo {
         return circumcenter;
     }
 
+    // 計算法向量
     public static float[] getNormalVector(GeneratorPoint start, GeneratorPoint end) {
         // 計算start點到end點的法向量
         float dx = end.getX() - start.getX(); // 計算方向向量的x分量
@@ -60,6 +63,7 @@ public class TwoDPlaneAlgo {
         return normal;
     }
 
+    // 點向一個向量方向延伸一個距離
     public static float[] extendWithVector(float x, float y, float dx, float dy, float delta) {
         // (x,y)沿著向量(dx,dy)延伸length的新座標
 
@@ -86,15 +90,61 @@ public class TwoDPlaneAlgo {
         return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
+    // 點和矩形(畫布)最遠的距離+100，保證可以顯現在畫布上
     public static float maxDistanceWithRectangle(float x, float y, float rect_left_bound, float rect_right_bound, float rect_down_bound, float rect_up_bound) {
-        // 點和矩形最遠的距離
+        // 點和畫布x方向上最遠的距離
         float maxDistanceX = Math.max(Math.abs(x-rect_left_bound),Math.abs(x-rect_right_bound));
         // 點跟畫布y方向上最遠的距離
         float maxDistanceY = Math.max(Math.abs(y-rect_down_bound),Math.abs(y-rect_up_bound));
 
         float distance = (float) Math.sqrt(Math.pow(maxDistanceX, 2)+Math.pow(maxDistanceY, 2));
 
-        return distance;
+        return distance+100;
+    }
+
+    // 判斷兩個封閉線段的交點座標，如果不相交則回傳兩個負無限
+    public static float[] intersectionOfTwoClosedLine(float L1startX, float L1startY, float L1endX, float L1endY,
+                                                      float L2startX, float L2startY, float L2endX, float L2endY) {
+        // 計算向量
+        // 線可以表示為Ax+By=C
+        // A1=y2−y1、B1=x1−x2B1=x1−x2、C1=A1×x1+B1×y1C1=A1×x1+B1×y1
+        float A1 = L1endY - L1startY;
+        float B1 = L1startX - L1endX;
+        float C1 = A1 * L1startX + B1 * L1startY;
+
+        float A2 = L2endY - L2startY;
+        float B2 = L2startX - L2endX;
+        float C2 = A2 * L2startX + B2 * L2startY;
+
+        // 計算兩直線的交點
+        float det = A1 * B2 - A2 * B1;
+        if (det == 0) { // 方向向量方向一樣
+            // 兩直線平行或重合
+            return new float[] {Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY};
+        } else {
+            float x = (B2 * C1 - B1 * C2) / det;
+            float y = (A1 * C2 - A2 * C1) / det;
+
+            // 判斷交點是否在線段上
+            if ((Math.min(L1startX, L1endX) <= x && x <= Math.max(L1startX, L1endX)) &&
+                    (Math.min(L1startY, L1endY) <= y && y <= Math.max(L1startY, L1endY)) &&
+                    (Math.min(L2startX, L2endX) <= x && x <= Math.max(L2startX, L2endX)) &&
+                    (Math.min(L2startY, L2endY) <= y && y <= Math.max(L2startY, L2endY))) {
+
+                // 檢查並修正 -0.0 的情況
+                if (x == -0.0f) x = 0.0f;
+                if (y == -0.0f) y = 0.0f;
+
+                return new float[] {x, y};
+            } else {
+                return new float[] {Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY};
+            }
+        }
+    }
+
+    // 判斷點是否在矩形內
+    public static boolean isPointInsideRectangle(float x, float y, float minX, float maxX, float minY, float maxY) {
+        return (x >= minX && x <= maxX && y >= minY && y <= maxY);
     }
 
 }
