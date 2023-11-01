@@ -5,9 +5,24 @@ import java.util.LinkedList;
 
 public class CircularLinkedList<E> extends LinkedList<E> {
 
-    public Iterator<E> circularIterator() {
-        return new Iterator<E>() {
-            private int currentIndex = 0;
+    public interface CircularIterator<E> extends Iterator<E> {
+        E previous();
+        E peek();
+        int getCurrentIndex();
+
+    }
+
+    public CircularIterator<E> circularIterator() {
+        return circularIterator(0);  // 預設從索引0開始
+    }
+
+    public CircularIterator<E> circularIterator(int startIndex) {
+        if (startIndex < 0 || startIndex >= size()) {
+            throw new IndexOutOfBoundsException("索引超出範圍");
+        }
+
+        return new CircularIterator<E>() {
+            private int currentIndex = startIndex;
 
             @Override
             public boolean hasNext() {
@@ -19,6 +34,22 @@ public class CircularLinkedList<E> extends LinkedList<E> {
                 E element = get(currentIndex);
                 currentIndex = (currentIndex + 1) % size();  // 循環到列表開頭
                 return element;
+            }
+
+            @Override
+            public E previous() {
+                currentIndex = (currentIndex - 1 + size()) % size();  // 循環到列表末尾
+                return get(currentIndex);
+            }
+
+            @Override
+            public E peek() {
+                return get(currentIndex);
+            }
+
+            @Override
+            public int getCurrentIndex() {
+                return currentIndex;
             }
         };
     }
