@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -157,4 +158,45 @@ public class CanvasAction {
         // 清空一個與Canvas大小相同的矩形區域
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
+
+    // 畫出輸入的檔案
+    public static void drawImportFile(Canvas canvas, ArrayList<float[]> importGeneratorPoints, ArrayList<float[]> importEdges) {
+        // 畫邊
+        drawImportFileEdges(canvas, importEdges);
+        // 畫點
+        drawImportFilePoints(canvas, importGeneratorPoints);
+    }
+
+    // 畫出輸入的檔案的所有點
+    public static void drawImportFilePoints(Canvas canvas, ArrayList<float[]> importGeneratorPoints) {
+        for (float[] importGeneratorPoint : importGeneratorPoints) {
+            drawImportFilePoint(canvas, importGeneratorPoint);
+        }
+    }
+
+    // 畫出輸入的檔案的點
+    public static void drawImportFilePoint(Canvas canvas, float[] importGeneratorPoint) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // 設定點的顏色
+        gc.setFill(GENERATOR_POINT_COLOR);
+        // 畫出點（這裡以3x3的大小為例）
+        gc.fillOval(importGeneratorPoint[0]-GENERATOR_POINT_RADIUS/2, importGeneratorPoint[1]-GENERATOR_POINT_RADIUS/2, GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
+    }
+
+    // 畫出輸入的檔案的所有邊
+    public static void drawImportFileEdges(Canvas canvas, ArrayList<float[]> importEdges) {
+        for (float[] importEdge : importEdges) {
+            drawImportFileEdge(canvas, importEdge);
+        }
+    }
+
+    // 畫出輸入的檔案的邊
+    public static void drawImportFileEdge(Canvas canvas, float[] importEdge) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // 設定edge的顏色
+        gc.setStroke(EDGE_COLOR);
+
+        gc.strokeLine(importEdge[0], importEdge[1], importEdge[2], importEdge[3]);
+    }
+
 }

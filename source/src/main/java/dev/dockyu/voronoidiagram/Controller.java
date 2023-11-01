@@ -115,7 +115,39 @@ public class Controller {
 
     @FXML
     protected void importVoronoi() {
-        System.out.println("importOutput button click");
+//        System.out.println("importOutput button click");
+        System.out.println("Controller.java importVoronoi()");
+
+        ArrayList<float[]> importEdges = new ArrayList<>(); // 存儲輸入的邊
+        ArrayList<float[]> importGeneratorPoints = new ArrayList<>(); // 存儲輸入的點
+
+        FileChooser fileChooser = new FileChooser(); // 用來打開檔案選擇對話框
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(" ");
+
+                    if (parts[0].equals("P")) {
+                        float x = Float.parseFloat(parts[1]);
+                        float y = Float.parseFloat(parts[2]);
+                        importGeneratorPoints.add(new float[]{x, y});
+                    } else if (parts[0].equals("E")) {
+                        float x1 = Float.parseFloat(parts[1]);
+                        float y1 = Float.parseFloat(parts[2]);
+                        float x2 = Float.parseFloat(parts[3]);
+                        float y2 = Float.parseFloat(parts[4]);
+                        importEdges.add(new float[]{x1, y1, x2, y2});
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // 畫出輸入圖形
+            CanvasAction.drawImportFile(this.canvas, importGeneratorPoints, importEdges);
+        }
     }
 
     @FXML
@@ -230,12 +262,12 @@ public class Controller {
         LexicalOrderAlgo.sortEdgesLexically(exportEdges);
 
         // 輸出測試
-        for (float[] point : exportGeneratorPoints) {
-            System.out.println("P "+(int) point[0] + " " + (int) point[1]);
-        }
-        for (float[] edge : exportEdges) {
-            System.out.println("E " + (int) edge[0] + " " + (int) edge[1] + " " + (int) edge[2] + " " + (int) edge[3]);
-        }
+//        for (float[] point : exportGeneratorPoints) {
+//            System.out.println("P "+(int) point[0] + " " + (int) point[1]);
+//        }
+//        for (float[] edge : exportEdges) {
+//            System.out.println("E " + (int) edge[0] + " " + (int) edge[1] + " " + (int) edge[2] + " " + (int) edge[3]);
+//        }
 
         // 輸出檔案
         FileChooser fileChooser = new FileChooser();
