@@ -29,7 +29,7 @@ public class VoronoiBaseCase {
 
             // 共線有3種情況，算v0,v1,v2,v3座標
             if (gp0.getX() == gp1.getX() && gp1.getX() == gp2.getX()) {
-                // case1: 三點垂直共線
+                // TODO: case1: 三點垂直共線
                 // 三點在垂直線上，y座標有變動，x座標不變
                 // 做水平中垂線
 
@@ -43,7 +43,7 @@ public class VoronoiBaseCase {
                 v3_x = midPoint12_x + delta;
                 v3_y = midPoint12_y;
             } else if (gp0.getY() == gp1.getY() && gp1.getY() == gp2.getY()) {
-                // case2: 三點水平共線
+                // TODO: case2: 三點水平共線
                 // 三點在水平線上，x座標有變動，y座標不變
                 // 做垂直中垂線
 
@@ -57,8 +57,8 @@ public class VoronoiBaseCase {
                 v3_x = midPoint12_x;
                 v3_y = midPoint12_y - delta;
             } else {
-                // case3: 三點共線，但不是垂直或水平
-                System.out.println("三點共斜線");
+                // TODO: case3: 三點共線，但不是垂直或水平
+//                System.out.println("三點共斜線");
                 float slope = (gp1.getY()-gp0.getY())/(gp1.getX()- gp0.getX()); // gp0, gp1的斜率，等同gp1,gp2的斜率
                 float perpendicularSlope = -1 / slope; // gp0, gp1 中垂線的斜率
                 float angle = (float) Math.atan(perpendicularSlope); // 中垂線的角度
@@ -123,7 +123,7 @@ public class VoronoiBaseCase {
             VD.convexHull.right = 2;
 
         } else {
-            // 三點不共線
+            // TODO: 三點不共線
 //            System.out.println("三點不共線");
 
             // 按照順時針排序 gp0,gp1,gp2
@@ -131,6 +131,8 @@ public class VoronoiBaseCase {
             gp0 = cwThreePoints[0];
             gp1 = cwThreePoints[1];
             gp2 = cwThreePoints[2];
+//            System.out.println("順時鐘的gp0: ("+gp0.getX()+","+gp0.getY()+")");
+//            System.out.println("順時鐘的gp2: ("+gp2.getX()+","+gp2.getY()+")");
 
             // 算出gp0,gp1,gp2的外心
             float[] circumcenter = TwoDPlaneAlgo.getThreePointCircumcenter(gp0, gp1, gp2);
@@ -158,7 +160,7 @@ public class VoronoiBaseCase {
 
             float[] v3_coordinate = TwoDPlaneAlgo.extendWithVector(circumcenter_x, circumcenter_y, normal20_x, normal20_y, delta);
 
-            // 建構三點共線的Voronoi Diagram
+            // 建構三點不共線的Voronoi Diagram
 
             // generator point
             VD.generatorPoints.add(gp0);
@@ -204,9 +206,16 @@ public class VoronoiBaseCase {
             VD.convexHull.hull.add(gp1);
             VD.convexHull.hull.add(gp2);
             VD.convexHull.left = 0;
-            VD.convexHull.right = 2;
+            if (gp1.getX() > gp2.getX()) {
+                // 如果gp1比較右邊
+                VD.convexHull.right = 1;
+            } else {
+                VD.convexHull.right = 2;
+            }
 
         }
+//        System.out.println("convex hull left: "+VD.convexHull.get(VD.convexHull.left).getX()+","+VD.convexHull.get(VD.convexHull.left).getY());
+//        System.out.println("convex hull right: "+VD.convexHull.get(VD.convexHull.right).getX()+","+VD.convexHull.get(VD.convexHull.right).getY());
 
         return VD;
     }
@@ -231,7 +240,7 @@ public class VoronoiBaseCase {
 
         // 計算三種情況的v0,v1座標
         if ( gp0.getY()==gp1.getY() ) {
-            // 兩點水平
+            // TODO: 兩點水平
             // 中垂線垂直
             v0_x = midPoint_x;
             v0_y = midPoint_y - delta;
@@ -239,7 +248,7 @@ public class VoronoiBaseCase {
             v1_y = midPoint_y + delta;
 
         } else if ( gp0.getX()==gp1.getX() ) {
-            // 兩點垂直
+            // TODO: 兩點垂直
             // 中垂線水平
             v0_x = midPoint_x + delta;
             v0_y = midPoint_y;
@@ -247,7 +256,7 @@ public class VoronoiBaseCase {
             v1_y = midPoint_y;
 
         } else {
-            // 中垂線斜斜的
+            // TODO: 中垂線斜斜的
             float slope = (gp1.getY() - gp0.getY()) / (gp1.getX() - gp0.getX());
             float perpSlope = -1 / slope; // 中垂線斜率
 
@@ -294,6 +303,9 @@ public class VoronoiBaseCase {
         VD.convexHull.hull.add(gp1);
         VD.convexHull.left = 0;
         VD.convexHull.right = 1;
+
+//        System.out.println("convex hull left: "+VD.convexHull.get(VD.convexHull.left).getX()+","+VD.convexHull.get(VD.convexHull.left).getY());
+//        System.out.println("convex hull right: "+VD.convexHull.get(VD.convexHull.right).getX()+","+VD.convexHull.get(VD.convexHull.right).getY());
 
         return VD;
     }

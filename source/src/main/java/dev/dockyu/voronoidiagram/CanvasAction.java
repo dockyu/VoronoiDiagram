@@ -5,6 +5,7 @@ import dev.dockyu.voronoidiagram.datastruct.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class CanvasAction {
 
     // 畫出目前task狀態(一堆voronoi diagram)
     public static void drawTaskState(Canvas canvas, LinkedList<VoronoiDiagram> taskState) {
-        System.out.println("CanvasAction.java drawTaskState()");
+//        System.out.println("CanvasAction.java drawTaskState()");
         clear(canvas); // 先清空canvas
         // 遍歷taskState並依次畫出所有Voronoi Diagram
         for (VoronoiDiagram voronoiDiagram : taskState) {
@@ -117,6 +118,19 @@ public class CanvasAction {
         gc.setFill(GENERATOR_POINT_COLOR);
         // 畫出點（這裡以3x3的大小為例）
         gc.fillOval(generatorPoint.getX()-GENERATOR_POINT_RADIUS/2, generatorPoint.getY()-GENERATOR_POINT_RADIUS/2, GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
+
+        // 印出座標
+        // 設定文字的顏色
+        gc.setFill(Color.BLACK);
+        // 設定字體大小
+        gc.setFont(new Font("Arial", 10));
+
+        // 準備要印出的座標文字
+        String coordinatesText = String.format("(%d, %d)", (int)generatorPoint.getX(), (int)generatorPoint.getY());
+
+        // 印出座標文字
+        gc.fillText(coordinatesText, generatorPoint.getX() + GENERATOR_POINT_RADIUS, generatorPoint.getY() - GENERATOR_POINT_RADIUS);
+
     }
 
     // 畫出多個generator point

@@ -148,14 +148,18 @@ public class TwoDPlaneAlgo {
     }
 
     // 算兩個生成點斜率
-    public static float getSlope(GeneratorPoint gp0, GeneratorPoint gp1) {
-        float x1 = gp0.getX();
-        float y1 = gp0.getY();
-        float x2 = gp1.getX();
-        float y2 = gp1.getY();
+    public static float getSlope(GeneratorPoint leftGP, GeneratorPoint rightGP) {
+        float x1 = leftGP.getX();
+        float y1 = leftGP.getY();
+        float x2 = rightGP.getX();
+        float y2 = rightGP.getY();
 
         if (x2 == x1) {
-            return Float.POSITIVE_INFINITY;  // 斜率為無窮大
+            if (y1 > y2) {
+                return Float.NEGATIVE_INFINITY;  // 左邊在上，斜率為無窮小
+            } else {
+                return Float.POSITIVE_INFINITY;  // 左邊在下，斜率為無窮大
+            }
         }
 
         return (y2 - y1) / (x2 - x1);

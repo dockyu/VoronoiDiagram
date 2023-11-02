@@ -409,7 +409,7 @@ public class Controller {
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
-                VoronoiAlgo.merge(this.model.taskState);
+//                VoronoiAlgo.merge(this.model.taskState);
             }
             // 畫出目前task
             CanvasAction.drawTaskState(this.canvas, this.model.taskState);
@@ -426,7 +426,7 @@ public class Controller {
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
-                VoronoiAlgo.merge(this.model.taskState);
+//                VoronoiAlgo.merge(this.model.taskState);
             }
             // 畫出目前task
             CanvasAction.drawTaskState(this.canvas, this.model.taskState);
@@ -448,7 +448,7 @@ public class Controller {
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
-                VoronoiAlgo.merge(this.model.taskState);
+//                VoronoiAlgo.merge(this.model.taskState);
             }
             // 畫出目前task
             CanvasAction.drawTaskState(this.canvas, this.model.taskState);
@@ -464,7 +464,7 @@ public class Controller {
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
-                VoronoiAlgo.merge(this.model.taskState);
+//                VoronoiAlgo.merge(this.model.taskState);
             }
             // 畫出目前task
             CanvasAction.drawTaskState(this.canvas, this.model.taskState);

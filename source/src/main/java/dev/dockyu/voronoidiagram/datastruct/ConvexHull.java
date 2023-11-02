@@ -9,4 +9,21 @@ public class ConvexHull {
         this.hull = new CircularLinkedList<>();
     }
 
+    public GeneratorPoint get(int index) {
+        return this.hull.get(index);
+    }
+
+    public int getNextIndex(int nowIndex) {
+        nowIndex++;
+        return nowIndex % this.hull.size();
+    }
+
+    public int getPreviousIndex(int nowIndex) {
+        nowIndex--;
+        if (nowIndex < 0) {
+            nowIndex += this.hull.size();  // 確保索引總是正數
+        }
+        return nowIndex % this.hull.size();
+    }
+
 }

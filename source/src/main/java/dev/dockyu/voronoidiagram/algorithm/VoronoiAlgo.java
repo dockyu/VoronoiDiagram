@@ -36,58 +36,51 @@ public class VoronoiAlgo {
     }
 
     public static void merge(LinkedList<VoronoiDiagram> voronoiTaskState) {
-        System.out.println("merge");
+//        System.out.println("merge");
         VoronoiDiagram VDleft = voronoiTaskState.poll();
         VoronoiDiagram VDright = voronoiTaskState.poll();
 
-        // 如果left VD真實位置在右邊就交換
+        // TODO: 如果left VD真實位置在右邊就交換
         if (VDleft.generatorPoints.get(0).getX() > VDright.generatorPoints.get(0).getX()) { // VDleft換成左邊
-            System.out.println("change left and right");
+//            System.out.println("change left and right");
             VoronoiDiagram temp = VDleft;
             VDleft = VDright;
             VDright = temp;
         }
         VoronoiDiagram VDmerge = new VoronoiDiagram();
-        // merge開始
+        // TODO: merge開始
 
-        // 求上下切線
-        System.out.println("find Tangent");
-        System.out.println("left points");
-//        for (GeneratorPoint gp : VDleft.convexHull.hull) {
-//            System.out.println(gp.getX()+","+gp.getY());
-//        }
-        System.out.println("left: "+VDleft.convexHull.hull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.hull.get(VDleft.convexHull.left).getY());
-        System.out.println("left: "+VDleft.convexHull.hull.get(VDleft.convexHull.right).getX()+","+VDleft.convexHull.hull.get(VDleft.convexHull.right).getY());
-        System.out.println("right points");
-//        for (GeneratorPoint gp : VDright.convexHull.hull) {
-//            System.out.println(gp.getX()+","+gp.getY());
-//        }
-        System.out.println("right: "+VDright.convexHull.hull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.left).getY());
-        System.out.println("right: "+VDright.convexHull.hull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.right).getY());
-
+        // TODO: 求上下切線
+//        System.out.println("find Tangent");
         int[] upperTangent = ConvexHullAlgo.getUpperTangent(VDleft.convexHull, VDright.convexHull);
         int[] lowerTangent = ConvexHullAlgo.getLowerTangent(VDleft.convexHull, VDright.convexHull);
 
-        System.out.println("upperTangent: "+VDleft.convexHull.hull.get(upperTangent[0]).getX()+","+VDleft.convexHull.hull.get(upperTangent[0]).getY());
-        System.out.println("upperTangent: "+VDright.convexHull.hull.get(upperTangent[1]).getX()+","+VDright.convexHull.hull.get(upperTangent[1]).getY());
-        System.out.println("lowerTangent: "+VDleft.convexHull.hull.get(lowerTangent[0]).getX()+","+VDleft.convexHull.hull.get(lowerTangent[0]).getY());
-        System.out.println("lowerTangent: "+VDright.convexHull.hull.get(lowerTangent[1]).getX()+","+VDright.convexHull.hull.get(lowerTangent[1]).getY());
+//        System.out.println("upperTangent left: "+VDleft.convexHull.get(upperTangent[0]).getX()+","+VDleft.convexHull.get(upperTangent[0]).getY());
+//        System.out.println("upperTangent right: "+VDright.convexHull.get(upperTangent[1]).getX()+","+VDright.convexHull.get(upperTangent[1]).getY());
+//        System.out.println("lowerTangent left: "+VDleft.convexHull.get(lowerTangent[0]).getX()+","+VDleft.convexHull.get(lowerTangent[0]).getY());
+//        System.out.println("lowerTangent right: "+VDright.convexHull.get(lowerTangent[1]).getX()+","+VDright.convexHull.get(lowerTangent[1]).getY());
 
-        // TODO:找第一個點
+        // TODO: 找第一個點
 
-        // merge generatorPoints
-        System.out.println("merge generator Points");
+        // TODO: merge generatorPoints
+//        System.out.println("merge generator Points");
+
+//        System.out.println("左圖 left: "+VDleft.convexHull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.get(VDleft.convexHull.left).getY());
+//        System.out.println("左圖 right: "+VDleft.convexHull.get(VDleft.convexHull.right).getX()+","+VDleft.convexHull.get(VDleft.convexHull.right).getY());
+//        System.out.println("右圖 left: "+VDright.convexHull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.get(VDright.convexHull.left).getY());
+//        System.out.println("右圖 right: "+VDright.convexHull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.get(VDright.convexHull.right).getY());
+
         VDmerge.generatorPoints.addAll(VDleft.generatorPoints);
         VDmerge.generatorPoints.addAll(VDright.generatorPoints);
 
-        // merge convex hull
-        System.out.println("merge convex hull");
-        VDmerge.convexHull = ConvexHullAlgo.merge(VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
-        System.out.println("after merge points");
-        for (GeneratorPoint gp : VDmerge.convexHull.hull) {
-            System.out.println(gp.getX()+","+gp.getY());
-        }
-        
+        // TODO: merge convex hull
+//        System.out.println("merge convex hull");
+        ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
+//        System.out.println("after merge points");
+//        for (GeneratorPoint gp : VDmerge.convexHull.hull) {
+//            System.out.println(gp.getX()+","+gp.getY());
+//        }
+
         // merge完成
         voronoiTaskState.add(VDmerge);
     }
