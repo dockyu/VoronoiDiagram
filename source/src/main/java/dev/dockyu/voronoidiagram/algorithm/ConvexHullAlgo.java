@@ -38,7 +38,7 @@ public class ConvexHullAlgo {
                 // 左邊有上升就好
                 if (CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY()) {
 //                    System.out.println("error1");
-                    System.out.println(CHleft.get(leftNext).getY() +">"+ CHleft.get(leftNow).getY());
+//                    System.out.println(CHleft.get(leftNext).getY() +">"+ CHleft.get(leftNow).getY());
 
                     leftNow = leftNext; // 走一步
                     leftNext = CHleft.getPreviousIndex(leftNow); // 走一步

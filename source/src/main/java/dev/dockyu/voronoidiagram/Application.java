@@ -22,6 +22,10 @@ public class Application extends javafx.application.Application {
             Pane root = loader.load();  // 加載FXML
 
             Scene scene = new Scene(root,1000,800);
+
+            // 4. 設置視窗標題
+            primaryStage.setTitle("Voronoi");
+
             primaryStage.setScene(scene);
             primaryStage.show();
 

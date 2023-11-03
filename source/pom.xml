@@ -61,9 +61,9 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>dev.dockyu.voronoidiagram/dev.dockyu.voronoidiagram.Application</mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
+                            <launcher>VoronoiDiagramApp</launcher>
+                            <jlinkZipName>VoronoiDiagram</jlinkZipName>
+                            <jlinkImageName>VoronoiDiagram</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
