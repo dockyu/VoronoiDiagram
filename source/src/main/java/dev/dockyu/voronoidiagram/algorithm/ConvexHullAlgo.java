@@ -32,6 +32,23 @@ public class ConvexHullAlgo {
                 
                 rightStop = false; // 或許走了這步原本停止的右邊又可以繼續走
 
+            } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                // 如果都是無限大或無限小
+                // 左邊有上升就好
+                if (CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY()) {
+//                    System.out.println("error1");
+                    System.out.println(CHleft.get(leftNext).getY() +">"+ CHleft.get(leftNow).getY());
+
+                    leftNow = leftNext; // 走一步
+                    leftNext = CHleft.getPreviousIndex(leftNow); // 走一步
+
+                    rightStop = false; // 或許走了這步原本停止的右邊又可以繼續走
+                } else {
+                    // 左邊走一步變差
+                    leftStop = true; // 左邊停止
+                }
+
             } else {
                 // 左邊走一步變差
                 leftStop = true; // 左邊停止
@@ -44,6 +61,22 @@ public class ConvexHullAlgo {
                 rightNext = CHright.getNextIndex(rightNow); // 走一步
 //                System.out.println("右邊走");
                 leftStop = false; // 或許走了這步原本停止的左邊又可以繼續走
+            } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNext))
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                if (CHright.get(rightNext).getY()>CHright.get(rightNow).getY()) {
+                    // 如果斜率一樣
+                    // 右邊有上升就好
+//                    System.out.println("error2");
+                    rightNow = rightNext; // 走一步
+                    rightNext = CHright.getNextIndex(rightNow); // 走一步
+//                System.out.println("右邊走");
+                    leftStop = false; // 或許走了這步原本停止的左邊又可以繼續走
+                } else {
+                    // 右邊走一步變差
+//                System.out.println("右邊停");
+                    rightStop = true; // 右邊停止
+                }
+
             } else {
                 // 右邊走一步變差
 //                System.out.println("右邊停");
@@ -81,7 +114,24 @@ public class ConvexHullAlgo {
 
                 rightStop = false;
 
-            } else {
+            } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                if (CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY()) {
+                    // 如果都是無限大或無限小
+                    // 左邊有下降就好
+//                    System.out.println("error3");
+                    leftNow = leftNext; // 走一步
+                    leftNext = CHleft.getNextIndex(leftNow); // 走一步
+
+                    rightStop = false;
+                }else {
+                    // 左邊走一步變差
+//                System.out.println("左邊停");
+//                System.out.println("左邊停在"+CHleft.get(leftNow).getX()+"因為下一個點"+CHleft.get(leftNext).getX()+"斜率沒有變大");
+                    leftStop = true; // 左邊停止
+                }
+
+            }else {
                 // 左邊走一步變差
 //                System.out.println("左邊停");
 //                System.out.println("左邊停在"+CHleft.get(leftNow).getX()+"因為下一個點"+CHleft.get(leftNext).getX()+"斜率沒有變大");
@@ -96,6 +146,23 @@ public class ConvexHullAlgo {
 //                System.out.println("右邊走");
 
                 leftStop = false;
+            } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNext))
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                if (CHright.get(rightNext).getY()<CHright.get(rightNow).getY()){
+                    // 如果都是無限大或無限小
+                    // 右邊有下降就好
+//                    System.out.println("error4");
+                    rightNow = rightNext; // 走一步
+                    rightNext = CHright.getPreviousIndex(rightNow); // 走一步
+//                System.out.println("右邊走");
+
+                    leftStop = false;
+                } else {
+                    // 右邊走一步變差
+//                System.out.println("右邊停");
+                    rightStop = true; // 右邊停止
+                }
+
             } else {
                 // 右邊走一步變差
 //                System.out.println("右邊停");

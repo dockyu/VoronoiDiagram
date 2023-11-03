@@ -319,7 +319,7 @@ public class Controller {
             // 目前task剛在畫布上點完點，所以taskPoints有點，但是舊的狀態被清空了
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
                 VoronoiAlgo.merge(this.model.taskState);
@@ -335,7 +335,7 @@ public class Controller {
             this.model.taskState.clear();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
                 VoronoiAlgo.merge(this.model.taskState);
@@ -356,7 +356,7 @@ public class Controller {
             this.updateTaskPointsArea();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
                 VoronoiAlgo.merge(this.model.taskState);
@@ -371,7 +371,7 @@ public class Controller {
             this.model.taskPoints = this.model.tasks.poll();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // merge直到結束(taskState只剩一個voronoi diagram)
             while ( this.model.taskState.size()>1 ){
                 VoronoiAlgo.merge(this.model.taskState);
@@ -405,7 +405,7 @@ public class Controller {
             // 目前task剛在畫布上點完點，所以taskPoints有點，但是舊的狀態被清空了
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
@@ -422,7 +422,7 @@ public class Controller {
             this.model.taskState.clear();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
@@ -444,7 +444,7 @@ public class Controller {
             this.updateTaskPointsArea();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次
@@ -460,7 +460,7 @@ public class Controller {
             this.model.taskPoints = this.model.tasks.poll();
             // 先divide，用taskPoints建立初始狀態
             this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState);
+            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
             // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
             if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
                 // merge一次

@@ -10,12 +10,12 @@ public class Model {
     LinkedList<VoronoiDiagram> taskState; // 目前任務狀態，Queue
 
 
+
     public Model() { // 建構函式
         tasks = new LinkedList<>();
         taskPoints = new LinkedList<>();
         taskState = new LinkedList<>();
     }
-
 
 
     // other methods related to your business logic

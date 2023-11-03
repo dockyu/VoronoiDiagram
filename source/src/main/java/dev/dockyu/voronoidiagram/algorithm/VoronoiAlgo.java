@@ -7,7 +7,7 @@ import java.util.LinkedList;
 public class VoronoiAlgo {
 
     // 用多個生成點生成初始狀態(queue)
-    public static void divide(LinkedList<GeneratorPoint> Points, LinkedList<VoronoiDiagram> voronoiTaskState) {
+    public static void divide(LinkedList<GeneratorPoint> Points, LinkedList<VoronoiDiagram> voronoiTaskState, int taskPointsNum) {
 //        System.out.println("VoronoiAlgo.java divide()");
         int pointNum = Points.size();
 
@@ -15,6 +15,9 @@ public class VoronoiAlgo {
         if (pointNum == 3) {
             VoronoiDiagram threePointVD = VoronoiBaseCase.createThreePointVD(Points.get(0), Points.get(1), Points.get(2));
             voronoiTaskState.add(threePointVD);
+            if (!canBuildFullBinaryTree(taskPointsNum)) {
+                voronoiTaskState.add(null); // 補成complete tree
+            }
         } else if (pointNum == 2) {
             VoronoiDiagram twoPointVD = VoronoiBaseCase.createTwoPointVD(Points.get(0), Points.get(1));
             voronoiTaskState.add(twoPointVD);
@@ -27,8 +30,8 @@ public class VoronoiAlgo {
             LinkedList<GeneratorPoint> leftPoints = new LinkedList<>(Points.subList(0, midIndex));
             LinkedList<GeneratorPoint> rightPoints = new LinkedList<>(Points.subList(midIndex, pointNum));
 
-            divide(leftPoints, voronoiTaskState);
-            divide(rightPoints, voronoiTaskState);
+            divide(leftPoints, voronoiTaskState, taskPointsNum);
+            divide(rightPoints, voronoiTaskState, taskPointsNum);
         }//else { // pointNum<1，有問題
 //            System.out.println("divide 出錯");
 //        }
@@ -39,14 +42,21 @@ public class VoronoiAlgo {
 //        System.out.println("merge");
         VoronoiDiagram VDleft = voronoiTaskState.poll();
         VoronoiDiagram VDright = voronoiTaskState.poll();
+        while (VDright==null) {
+            voronoiTaskState.add(VDleft);
+            VDleft = voronoiTaskState.poll();
+            VDright = voronoiTaskState.poll();
+        }
+
+
 
         // TODO: 如果left VD真實位置在右邊就交換
-        if (VDleft.generatorPoints.get(0).getX() > VDright.generatorPoints.get(0).getX()) { // VDleft換成左邊
-//            System.out.println("change left and right");
-            VoronoiDiagram temp = VDleft;
-            VDleft = VDright;
-            VDright = temp;
-        }
+//        if (VDleft.generatorPoints.get(0).getX() > VDright.generatorPoints.get(0).getX()) { // VDleft換成左邊
+////            System.out.println("change left and right");
+//            VoronoiDiagram temp = VDleft;
+//            VDleft = VDright;
+//            VDright = temp;
+//        }
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         // TODO: merge開始
 
@@ -83,6 +93,7 @@ public class VoronoiAlgo {
 
         // merge完成
         voronoiTaskState.add(VDmerge);
+
     }
 
     // 測試用
@@ -99,5 +110,13 @@ public class VoronoiAlgo {
         }
     }
 
+    private static boolean canBuildFullBinaryTree(int gpNum) {
+        // 判斷gpNum個生成點能不能剛好補成Full binary tree
+        double K = Math.floor(Math.log(gpNum) / Math.log(2));
+        double S = K-1;
+        double T = Math.pow(2, S) - 1;
+        double G = Math.pow(2, K+1) -1;
 
+        return !(gpNum>= G-T+1 && gpNum<= G);
+    }
 }

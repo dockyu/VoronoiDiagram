@@ -18,6 +18,10 @@ public class CanvasAction {
     public static final Color EDGE_COLOR = Color.BLACK; // Voronoi Diagram edge的顏色
     public static final Color CONVEX_HULL_COLOR = Color.RED; // Convex Hull 的顏色
 
+    public static final Color NEXT_GENERATOR_POINT_COLOR = Color.GREEN; // 下兩組要merge的 generator point 的顏色
+    public static final Color NEXT_EDGE_COLOR = Color.PURPLE; // 下兩組要merge的 Voronoi Diagram edge 的顏色
+    public static final Color NEXT_CONVEX_HULL_COLOR = Color.YELLOW; // 下兩組要merge的 Convex Hull 的顏色
+
     // 靜態方法，不需要實例就可以呼叫
 
 
@@ -27,26 +31,39 @@ public class CanvasAction {
         clear(canvas); // 先清空canvas
         // 遍歷taskState並依次畫出所有Voronoi Diagram
         for (VoronoiDiagram voronoiDiagram : taskState) {
-            drawVoronoiDiagram(canvas, voronoiDiagram);
+            drawVoronoiDiagram(canvas, voronoiDiagram, EDGE_COLOR, GENERATOR_POINT_COLOR, CONVEX_HULL_COLOR);
+        }
+
+        // 如果之後還有兩個以上subVoronoi diagram要merge
+        if (taskState.size()>=2) {
+            int index = 0;
+            while (taskState.get(index+1)==null) {
+                index+=2;
+            }
+            drawVoronoiDiagram(canvas, taskState.get(index), NEXT_EDGE_COLOR, NEXT_GENERATOR_POINT_COLOR, NEXT_CONVEX_HULL_COLOR);
+            drawVoronoiDiagram(canvas, taskState.get(index+1), NEXT_EDGE_COLOR, NEXT_GENERATOR_POINT_COLOR, NEXT_CONVEX_HULL_COLOR);
         }
 
     }
 
     // 畫出一個voronoi diagram
-    public static void drawVoronoiDiagram(Canvas canvas, VoronoiDiagram voronoiDiagram) {
+    public static void drawVoronoiDiagram(Canvas canvas, VoronoiDiagram voronoiDiagram, Color edgeColor, Color generatorPointColor, Color convexHullColor) {
+        if (voronoiDiagram==null) {
+            return;
+        }
         // 畫所有邊
-        drawEdges(canvas, voronoiDiagram.edges, voronoiDiagram.vertexs);
+        drawEdges(canvas, voronoiDiagram.edges, voronoiDiagram.vertexs, edgeColor);
         // 畫convex hull
-        drawConvexHull(canvas, voronoiDiagram.convexHull);
+        drawConvexHull(canvas, voronoiDiagram.convexHull, convexHullColor);
         // 畫所有生成點
-        drawGeneratorPoints(canvas, voronoiDiagram.generatorPoints);
+        drawGeneratorPoints(canvas, voronoiDiagram.generatorPoints, generatorPointColor);
     }
 
     // 畫一條edge
-    public static void drawEdge(Canvas canvas, Edge edge, LinkedList<Vertex> vertexs) {
+    public static void drawEdge(Canvas canvas, Edge edge, LinkedList<Vertex> vertexs, Color color) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定edge的顏色
-        gc.setStroke(EDGE_COLOR);
+        gc.setStroke(color);
 
         if (edge.real) { // 如果是真實存在的邊才要畫
             Vertex start = vertexs.get(edge.start_vertex); // 起始點
@@ -105,13 +122,33 @@ public class CanvasAction {
     }
 
     // 畫多條edge
-    public static void drawEdges(Canvas canvas, LinkedList<Edge> edges, LinkedList<Vertex> vertexs) {
+    public static void drawEdges(Canvas canvas, LinkedList<Edge> edges, LinkedList<Vertex> vertexs, Color color) {
         for (Edge edge : edges) {
-            drawEdge(canvas, edge, vertexs);
+            drawEdge(canvas, edge, vertexs, color);
         }
     }
 
     // 畫出一個generator point
+    public static void drawGeneratorPoint(Canvas canvas, GeneratorPoint generatorPoint, Color color) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // 設定點的顏色
+        gc.setFill(color);
+        // 畫出點（這裡以3x3的大小為例）
+        gc.fillOval(generatorPoint.getX()-GENERATOR_POINT_RADIUS/2, generatorPoint.getY()-GENERATOR_POINT_RADIUS/2, GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
+
+        // 印出座標
+        // 設定文字的顏色
+        gc.setFill(Color.BLACK);
+        // 設定字體大小
+        gc.setFont(new Font("Arial", 10));
+
+        // 準備要印出的座標文字
+        String coordinatesText = String.format("(%d, %d)", (int)generatorPoint.getX(), (int)generatorPoint.getY());
+
+        // 印出座標文字
+        gc.fillText(coordinatesText, generatorPoint.getX() + GENERATOR_POINT_RADIUS, generatorPoint.getY() - GENERATOR_POINT_RADIUS);
+
+    }
     public static void drawGeneratorPoint(Canvas canvas, GeneratorPoint generatorPoint) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定點的顏色
@@ -134,14 +171,19 @@ public class CanvasAction {
     }
 
     // 畫出多個generator point
+    public static void drawGeneratorPoints(Canvas canvas, LinkedList<GeneratorPoint> generatorPointList, Color color) {
+        for (GeneratorPoint generatorPoint : generatorPointList) {
+            drawGeneratorPoint(canvas, generatorPoint, color);
+        }
+    }
     public static void drawGeneratorPoints(Canvas canvas, LinkedList<GeneratorPoint> generatorPointList) {
         for (GeneratorPoint generatorPoint : generatorPointList) {
-            drawGeneratorPoint(canvas, generatorPoint);
+            drawGeneratorPoint(canvas, generatorPoint, GENERATOR_POINT_COLOR);
         }
     }
 
     // 畫出convexhull
-    public static void drawConvexHull(Canvas canvas, ConvexHull convexHull) {
+    public static void drawConvexHull(Canvas canvas, ConvexHull convexHull, Color color) {
         Iterator<GeneratorPoint> iterator = convexHull.hull.circularIterator();
         if (!iterator.hasNext()) {
             return; // 空的ConvexHull，直接返回
@@ -149,7 +191,7 @@ public class CanvasAction {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定edge的顏色
-        gc.setStroke(CONVEX_HULL_COLOR);
+        gc.setStroke(color);
 
         // 存儲第一個點以便最後使用
         GeneratorPoint firstPoint = iterator.next();
@@ -176,39 +218,39 @@ public class CanvasAction {
     // 畫出輸入的檔案
     public static void drawImportFile(Canvas canvas, ArrayList<float[]> importGeneratorPoints, ArrayList<float[]> importEdges) {
         // 畫邊
-        drawImportFileEdges(canvas, importEdges);
+        drawImportFileEdges(canvas, importEdges, EDGE_COLOR);
         // 畫點
-        drawImportFilePoints(canvas, importGeneratorPoints);
+        drawImportFilePoints(canvas, importGeneratorPoints, GENERATOR_POINT_COLOR);
     }
 
     // 畫出輸入的檔案的所有點
-    public static void drawImportFilePoints(Canvas canvas, ArrayList<float[]> importGeneratorPoints) {
+    public static void drawImportFilePoints(Canvas canvas, ArrayList<float[]> importGeneratorPoints, Color color) {
         for (float[] importGeneratorPoint : importGeneratorPoints) {
-            drawImportFilePoint(canvas, importGeneratorPoint);
+            drawImportFilePoint(canvas, importGeneratorPoint, color);
         }
     }
 
     // 畫出輸入的檔案的點
-    public static void drawImportFilePoint(Canvas canvas, float[] importGeneratorPoint) {
+    public static void drawImportFilePoint(Canvas canvas, float[] importGeneratorPoint, Color color) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定點的顏色
-        gc.setFill(GENERATOR_POINT_COLOR);
+        gc.setFill(color);
         // 畫出點（這裡以3x3的大小為例）
         gc.fillOval(importGeneratorPoint[0]-GENERATOR_POINT_RADIUS/2, importGeneratorPoint[1]-GENERATOR_POINT_RADIUS/2, GENERATOR_POINT_RADIUS, GENERATOR_POINT_RADIUS);  // 畫圓
     }
 
     // 畫出輸入的檔案的所有邊
-    public static void drawImportFileEdges(Canvas canvas, ArrayList<float[]> importEdges) {
+    public static void drawImportFileEdges(Canvas canvas, ArrayList<float[]> importEdges, Color color) {
         for (float[] importEdge : importEdges) {
-            drawImportFileEdge(canvas, importEdge);
+            drawImportFileEdge(canvas, importEdge, color);
         }
     }
 
     // 畫出輸入的檔案的邊
-    public static void drawImportFileEdge(Canvas canvas, float[] importEdge) {
+    public static void drawImportFileEdge(Canvas canvas, float[] importEdge, Color color) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定edge的顏色
-        gc.setStroke(EDGE_COLOR);
+        gc.setStroke(color);
 
         gc.strokeLine(importEdge[0], importEdge[1], importEdge[2], importEdge[3]);
     }
