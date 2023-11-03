@@ -1,6 +1,7 @@
 package dev.dockyu.voronoidiagram.algorithm;
 
 import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
+import dev.dockyu.voronoidiagram.datastruct.Vertex;
 
 public class TwoDPlaneAlgo {
     // 將三個生成點順時鐘排序
@@ -165,6 +166,51 @@ public class TwoDPlaneAlgo {
         return (y2 - y1) / (x2 - x1);
     }
 
+    // edge和半平面的交點，沒有交點回傳null，HP
+    public static float[] isIntersectWithHP(float[] HPpoint, float[] HPvector, Vertex v1, Vertex v2) {
+        float A1 = HPvector[1];
+        float B1 = -HPvector[0];
+        float C1 = HPvector[0] * HPpoint[1] - HPvector[1] * HPpoint[0];
 
+        float A2 = v2.y - v1.y;
+        float B2 = v1.x - v2.x;
+        float C2 = v2.x * v1.y - v2.y * v1.x;
+
+        float det = A1 * B2 - A2 * B1;
+        if (det == 0) {
+            return null; // 平行且不重合
+        }
+
+        float x = (C1 * B2 - C2 * B1) / det;
+        float y = (A1 * C2 - A2 * C1) / det;
+
+        float t1 = (x - HPpoint[0]) * HPvector[0] + (y - HPpoint[1]) * HPvector[1];
+        float t2 = (x - v1.x) * (v2.x - v1.x) + (y - v1.y) * (v2.y - v1.y);
+        float lengthSquared = (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y);
+
+        if (t1 < 0) {
+            return null; // 不在半平面的正向延伸方向上
+        }
+
+        if (!v1.terminal && !v2.terminal) {
+            // 兩端封閉
+            if (t2 < 0 || t2 > lengthSquared) {
+                return null; // 不在線段上
+            }
+        } else if (!v1.terminal) {
+            // 一端封閉（v1），一端無限（v2）
+            if (t2 < 0) {
+                return null; // 不在線段上
+            }
+        } else if (!v2.terminal) {
+            // 一端封閉（v2），一端無限（v1）
+            if (t2 > lengthSquared) {
+                return null; // 不在線段上
+            }
+        }
+        // 兩端無限的情況無需額外判斷
+
+        return new float[]{x, y};
+    }
 
 }

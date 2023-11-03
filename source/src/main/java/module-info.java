@@ -4,7 +4,9 @@ module dev.dockyu.voronoidiagram {
 
 
     opens dev.dockyu.voronoidiagram to javafx.fxml;
+    opens dev.dockyu.voronoidiagram.datastruct to javafx.fxml;
+    opens dev.dockyu.voronoidiagram.algorithm to javafx.fxml;
     exports dev.dockyu.voronoidiagram;
     exports dev.dockyu.voronoidiagram.datastruct;
-    opens dev.dockyu.voronoidiagram.datastruct to javafx.fxml;
+    exports dev.dockyu.voronoidiagram.algorithm;
 }

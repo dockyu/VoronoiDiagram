@@ -40,6 +40,7 @@ public class VoronoiAlgo {
 
     public static void merge(LinkedList<VoronoiDiagram> voronoiTaskState) {
 //        System.out.println("merge");
+        // TODO: 從taskState取出要merge的兩個VD
         VoronoiDiagram VDleft = voronoiTaskState.poll();
         VoronoiDiagram VDright = voronoiTaskState.poll();
         while (VDright==null) {
@@ -48,43 +49,93 @@ public class VoronoiAlgo {
             VDright = voronoiTaskState.poll();
         }
 
-
-
-        // TODO: 如果left VD真實位置在右邊就交換
-//        if (VDleft.generatorPoints.get(0).getX() > VDright.generatorPoints.get(0).getX()) { // VDleft換成左邊
-////            System.out.println("change left and right");
-//            VoronoiDiagram temp = VDleft;
-//            VDleft = VDright;
-//            VDright = temp;
-//        }
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         // TODO: merge開始
 
         // TODO: 求上下切線
-//        System.out.println("find Tangent");
+        System.out.println("find Tangent");
         int[] upperTangent = ConvexHullAlgo.getUpperTangent(VDleft.convexHull, VDright.convexHull);
         int[] lowerTangent = ConvexHullAlgo.getLowerTangent(VDleft.convexHull, VDright.convexHull);
+
+        // TODO: 生成上下切線的4的點
+        GeneratorPoint leftUpperGP = VDleft.generatorPoints.get(upperTangent[0]);
+        GeneratorPoint leftLowerGP = VDleft.generatorPoints.get(lowerTangent[0]);
+        GeneratorPoint rightUpperGP = VDright.generatorPoints.get(upperTangent[1]);
+        GeneratorPoint rightLowerGP = VDright.generatorPoints.get(lowerTangent[1]);
+//        System.out.println("左圖上切線的生成點: ("+leftUpperGP.getX()+","+leftUpperGP.getY()+")");
+//        System.out.println("右圖下切線的生成點: ("+rightLowerGP.getX()+","+rightLowerGP.getY()+")");
+
+
+        // TODO: 找上切線的中垂線
+        float[] HPpoint = new float[]{ // 初始HP上一點
+                (leftUpperGP.getX()+rightUpperGP.getX())/2,
+                (leftUpperGP.getY()+rightUpperGP.getY())/2
+        };
+        float[] HPvector = TwoDPlaneAlgo.getNormalVector(leftUpperGP, rightUpperGP);
 
 //        System.out.println("upperTangent left: "+VDleft.convexHull.get(upperTangent[0]).getX()+","+VDleft.convexHull.get(upperTangent[0]).getY());
 //        System.out.println("upperTangent right: "+VDright.convexHull.get(upperTangent[1]).getX()+","+VDright.convexHull.get(upperTangent[1]).getY());
 //        System.out.println("lowerTangent left: "+VDleft.convexHull.get(lowerTangent[0]).getX()+","+VDleft.convexHull.get(lowerTangent[0]).getY());
 //        System.out.println("lowerTangent right: "+VDright.convexHull.get(lowerTangent[1]).getX()+","+VDright.convexHull.get(lowerTangent[1]).getY());
 
-        // TODO: 找第一個點
+        // TODO: 找外圍的所有點
+        System.out.println("find terminal vertex");
+        LinkedList<Integer> leftTerminalVertexs = VDleft.vertexsAroundPolygon(VDleft.generatorPoints.size()); // 左圖外圍的所有點
+        LinkedList<Integer> rightTerminalVertexs = VDright.vertexsAroundPolygon(VDright.generatorPoints.size()); // 右圖外圍的所有點
+//        // 左
+//        for (int i : leftTerminalVertexs) {
+//            System.out.println("gp"+i);
+//        }
+//        // 右
+//        for (int i : rightTerminalVertexs) {
+//            System.out.println("gp"+i);
+//        }
 
-        // TODO: merge generatorPoints
-//        System.out.println("merge generator Points");
+        // TODO: 找所有無限延伸的邊
+        LinkedList<Integer> leftInfinityEdges = new LinkedList<>(); // 左圖無限延伸的邊
+        LinkedList<Integer> rightInfinityEdges = new LinkedList<>(); // 右圖無限延伸的邊
+        LinkedList<Integer> tempEdges;
+
+        for (int vertex : leftTerminalVertexs) {
+            tempEdges = VDleft.edgesAroundVertex(vertex);
+            for (int edge : tempEdges) {
+                if (VDleft.edges.get(edge).real) {
+                    leftInfinityEdges.add(edge);
+                }
+            }
+        }
+        for (int vertex : rightTerminalVertexs) {
+            tempEdges = VDright.edgesAroundVertex(vertex);
+            for (int edge : tempEdges) {
+                if (VDright.edges.get(edge).real) {
+                    rightInfinityEdges.add(edge);
+                }
+            }
+        }
+//        System.out.println("左圖無限延伸的邊");
+//        for (int edge : leftInfinityEdges) {
+//            System.out.println("e"+edge);
+//        }
+//        System.out.println("右圖無限延伸的邊");
+//        for (int edge : rightInfinityEdges) {
+//            System.out.println("e"+edge);
+//        }
+
+        // TODO: 判斷無限延伸線是不是會和HP相交
+
 
 //        System.out.println("左圖 left: "+VDleft.convexHull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.get(VDleft.convexHull.left).getY());
 //        System.out.println("左圖 right: "+VDleft.convexHull.get(VDleft.convexHull.right).getX()+","+VDleft.convexHull.get(VDleft.convexHull.right).getY());
 //        System.out.println("右圖 left: "+VDright.convexHull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.get(VDright.convexHull.left).getY());
 //        System.out.println("右圖 right: "+VDright.convexHull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.get(VDright.convexHull.right).getY());
 
+        // TODO: merge generatorPoints
+        // 直接合併就好
         VDmerge.generatorPoints.addAll(VDleft.generatorPoints);
         VDmerge.generatorPoints.addAll(VDright.generatorPoints);
 
         // TODO: merge convex hull
-//        System.out.println("merge convex hull");
+        // 合併convex hull
         ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
 //        System.out.println("after merge points");
 //        for (GeneratorPoint gp : VDmerge.convexHull.hull) {
