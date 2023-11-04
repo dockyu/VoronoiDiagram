@@ -52,6 +52,8 @@ public class VoronoiAlgo {
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         // TODO: merge開始
 
+        boolean mergeFinish = false;
+
         // TODO: 求上下切線
         System.out.println("find Tangent");
         int[] upperTangent = ConvexHullAlgo.getUpperTangent(VDleft.convexHull, VDright.convexHull);
@@ -187,6 +189,7 @@ public class VoronoiAlgo {
         // TODO: 4種情況
         if (leftIntersectEdgeIndex==-1 && rightIntersectEdgeIndex==-1) {
             // TODO: case1 左右圖都沒有交點
+            mergeFinish = true;
 //            System.out.println("左右圖都沒有交點");
         } else if (rightIntersectEdgeIndex==-1) {
             // TODO: case2 只有左圖有交點
