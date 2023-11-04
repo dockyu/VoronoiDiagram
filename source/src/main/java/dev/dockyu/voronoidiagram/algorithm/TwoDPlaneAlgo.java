@@ -61,6 +61,10 @@ public class TwoDPlaneAlgo {
         normal[0] = -dy; // 新的x坐標
         normal[1] = dx;  // 新的y坐標
 
+        // 處理-0.0的情況
+        normal[0] = (normal[0] == -0.0f) ? 0.0f : normal[0];
+        normal[1] = (normal[1] == -0.0f) ? 0.0f : normal[1];
+
         return normal;
     }
 
@@ -168,49 +172,64 @@ public class TwoDPlaneAlgo {
 
     // edge和半平面的交點，沒有交點回傳null，HP
     public static float[] isIntersectWithHP(float[] HPpoint, float[] HPvector, Vertex v1, Vertex v2) {
+
+//        System.out.println("點(" + HPpoint[0] + "," + HPpoint[1] + ")向向量(" + HPvector[0] + "," + HPvector[1] + ")延伸");
+//        System.out.println("線段 (" + v1.x + "," + v1.y + ")<->(" + v2.x + "," + v2.y + ")");
+
+        // 計算直線方程 Ax + By = C 的係數
         float A1 = HPvector[1];
         float B1 = -HPvector[0];
-        float C1 = HPvector[0] * HPpoint[1] - HPvector[1] * HPpoint[0];
+        float C1 = A1 * HPpoint[0] + B1 * HPpoint[1]; // 使用 HPpoint 計算 C1
 
         float A2 = v2.y - v1.y;
         float B2 = v1.x - v2.x;
-        float C2 = v2.x * v1.y - v2.y * v1.x;
+        float C2 = A2 * v1.x + B2 * v1.y; // 使用 v1 計算 C2
 
-        float det = A1 * B2 - A2 * B1;
-        if (det == 0) {
+        float det = A1 * B2 - A2 * B1; // 行列式
+        if (Math.abs(det) < 1e-6) {
+//            System.out.println("狀況: 平行");
             return null; // 平行且不重合
         }
 
         float x = (C1 * B2 - C2 * B1) / det;
         float y = (A1 * C2 - A2 * C1) / det;
 
+        // 檢查交點是否過於偏遠
+        float threshold = 1.5E5f;
+        float dx = x - HPpoint[0];
+        float dy = y - HPpoint[1];
+        if (dx * dx + dy * dy > threshold * threshold) {
+//            System.out.println("狀況: 交點過於偏遠");
+            return null;
+        }
+
         float t1 = (x - HPpoint[0]) * HPvector[0] + (y - HPpoint[1]) * HPvector[1];
         float t2 = (x - v1.x) * (v2.x - v1.x) + (y - v1.y) * (v2.y - v1.y);
         float lengthSquared = (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y);
 
         if (t1 < 0) {
-            return null; // 不在半平面的正向延伸方向上
+//            System.out.println("狀況: 不在半平面的正向延伸方向上");
+            return null;
         }
 
         if (!v1.terminal && !v2.terminal) {
-            // 兩端封閉
             if (t2 < 0 || t2 > lengthSquared) {
-                return null; // 不在線段上
+//                System.out.println("狀況: 兩端封閉且不在線段上");
+                return null;
             }
         } else if (!v1.terminal) {
-            // 一端封閉（v1），一端無限（v2）
             if (t2 < 0) {
-                return null; // 不在線段上
+//                System.out.println("狀況: 一端封閉（v1）且不在線段上");
+                return null;
             }
         } else if (!v2.terminal) {
-            // 一端封閉（v2），一端無限（v1）
             if (t2 > lengthSquared) {
-                return null; // 不在線段上
+//                System.out.println("狀況: 一端封閉（v2）且不在線段上");
+                return null;
             }
         }
-        // 兩端無限的情況無需額外判斷
 
+//        System.out.println("狀況: 有交點");
         return new float[]{x, y};
     }
-
 }

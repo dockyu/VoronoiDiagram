@@ -71,7 +71,8 @@ public class VoronoiAlgo {
                 (leftUpperGP.getX()+rightUpperGP.getX())/2,
                 (leftUpperGP.getY()+rightUpperGP.getY())/2
         };
-        float[] HPvector = TwoDPlaneAlgo.getNormalVector(leftUpperGP, rightUpperGP);
+        float[] HPVectorUp = TwoDPlaneAlgo.getNormalVector(leftUpperGP, rightUpperGP);
+        float[] HPVectorDown = TwoDPlaneAlgo.getNormalVector(rightUpperGP, leftUpperGP);
 
 //        System.out.println("upperTangent left: "+VDleft.convexHull.get(upperTangent[0]).getX()+","+VDleft.convexHull.get(upperTangent[0]).getY());
 //        System.out.println("upperTangent right: "+VDright.convexHull.get(upperTangent[1]).getX()+","+VDright.convexHull.get(upperTangent[1]).getY());
@@ -122,6 +123,92 @@ public class VoronoiAlgo {
 //        }
 
         // TODO: 判斷無限延伸線是不是會和HP相交
+        int leftIntersectEdgeIndex = -1; // 左圖有最高交點的邊
+        float[] leftIntersection = new float[]{0, Float.NEGATIVE_INFINITY}; // 左圖最高的交點
+        int rightIntersectEdgeIndex = -1; // 右圖有最高交點的邊
+        float[] rightIntersection = new float[]{0, Float.NEGATIVE_INFINITY}; // 右圖最高的交點
+
+        float[] tempIntersection; // 暫存交點
+        // TODO: 找左邊交點
+        for (int edgeIndex : leftInfinityEdges) {
+            Edge edge = VDleft.edges.get(edgeIndex); // 目前要判斷的邊
+            Vertex startVertex = VDleft.vertexs.get(edge.start_vertex);
+            Vertex endVertex = VDleft.vertexs.get(edge.end_vertex);
+            // TODO: 判斷是不是真的邊
+            if (edge.real == false) { // 是假的邊
+                continue;
+            }
+            // TODO: 判斷有沒有交點
+            // 把HP分成兩次求交點
+            tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(HPpoint, HPVectorUp, startVertex, endVertex);
+            if (tempIntersection == null) { // 與HP向上延伸沒有交點
+                tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(HPpoint, HPVectorDown, startVertex, endVertex);
+            }
+            if (tempIntersection == null) { // 與HP沒有交點
+                continue;
+            }
+            // TODO: 判斷此交點有沒有比較高
+            if (tempIntersection[1] > leftIntersection[1]) {
+                // TODO: 比較高，更新最高交點
+//                System.out.println("左圖找到更高的點 ("+tempIntersection[0]+","+tempIntersection[0]+")");
+                leftIntersectEdgeIndex = edgeIndex;
+                leftIntersection = tempIntersection;
+            }
+        }
+        // TODO: 找右邊交點
+        for (int edgeIndex : rightInfinityEdges) {
+            Edge edge = VDright.edges.get(edgeIndex); // 目前要判斷的邊
+            Vertex startVertex = VDright.vertexs.get(edge.start_vertex);
+            Vertex endVertex = VDright.vertexs.get(edge.end_vertex);
+            // TODO: 判斷是不是真的邊
+            if (edge.real == false) { // 是假的邊
+                continue;
+            }
+            // TODO: 判斷有沒有交點
+            // 把HP分成兩次求交點
+            tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(HPpoint, HPVectorUp, startVertex, endVertex);
+            if (tempIntersection == null) { // 與HP向上延伸沒有交點
+                tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(HPpoint, HPVectorDown, startVertex, endVertex);
+            }
+            if (tempIntersection == null) { // 與HP沒有交點
+                continue;
+            }
+            // TODO: 判斷此交點有沒有比較高
+            if (tempIntersection[1] > rightIntersection[1]) {
+                // TODO: 比較高，更新最高交點
+//                System.out.println("右圖找到交點");
+                rightIntersectEdgeIndex = edgeIndex;
+                rightIntersection = tempIntersection;
+            }
+        }
+
+        // TODO: 找第一個交點
+        // TODO: 找出左圖+右圖最高的交點
+        // TODO: 4種情況
+        if (leftIntersectEdgeIndex==-1 && rightIntersectEdgeIndex==-1) {
+            // TODO: case1 左右圖都沒有交點
+//            System.out.println("左右圖都沒有交點");
+        } else if (rightIntersectEdgeIndex==-1) {
+            // TODO: case2 只有左圖有交點
+//            System.out.println("只有左圖有交點");
+//            System.out.println("左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
+        } else if (leftIntersectEdgeIndex==-1) {
+            // TODO: case3 只有右圖有交點
+//            System.out.println("只有右圖有交點");
+//            System.out.println("右圖交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
+        } else {
+            // TODO: case4 左右圖都有交點
+            if (leftIntersection[1]>rightIntersection[1]) {
+                // TODO: case 4-1 左圖交點比較高
+//                System.out.println("左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
+            } else if (rightIntersection[1]>leftIntersection[1]) {
+                // TODO: case 4-2 右圖交點比較高
+//                System.out.println("右圖交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
+            } else {
+                // TODO: case 4-3 左圖右圖交點一樣高
+//                System.out.println("兩圖同時交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
+            }
+        }
 
 
 //        System.out.println("左圖 left: "+VDleft.convexHull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.get(VDleft.convexHull.left).getY());
