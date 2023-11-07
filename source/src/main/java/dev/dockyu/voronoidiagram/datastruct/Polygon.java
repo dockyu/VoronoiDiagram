@@ -6,4 +6,9 @@ public class Polygon {
     public Polygon(int edge_around_polygon) {
         this.edge_around_polygon = edge_around_polygon;
     }
+
+    // 複製構造器
+    public Polygon(Polygon other) {
+        this.edge_around_polygon = other.edge_around_polygon;
+    }
 }

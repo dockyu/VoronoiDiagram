@@ -185,7 +185,7 @@ public class VoronoiAlgo {
 
         // TODO: 找第一個交點
         LinkedList<Intersection> HyperPlane = new LinkedList<>();
-        Intersection intersection = null;
+        Intersection intersectionFirst = null;
         int[] tangent = new int[]{upperTangent[0], upperTangent[1]}; // 下一條要做的切線(生成點跟生成點的切線)
         // tangent[0] 切線左邊生成點的index
         // tangent[1] 切線右邊生成點的index
@@ -199,37 +199,37 @@ public class VoronoiAlgo {
             // TODO: case2 只有左圖有交點
 //            System.out.println("只有左圖有交點");
 //            System.out.println("左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
-            intersection = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
-            HyperPlane.add(intersection);
+            intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
+            HyperPlane.add(intersectionFirst);
             leftNextEdge(tangent, leftIntersectEdgeIndex, VDleft); // 左邊找下一個生成點做切線
         } else if (leftIntersectEdgeIndex==-1) {
             // TODO: case3 只有右圖有交點
 //            System.out.println("只有右圖有交點");
 //            System.out.println("右圖交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
-            intersection = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
-            HyperPlane.add(intersection);
+            intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
+            HyperPlane.add(intersectionFirst);
             rightNextEdge(tangent, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
         } else {
             // TODO: case4 左右圖都有交點
             if (leftIntersection[1]>rightIntersection[1]) {
                 // TODO: case 4-1 左圖交點比較高
 //                System.out.println("左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
-                intersection = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
-                HyperPlane.add(intersection);
+                intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
+                HyperPlane.add(intersectionFirst);
                 leftNextEdge(tangent, leftIntersectEdgeIndex, VDleft); // 左邊找下一個生成點做切線
             } else if (rightIntersection[1]>leftIntersection[1]) {
                 // TODO: case 4-2 右圖交點比較高
 //                System.out.println("右圖交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
-                intersection = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
-                HyperPlane.add(intersection);
+                intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
+                HyperPlane.add(intersectionFirst);
                 rightNextEdge(tangent, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
             } else {
                 // TODO: case 4-3 左圖右圖交點一樣高
-                intersection = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
-                HyperPlane.add(intersection);
+                intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
+                HyperPlane.add(intersectionFirst);
                 leftNextEdge(tangent, leftIntersectEdgeIndex, VDleft); // 左邊找下一個生成點做切線
-                intersection = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
-                HyperPlane.add(intersection);
+                intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
+                HyperPlane.add(intersectionFirst);
                 rightNextEdge(tangent, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
 //                System.out.println("兩圖同時交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
             }
@@ -291,6 +291,8 @@ public class VoronoiAlgo {
                     intersectionLeft.y = tempIntersection[1];
                     intersectionLeft.setLeft();
                     intersectionLeft.edgeIndex = leftEdgeIndex;
+//                    System.out.println("左邊有可能交點，左邊第"+leftEdgeIndex+"條");
+//                    System.out.println("("+intersectionLeft.x+","+intersectionLeft.y+")");
                 }
             }
             // TODO: 右圖找最高交點
@@ -354,6 +356,345 @@ public class VoronoiAlgo {
             System.out.println("("+it.x+","+it.y+")");
         }
 
+        // TODO: 合併並換Index
+        int leftGPNums = VDleft.generatorPoints.size();
+        int leftEdgeNums = VDleft.edges.size();
+        int leftVertexNums = VDleft.vertexs.size();
+
+        // TODO: 合併 generatorPoints
+        // 直接合併就好
+        VDmerge.generatorPoints.addAll(VDleft.generatorPoints);
+        VDmerge.generatorPoints.addAll(VDright.generatorPoints);
+
+        // TODO: 合併 polygon
+        for (Polygon polygon : VDleft.polygons) { // 左
+            VDmerge.polygons.add(new Polygon(polygon));
+        }
+        VDmerge.polygons.removeLast(); // 刪掉左邊最後一個
+        for (Polygon polygon : VDright.polygons) { // 右
+            Polygon rightPolygon = new Polygon(polygon);
+            rightPolygon.edge_around_polygon += leftEdgeNums;
+            VDmerge.polygons.add(rightPolygon);
+        }
+
+        // TODO: 合併 vertex
+        for (Vertex vertex : VDleft.vertexs) {
+            VDmerge.vertexs.add(new Vertex(vertex));
+        }
+        for (Vertex vertex : VDright.vertexs) {
+            Vertex rightVertex = new Vertex(vertex);
+            rightVertex.edge_around_vertex += leftEdgeNums;
+            VDmerge.vertexs.add(rightVertex);
+        }
+
+        // TODO: HP消vertex
+        for (Intersection intersection : HyperPlane) {
+            int deleteEdgeIndex;
+            if (intersection.isLeft()) {
+                // 左圖的交點
+                int edgeIndex = intersection.edgeIndex;
+                int startVertexIndex = VDleft.edges.get(edgeIndex).start_vertex;
+                int endVertexIndex = VDleft.edges.get(edgeIndex).end_vertex;
+                Vertex startVertex = VDmerge.vertexs.get(startVertexIndex);
+                Vertex endVertex = VDmerge.vertexs.get(endVertexIndex);
+                if (startVertex.terminal && endVertex.terminal) {
+                    // 都是假點，消近的
+                    double startDistance = Math.pow(startVertex.x-intersection.x, 2) + Math.pow(startVertex.y-intersection.y, 2);
+                    double endDistance = Math.pow(endVertex.x-intersection.x, 2) + Math.pow(endVertex.y-intersection.y, 2);
+                    if (startDistance<endDistance) {
+                        startVertex.deleted = true;
+                        System.out.println("左圖消點1");
+                    } else {
+                        endVertex.deleted = true;
+                        System.out.println("左圖消點2");
+                    }
+                } else if (!startVertex.terminal && !endVertex.terminal) {
+                    // 都不是假點，消右邊的
+                    if (startVertex.x > endVertex.x) {
+                        startVertex.deleted = true;
+                        System.out.println("左圖消點3");
+                    } else {
+                        endVertex.deleted = true;
+                        System.out.println("左圖消點4");
+                    }
+
+                } else if (startVertex.terminal) {
+                    // 只有start是假點，消start
+                    System.out.println("左圖消點5");
+                    startVertex.deleted = true;
+                } else if (endVertex.terminal) {
+                    // 只有end是假點，消end
+                    System.out.println("左圖消點6");
+                    endVertex.deleted = true;
+                }
+            } else {
+                // 右圖的交點
+                int edgeIndex = intersection.edgeIndex;
+                int startVertexIndex = VDright.edges.get(edgeIndex).start_vertex+leftVertexNums;
+                int endVertexIndex = VDright.edges.get(edgeIndex).end_vertex+leftVertexNums;
+                Vertex startVertex = VDmerge.vertexs.get(startVertexIndex);
+                Vertex endVertex = VDmerge.vertexs.get(endVertexIndex);
+                if (startVertex.terminal && endVertex.terminal) {
+                    // 都是假點，消近的
+                    double startDistance = Math.pow(startVertex.x-intersection.x, 2) + Math.pow(startVertex.y-intersection.y, 2);
+                    double endDistance = Math.pow(endVertex.x-intersection.x, 2) + Math.pow(endVertex.y-intersection.y, 2);
+                    if (startDistance<endDistance) {
+                        startVertex.deleted = true;
+                        System.out.println("右圖消點1");
+                    } else {
+                        endVertex.deleted = true;
+                        System.out.println("右圖消點2");
+                    }
+                } else if (!startVertex.terminal && !endVertex.terminal) {
+                    // 都不是假點，消右邊的
+                    if (startVertex.x < endVertex.x) {
+                        startVertex.deleted = true;
+                        System.out.println("右圖消點3");
+                    } else {
+                        endVertex.deleted = true;
+                        System.out.println("右圖消點4");
+                    }
+                } else if (startVertex.terminal) {
+                    // 只有start是假點，消start
+                    startVertex.deleted = true;
+                    System.out.println("右圖消點5");
+                } else if (endVertex.terminal) {
+                    // 只有end是假點，消end
+                    endVertex.deleted = true;
+                    System.out.println("右圖消點6");
+                }
+            }
+        }
+
+        // TODO: 合併 edge
+        for (Edge edge : VDleft.edges) {
+            Edge leftEdge = new Edge(edge);
+            // P無限要換
+            if (leftEdge.left_polygon==leftGPNums) {
+                leftEdge.left_polygon = VDmerge.polygons.size()-1;
+            } else if (leftEdge.right_polygon==leftGPNums) {
+                leftEdge.right_polygon = VDmerge.polygons.size()-1;
+            }
+            VDmerge.edges.add(leftEdge);
+        }
+        for (Edge edge : VDright.edges) {
+            Edge rightEdge = new Edge(edge);
+            rightEdge.right_polygon += leftGPNums;
+            rightEdge.left_polygon += leftGPNums;
+            rightEdge.start_vertex += leftVertexNums;
+            rightEdge.end_vertex += leftVertexNums;
+            rightEdge.ccw_predecessor += leftEdgeNums;
+            rightEdge.cw_predecessor += leftEdgeNums;
+            rightEdge.ccw_successor += leftEdgeNums;
+            rightEdge.cw_successor += leftEdgeNums;
+            VDmerge.edges.add(rightEdge);
+        }
+
+        // TODO: 消邊
+        for (Edge edge : VDmerge.edges) {
+            if (edge.real) {
+                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                if (startVertex.terminal && endVertex.deleted ||
+                        startVertex.deleted && endVertex.terminal) {
+                    edge.deleted = true;
+                }
+            }
+        }
+
+        // TODO: HP建構
+
+        // TODO: 第一個點
+        int previousVertexNums = VDmerge.vertexs.size(); // 目前有 0~previoudVertexNums-1
+        int previousEdgeNums = VDmerge.edges.size();
+        tangent[0] = upperTangent[0];
+        tangent[1] = upperTangent[1];
+        float normVector[] = TwoDPlaneAlgo.getNormalVector(VDleft.generatorPoints.get(tangent[0]), VDright.generatorPoints.get(tangent[1]));
+        float upperVertexXY[] = TwoDPlaneAlgo.extendWithVector(HyperPlane.get(0).x, HyperPlane.get(0).y,
+                normVector[0], normVector[1], 10f);
+        Vertex upperVertex = new Vertex(previousEdgeNums, true, upperVertexXY[0], upperVertexXY[1]);
+        VDmerge.vertexs.add(upperVertex);
+            // TODO: 虛邊更新
+        LinkedList<Integer> edgeIndexs = VDleft.edgesAroundPolygon(tangent[0]);
+        int[] upperTerminal = new int[2];
+        // 左邊
+        for (int edgeIndex : edgeIndexs) {
+            if (VDmerge.edges.get(edgeIndex).real==false) {
+                upperTerminal[0] = edgeIndex;
+
+            }
+        }
+        edgeIndexs = VDright.edgesAroundPolygon(tangent[1]);
+        // 右邊
+        for (int edgeIndex : edgeIndexs) {
+            edgeIndex += leftEdgeNums;
+            if (VDmerge.edges.get(edgeIndex).real==false) {
+                upperTerminal[1] = edgeIndex;
+            }
+        }
+
+        {
+            Edge edge = VDmerge.edges.get(upperTerminal[0]); // 左邊的上虛邊
+            Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+            Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+
+            if (startVertex.deleted) {
+                edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                edge.cw_predecessor = upperTerminal[1]; // 右邊的虛邊
+                edge.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+            } else if (endVertex.deleted) {
+                edge.end_vertex = VDmerge.vertexs.size()-1;
+                edge.cw_successor = upperTangent[1];
+                edge.ccw_successor = VDmerge.edges.size();
+            }
+
+            edge = VDmerge.edges.get(upperTerminal[1]); // 右邊的上虛邊
+            startVertex = VDmerge.vertexs.get(edge.start_vertex);
+            endVertex = VDmerge.vertexs.get(edge.end_vertex);
+
+            if (startVertex.deleted) {
+                edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                edge.ccw_predecessor = upperTerminal[0];
+                edge.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+            } else if (endVertex.deleted) {
+                edge.end_vertex = VDmerge.vertexs.size()-1;
+                edge.ccw_successor = upperTerminal[0];
+                edge.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+            }
+        }
+
+
+        int[] upperEdge = upperTerminal;
+        // TODO: HP交點建vertex edge
+        {
+            tangent[0] = upperTangent[0];
+            tangent[1] = upperTangent[1];
+
+            for (int i=0; i<HyperPlane.size(); i++) {
+                // 建點
+                Intersection intersection = HyperPlane.get(i);
+                Vertex vertex = new Vertex(VDmerge.edges.size(), false, intersection.x, intersection.y);
+                VDmerge.vertexs.add(vertex);
+                if (intersection.isLeft()) {
+                    int updateEdgeIndex = intersection.edgeIndex;
+                    Edge updateEdge = VDmerge.edges.get(updateEdgeIndex);
+                    Vertex startVertex = VDmerge.vertexs.get(updateEdge.start_vertex);
+                    Vertex endVertex = VDmerge.vertexs.get(updateEdge.end_vertex);
+                    if (startVertex.deleted) {
+                        updateEdge.start_vertex = VDmerge.vertexs.size()-1;
+                        updateEdge.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                        updateEdge.ccw_predecessor = VDmerge.edges.size()+1;
+                    } else if (endVertex.deleted) {
+                        updateEdge.end_vertex = VDmerge.vertexs.size()-1;
+                        updateEdge.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                        updateEdge.ccw_successor = VDmerge.edges.size()+1;
+                    }
+
+                    Edge edge = new Edge(true, tangent[1]+leftGPNums, tangent[0], VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2,
+                             updateEdgeIndex, VDmerge.edges.size()+1, upperEdge[0], upperEdge[1]);
+                    VDmerge.edges.add(edge);
+                    upperEdge[0] = updateEdgeIndex;
+                    upperEdge[1] = VDmerge.edges.size()-1;
+                    leftNextEdge(tangent, updateEdgeIndex, VDmerge);
+                } else {
+                    int updateEdgeIndex = intersection.edgeIndex+VDleft.edges.size();
+                    Edge updateEdge = VDmerge.edges.get(updateEdgeIndex);
+                    Vertex startVertex = VDmerge.vertexs.get(updateEdge.start_vertex);
+                    Vertex endVertex = VDmerge.vertexs.get(updateEdge.end_vertex);
+                    if (startVertex.deleted) {
+                        updateEdge.start_vertex = VDmerge.vertexs.size()-1;
+                        updateEdge.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                        updateEdge.cw_predecessor = VDmerge.edges.size()+1;
+                    } else if (endVertex.deleted) {
+                        updateEdge.end_vertex = VDmerge.vertexs.size()-1;
+                        updateEdge.ccw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                        updateEdge.cw_successor = VDmerge.edges.size()+1;
+                    }
+
+                    Edge edge = new Edge(true, tangent[1]+leftGPNums, tangent[0], VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2,
+                            VDmerge.edges.size()+1, updateEdgeIndex, upperEdge[0], upperEdge[1]);
+                    VDmerge.edges.add(edge);
+                    upperEdge[0] = VDmerge.edges.size()-1;
+                    upperEdge[1] = updateEdgeIndex;
+                    rightNextEdge(tangent, updateEdgeIndex, VDmerge);
+                }
+            }
+        }
+
+        // TODO: 最後一個點
+        {
+            // TODO: 建點
+            normVector = TwoDPlaneAlgo.getNormalVector(VDright.generatorPoints.get(lowerTangent[1]), VDleft.generatorPoints.get(lowerTangent[0]));
+            System.out.println("vector: ("+normVector[0]+","+normVector[1]+")");
+            float[] lowerVertexXY = TwoDPlaneAlgo.extendWithVector(HyperPlane.getLast().x, HyperPlane.getLast().y,
+                    normVector[0], normVector[1], 10f);
+            System.out.println("x:"+lowerVertexXY[0]+",y:"+lowerVertexXY[1]);
+            Vertex lowerVertex = new Vertex(VDmerge.edges.size(), true, lowerVertexXY[0], lowerVertexXY[1]);
+
+            VDmerge.vertexs.add(lowerVertex);
+//            System.out.println("x:"+VDmerge.vertexs.get(VDmerge.vertexs.size()-1).x);
+
+            // TODO: 找下虛邊
+            int[] lowerTerminal = new int[2];
+            edgeIndexs = VDmerge.edgesAroundPolygon(tangent[0]);
+            for (int edgeIndex : edgeIndexs) {
+                Edge edge = VDmerge.edges.get(edgeIndex);
+                if (edge.real == false) {
+                    lowerTerminal[0] = edgeIndex;
+                }
+            }
+            edgeIndexs = VDmerge.edgesAroundPolygon(tangent[1]);
+            for (int edgeIndex : edgeIndexs) {
+                Edge edge = VDmerge.edges.get(edgeIndex);
+                if (edge.real == false) {
+                    lowerTerminal[1] = edgeIndex;
+                }
+            }
+            // 更新下虛邊
+            {
+                Edge edge = VDmerge.edges.get(lowerTerminal[0]); // 左邊的下虛邊
+                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+
+                if (startVertex.deleted) {
+                    edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                    edge.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edge.ccw_predecessor = lowerTerminal[1]; // 右邊的虛邊
+                } else if (endVertex.deleted) {
+                    edge.end_vertex = VDmerge.vertexs.size()-1;
+                    edge.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edge.ccw_successor = lowerTerminal[1]; // 右邊的虛邊
+                }
+
+                edge = VDmerge.edges.get(lowerTerminal[1]); // 右邊的下虛邊
+                startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                endVertex = VDmerge.vertexs.get(edge.end_vertex);
+
+                if (startVertex.deleted) {
+                    edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                    edge.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edge.cw_predecessor = lowerTerminal[0]; // 左邊的虛邊
+                } else if (endVertex.deleted) {
+                    edge.end_vertex = VDmerge.vertexs.size()-1;
+                    edge.ccw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edge.cw_successor = lowerTerminal[0]; // 左邊的虛邊
+                }
+            }
+
+            // TODO: 建邊
+            {
+                System.out.println("x:"+VDmerge.vertexs.get(VDmerge.vertexs.size()-1).x);
+                Edge edge = new Edge(true, lowerTangent[1], lowerTangent[0], VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2
+                , lowerTerminal[1], lowerTerminal[0], upperEdge[0], upperEdge[1]);
+                VDmerge.edges.add(edge);
+            }
+
+
+
+
+        }
+
+
 
 
 //        System.out.println("左圖 left: "+VDleft.convexHull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.get(VDleft.convexHull.left).getY());
@@ -361,10 +702,7 @@ public class VoronoiAlgo {
 //        System.out.println("右圖 left: "+VDright.convexHull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.get(VDright.convexHull.left).getY());
 //        System.out.println("右圖 right: "+VDright.convexHull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.get(VDright.convexHull.right).getY());
 
-        // TODO: merge generatorPoints
-        // 直接合併就好
-        VDmerge.generatorPoints.addAll(VDleft.generatorPoints);
-        VDmerge.generatorPoints.addAll(VDright.generatorPoints);
+
 
         // TODO: merge convex hull
         // 合併convex hull

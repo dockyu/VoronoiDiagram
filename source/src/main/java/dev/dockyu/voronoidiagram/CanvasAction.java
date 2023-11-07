@@ -65,7 +65,7 @@ public class CanvasAction {
         // 設定edge的顏色
         gc.setStroke(color);
 
-        if (edge.real) { // 如果是真實存在的邊才要畫
+        if (edge.real && !edge.deleted) { // 如果是真實存在的邊才要畫
             Vertex start = vertexs.get(edge.start_vertex); // 起始點
             Vertex end = vertexs.get(edge.end_vertex); // 結束點
             float start_x = start.x; // 起始點的x座標
