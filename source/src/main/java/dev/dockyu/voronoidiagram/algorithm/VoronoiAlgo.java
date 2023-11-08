@@ -397,7 +397,7 @@ public class VoronoiAlgo {
                 int endVertexIndex = VDleft.edges.get(edgeIndex).end_vertex;
                 Vertex startVertex = VDmerge.vertexs.get(startVertexIndex);
                 Vertex endVertex = VDmerge.vertexs.get(endVertexIndex);
-                if (startVertex.terminal && endVertex.terminal) {
+//                if (startVertex.terminal && endVertex.terminal) {
                     // 都是假點，消近的
                     double startDistance = Math.pow(startVertex.x-intersection.x, 2) + Math.pow(startVertex.y-intersection.y, 2);
                     double endDistance = Math.pow(endVertex.x-intersection.x, 2) + Math.pow(endVertex.y-intersection.y, 2);
@@ -408,25 +408,28 @@ public class VoronoiAlgo {
                         endVertex.deleted = true;
                         System.out.println("左圖消點2");
                     }
-                } else if (!startVertex.terminal && !endVertex.terminal) {
-                    // 都不是假點，消右邊的
-                    if (startVertex.x > endVertex.x) {
-                        startVertex.deleted = true;
-                        System.out.println("左圖消點3");
-                    } else {
-                        endVertex.deleted = true;
-                        System.out.println("左圖消點4");
-                    }
-
-                } else if (startVertex.terminal) {
-                    // 只有start是假點，消start
-                    System.out.println("左圖消點5");
-                    startVertex.deleted = true;
-                } else if (endVertex.terminal) {
-                    // 只有end是假點，消end
-                    System.out.println("左圖消點6");
-                    endVertex.deleted = true;
-                }
+//                }
+//                else if (!startVertex.terminal && !endVertex.terminal) {
+//                else {
+//                    // 都不是假點，消右邊的
+//                    if (startVertex.x > endVertex.x) {
+//                        startVertex.deleted = true;
+//                        System.out.println("左圖消點3");
+//                    } else {
+//                        endVertex.deleted = true;
+//                        System.out.println("左圖消點4");
+//                    }
+//
+//                }
+//                else if (startVertex.terminal) {
+//                    // 只有start是假點，消start
+//                    System.out.println("左圖消點5");
+//                    startVertex.deleted = true;
+//                } else if (endVertex.terminal) {
+//                    // 只有end是假點，消end
+//                    System.out.println("左圖消點6");
+//                    endVertex.deleted = true;
+//                }
             } else {
                 // 右圖的交點
                 int edgeIndex = intersection.edgeIndex;
@@ -434,7 +437,7 @@ public class VoronoiAlgo {
                 int endVertexIndex = VDright.edges.get(edgeIndex).end_vertex+leftVertexNums;
                 Vertex startVertex = VDmerge.vertexs.get(startVertexIndex);
                 Vertex endVertex = VDmerge.vertexs.get(endVertexIndex);
-                if (startVertex.terminal && endVertex.terminal) {
+//                if (startVertex.terminal && endVertex.terminal) {
                     // 都是假點，消近的
                     double startDistance = Math.pow(startVertex.x-intersection.x, 2) + Math.pow(startVertex.y-intersection.y, 2);
                     double endDistance = Math.pow(endVertex.x-intersection.x, 2) + Math.pow(endVertex.y-intersection.y, 2);
@@ -445,24 +448,27 @@ public class VoronoiAlgo {
                         endVertex.deleted = true;
                         System.out.println("右圖消點2");
                     }
-                } else if (!startVertex.terminal && !endVertex.terminal) {
-                    // 都不是假點，消右邊的
-                    if (startVertex.x < endVertex.x) {
-                        startVertex.deleted = true;
-                        System.out.println("右圖消點3");
-                    } else {
-                        endVertex.deleted = true;
-                        System.out.println("右圖消點4");
-                    }
-                } else if (startVertex.terminal) {
-                    // 只有start是假點，消start
-                    startVertex.deleted = true;
-                    System.out.println("右圖消點5");
-                } else if (endVertex.terminal) {
-                    // 只有end是假點，消end
-                    endVertex.deleted = true;
-                    System.out.println("右圖消點6");
-                }
+//                }
+//                else if (!startVertex.terminal && !endVertex.terminal) {
+//                else {
+//                    // 都不是假點，消左邊的
+//                    if (startVertex.x < endVertex.x) {
+//                        startVertex.deleted = true;
+//                        System.out.println("右圖消點3");
+//                    } else {
+//                        endVertex.deleted = true;
+//                        System.out.println("右圖消點4");
+//                    }
+//                }
+//                else if (startVertex.terminal) {
+//                    // 只有start是假點，消start
+//                    startVertex.deleted = true;
+//                    System.out.println("右圖消點5");
+//                } else if (endVertex.terminal) {
+//                    // 只有end是假點，消end
+//                    endVertex.deleted = true;
+//                    System.out.println("右圖消點6");
+//                }
             }
         }
 
@@ -490,17 +496,17 @@ public class VoronoiAlgo {
             VDmerge.edges.add(rightEdge);
         }
 
-        // TODO: 消邊
-        for (Edge edge : VDmerge.edges) {
-            if (edge.real) {
-                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
-                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
-                if (startVertex.terminal && endVertex.deleted ||
-                        startVertex.deleted && endVertex.terminal) {
-                    edge.deleted = true;
-                }
-            }
-        }
+//        // TODO: 消邊
+//        for (Edge edge : VDmerge.edges) {
+//            if (edge.real) {
+//                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+//                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+//                if (startVertex.terminal && endVertex.deleted ||
+//                        startVertex.deleted && endVertex.terminal) {
+//                    edge.deleted = true;
+//                }
+//            }
+//        }
 
         // TODO: HP建構
 
@@ -691,12 +697,19 @@ public class VoronoiAlgo {
                 VDmerge.edges.add(edge);
             }
 
-
-
-
         }
 
-
+        // TODO: 消邊
+        for (Edge edge : VDmerge.edges) {
+            if (edge.real) {
+                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                if (startVertex.terminal && endVertex.deleted ||
+                        startVertex.deleted && endVertex.terminal) {
+                    edge.deleted = true;
+                }
+            }
+        }
 
 
 //        System.out.println("左圖 left: "+VDleft.convexHull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.get(VDleft.convexHull.left).getY());
