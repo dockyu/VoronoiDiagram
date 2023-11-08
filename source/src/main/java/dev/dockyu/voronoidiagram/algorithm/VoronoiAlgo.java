@@ -199,36 +199,36 @@ public class VoronoiAlgo {
             // TODO: case2 只有左圖有交點
 //            System.out.println("只有左圖有交點");
 //            System.out.println("左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
-            intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
+            intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, leftIntersectEdgeIndex);
             HyperPlane.add(intersectionFirst);
             leftNextEdge(tangent, leftIntersectEdgeIndex, VDleft); // 左邊找下一個生成點做切線
         } else if (leftIntersectEdgeIndex==-1) {
             // TODO: case3 只有右圖有交點
 //            System.out.println("只有右圖有交點");
 //            System.out.println("右圖交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
-            intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
+            intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, rightIntersectEdgeIndex);
             HyperPlane.add(intersectionFirst);
             rightNextEdge(tangent, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
         } else {
             // TODO: case4 左右圖都有交點
             if (leftIntersection[1]>rightIntersection[1]) {
                 // TODO: case 4-1 左圖交點比較高
-//                System.out.println("左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
-                intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
+                System.out.println("左圖交點比較高，左圖交點: ("+leftIntersection[0]+" "+leftIntersection[1]+")");
+                intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, leftIntersectEdgeIndex);
                 HyperPlane.add(intersectionFirst);
                 leftNextEdge(tangent, leftIntersectEdgeIndex, VDleft); // 左邊找下一個生成點做切線
             } else if (rightIntersection[1]>leftIntersection[1]) {
                 // TODO: case 4-2 右圖交點比較高
 //                System.out.println("右圖交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
-                intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
+                intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, rightIntersectEdgeIndex);
                 HyperPlane.add(intersectionFirst);
                 rightNextEdge(tangent, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
             } else {
                 // TODO: case 4-3 左圖右圖交點一樣高
-                intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, rightIntersectEdgeIndex);
+                intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, leftIntersectEdgeIndex);
                 HyperPlane.add(intersectionFirst);
                 leftNextEdge(tangent, leftIntersectEdgeIndex, VDleft); // 左邊找下一個生成點做切線
-                intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, leftIntersectEdgeIndex);
+                intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, rightIntersectEdgeIndex);
                 HyperPlane.add(intersectionFirst);
                 rightNextEdge(tangent, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
 //                System.out.println("兩圖同時交點: ("+rightIntersection[0]+" "+rightIntersection[1]+")");
@@ -625,10 +625,10 @@ public class VoronoiAlgo {
         {
             // TODO: 建點
             normVector = TwoDPlaneAlgo.getNormalVector(VDright.generatorPoints.get(lowerTangent[1]), VDleft.generatorPoints.get(lowerTangent[0]));
-            System.out.println("vector: ("+normVector[0]+","+normVector[1]+")");
+//            System.out.println("vector: ("+normVector[0]+","+normVector[1]+")");
             float[] lowerVertexXY = TwoDPlaneAlgo.extendWithVector(HyperPlane.getLast().x, HyperPlane.getLast().y,
                     normVector[0], normVector[1], 10f);
-            System.out.println("x:"+lowerVertexXY[0]+",y:"+lowerVertexXY[1]);
+//            System.out.println("x:"+lowerVertexXY[0]+",y:"+lowerVertexXY[1]);
             Vertex lowerVertex = new Vertex(VDmerge.edges.size(), true, lowerVertexXY[0], lowerVertexXY[1]);
 
             VDmerge.vertexs.add(lowerVertex);
@@ -636,15 +636,17 @@ public class VoronoiAlgo {
 
             // TODO: 找下虛邊
             int[] lowerTerminal = new int[2];
-            edgeIndexs = VDmerge.edgesAroundPolygon(tangent[0]);
+            edgeIndexs = VDleft.edgesAroundPolygon(lowerTangent[0]);
             for (int edgeIndex : edgeIndexs) {
+                System.out.println(edgeIndex);
                 Edge edge = VDmerge.edges.get(edgeIndex);
                 if (edge.real == false) {
                     lowerTerminal[0] = edgeIndex;
                 }
             }
-            edgeIndexs = VDmerge.edgesAroundPolygon(tangent[1]);
+            edgeIndexs = VDright.edgesAroundPolygon(lowerTangent[1]);
             for (int edgeIndex : edgeIndexs) {
+                edgeIndex += leftEdgeNums;
                 Edge edge = VDmerge.edges.get(edgeIndex);
                 if (edge.real == false) {
                     lowerTerminal[1] = edgeIndex;
@@ -680,7 +682,7 @@ public class VoronoiAlgo {
                     edge.cw_successor = lowerTerminal[0]; // 左邊的虛邊
                 }
             }
-
+            System.out.println("test5");
             // TODO: 建邊
             {
                 System.out.println("x:"+VDmerge.vertexs.get(VDmerge.vertexs.size()-1).x);
