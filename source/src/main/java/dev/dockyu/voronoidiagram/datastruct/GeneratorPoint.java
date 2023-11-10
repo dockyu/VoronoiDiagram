@@ -9,6 +9,11 @@ public class GeneratorPoint {
         this.y = clickedY;
     }
 
+    public GeneratorPoint(GeneratorPoint other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
     public float getX() { return this.x;}
     public float getY() { return this.y;}
 }
