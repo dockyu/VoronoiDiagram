@@ -22,5 +22,6 @@
       </StackPane>
       <TextArea fx:id="cursorCoordinateArea" layoutX="28.0" layoutY="573.0" prefHeight="29.0" prefWidth="170.0" />
       <TextArea fx:id="taskPointsArea" layoutX="839.0" layoutY="56.0" prefHeight="569.0" prefWidth="157.0" />
+      <Button fx:id="next" layoutX="16.0" layoutY="418.0" mnemonicParsing="false" onAction="#nextTask" text="next" />
    </children>
 </Pane>

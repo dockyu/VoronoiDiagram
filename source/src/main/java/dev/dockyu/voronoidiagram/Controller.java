@@ -43,6 +43,8 @@ public class Controller {
     @FXML
     private Button clear;
     @FXML
+    private Button next;
+    @FXML
     private Canvas canvas;
 
     @FXML
@@ -493,6 +495,24 @@ public class Controller {
         CanvasAction.clear(this.canvas);
         // 更新taskPoints顯示區
         this.updateTaskPointsArea();
+    }
+
+    @FXML
+    protected void nextTask(){
+        System.out.println("Controller.java run()");
+        if (!this.model.tasks.isEmpty()) {
+            // 還有下一個任務
+            // 清除之前的狀態
+            this.model.taskState.clear();
+            this.model.taskPoints.clear();
+            // 載入下一個task
+            this.model.taskPoints = this.model.tasks.poll();
+            // 更新taskPoints顯示區
+            this.updateTaskPointsArea();
+            // 畫出目前的點
+            CanvasAction.clear(this.canvas);
+            CanvasAction.drawGeneratorPoints(this.canvas, this.model.taskPoints);
+        }
     }
 
     @FXML
