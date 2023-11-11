@@ -1,6 +1,7 @@
 package dev.dockyu.voronoidiagram.algorithm;
 
 import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
+import dev.dockyu.voronoidiagram.datastruct.Intersection;
 import dev.dockyu.voronoidiagram.datastruct.Vertex;
 
 public class TwoDPlaneAlgo {
@@ -91,7 +92,7 @@ public class TwoDPlaneAlgo {
     }
 
     // 計算兩點之間的距離
-    private static float distance(float x1, float y1, float x2, float y2) {
+    public static float distance(float x1, float y1, float x2, float y2) {
         return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
@@ -231,5 +232,18 @@ public class TwoDPlaneAlgo {
 
 //        System.out.println("狀況: 有交點");
         return new float[]{x, y};
+    }
+
+    public static float dotProduct(float[] vector1, float[] vector2) {
+        // 檢查向量長度是否相等
+        if (vector1.length != vector2.length) {
+            throw new IllegalArgumentException("向量長度必須相同");
+        }
+
+        float dot = 0;
+        for (int i = 0; i < vector1.length; i++) {
+            dot += vector1[i] * vector2[i];
+        }
+        return dot;
     }
 }

@@ -24,6 +24,10 @@ public class Intersection {
         return side == Side.LEFT;
     }
 
+    public boolean isRight() {
+        return side == Side.RIGHT;
+    }
+
     public void setLeft() {
         this.side = Side.LEFT;
     }
