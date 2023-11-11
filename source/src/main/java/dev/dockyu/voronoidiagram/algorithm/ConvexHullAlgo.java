@@ -1,11 +1,6 @@
 package dev.dockyu.voronoidiagram.algorithm;
 
-import dev.dockyu.voronoidiagram.datastruct.CircularLinkedList;
 import dev.dockyu.voronoidiagram.datastruct.ConvexHull;
-import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ConvexHullAlgo {
 
@@ -36,7 +31,8 @@ public class ConvexHullAlgo {
                     == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
                 // 如果都是無限大或無限小
                 // 左邊有上升就好
-                if (CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY()) {
+                if (CHleft.get(leftNext).getX()>CHleft.get(leftNow).getX()
+                        || (CHleft.get(leftNext).getX()==CHleft.get(leftNow).getX() && CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY())) {
 //                    System.out.println("error1");
 //                    System.out.println(CHleft.get(leftNext).getY() +">"+ CHleft.get(leftNow).getY());
 
@@ -63,7 +59,8 @@ public class ConvexHullAlgo {
                 leftStop = false; // 或許走了這步原本停止的左邊又可以繼續走
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNext))
                     == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
-                if (CHright.get(rightNext).getY()>CHright.get(rightNow).getY()) {
+                if (CHright.get(rightNext).getX()<CHright.get(rightNow).getX()
+                        || (CHright.get(rightNext).getX()==CHright.get(rightNow).getX()&&CHright.get(rightNext).getY()<CHright.get(rightNow).getY())) {
                     // 如果斜率一樣
                     // 右邊有上升就好
 //                    System.out.println("error2");
@@ -116,7 +113,8 @@ public class ConvexHullAlgo {
 
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
                     == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
-                if (CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY()) {
+                if (CHleft.get(leftNext).getX()<CHleft.get(leftNow).getX()
+                        ||(CHleft.get(leftNext).getX()==CHleft.get(leftNow).getX()&&CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY())) {
                     // 如果都是無限大或無限小
                     // 左邊有下降就好
 //                    System.out.println("error3");
@@ -148,7 +146,8 @@ public class ConvexHullAlgo {
                 leftStop = false;
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNext))
                     == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
-                if (CHright.get(rightNext).getY()<CHright.get(rightNow).getY()){
+                if (CHright.get(rightNext).getX()>CHright.get(rightNow).getX()
+                        ||(CHright.get(rightNext).getX()==CHright.get(rightNow).getX()&&CHright.get(rightNext).getY()>CHright.get(rightNow).getY())){
                     // 如果都是無限大或無限小
                     // 右邊有下降就好
 //                    System.out.println("error4");

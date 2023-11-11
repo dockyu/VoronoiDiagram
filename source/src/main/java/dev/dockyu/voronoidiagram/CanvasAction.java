@@ -184,27 +184,23 @@ public class CanvasAction {
 
     // 畫出convexhull
     public static void drawConvexHull(Canvas canvas, ConvexHull convexHull, Color color) {
-        Iterator<GeneratorPoint> iterator = convexHull.hull.circularIterator();
-        if (!iterator.hasNext()) {
-            return; // 空的ConvexHull，直接返回
-        }
-
         GraphicsContext gc = canvas.getGraphicsContext2D();
         // 設定edge的顏色
         gc.setStroke(color);
 
-        // 存儲第一個點以便最後使用
-        GeneratorPoint firstPoint = iterator.next();
-        GeneratorPoint previousPoint = firstPoint;
+        int startIndex = convexHull.right;
+        int GPNowIndex = startIndex;
+        int GPNextIndex = convexHull.getNextIndex(GPNowIndex);
 
-        for (int i = 0; i < convexHull.hull.size(); i++) {
-            GeneratorPoint currentPoint = iterator.next();
-            // 使用previousPoint和currentPoint來畫線
-            gc.strokeLine(previousPoint.getX(), previousPoint.getY(), currentPoint.getX(), currentPoint.getY());
+        do{
+            GeneratorPoint GPNow = convexHull.get(GPNowIndex);
+            GeneratorPoint GPNext = convexHull.get(GPNextIndex);
 
-            // 更新previousPoint為當前點，以供下次迭代使用
-            previousPoint = currentPoint;
-        }
+            gc.strokeLine(GPNow.getX(), GPNow.getY(), GPNext.getX(), GPNext.getY());
+
+            GPNowIndex = GPNextIndex;
+            GPNextIndex = convexHull.getNextIndex(GPNowIndex);
+        }while(GPNowIndex!=startIndex);
     }
 
     // 清空canvas

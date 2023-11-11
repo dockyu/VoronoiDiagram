@@ -129,6 +129,18 @@ public class VoronoiAlgo {
             lowerTangentRightGPIndexInRightVD = lowerTangent[1];
         }
 
+        // TODO: merge convex hull
+        {
+            // 合併convex hull
+            int[] upperTangent = new int[]{upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD};
+            int[] lowerTangent = new int[]{lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD};
+            ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
+            System.out.println("after merge points");
+            for (GeneratorPoint gp : VDmerge.convexHull.hull) {
+                System.out.println(gp.getX()+","+gp.getY());
+            }
+        }
+
         // TODO: 生成上下切線的4的點
         GeneratorPoint upperTangentLeftGP = new GeneratorPoint(
                 VDleft.generatorPoints.get(upperTangentLeftGPIndexInLeftVD)
@@ -266,7 +278,112 @@ public class VoronoiAlgo {
             // TODO: 4種情況
             if (leftIntersectEdgeIndex==-1 && rightIntersectEdgeIndex==-1) {
                 // TODO: case1 左右圖都沒有交點
-                // TODO:
+                {
+                    // TODO: 直接建一條無限邊
+//                    nowTangentLeftGPIndex = 0;
+//                    nowTangentRightGPIndex = 0;
+//                    for (int i=0; i< VDleft.generatorPoints.size(); i++) {
+//                        if (VDleft.generatorPoints.get(i) > VDleft.generatorPoints.get(nowTangentLeftGPIndex))
+//                    }
+                    GeneratorPoint leftGP = VDleft.generatorPoints.get(nowTangentLeftGPIndex);
+                    GeneratorPoint rightGP = VDright.generatorPoints.get(nowTangentRightGPIndex);
+                    // TODO: 建兩個vertex
+                    float midpointX = ( leftGP.getX()+rightGP.getX() ) /2;
+                    float midpointY = ( leftGP.getY()+rightGP.getY() ) /2;
+
+                    float[] upperVertexXY = TwoDPlaneAlgo.extendWithVector(midpointX, midpointY, HPVectorUp[0], HPVectorUp[1], 10f);
+                    Vertex upperVertex = new Vertex(VDmerge.edges.size(), true, upperVertexXY[0], upperVertexXY[1]);
+
+                    float[] lowerVertexXY = TwoDPlaneAlgo.extendWithVector(midpointX, midpointY, HPVectorDown[0], HPVectorDown[1], 10f);
+                    Vertex lowerVertex = new Vertex(VDmerge.edges.size(), true, lowerVertexXY[0], lowerVertexXY[1]);
+
+                    VDmerge.vertexs.add(upperVertex);
+                    VDmerge.vertexs.add(lowerVertex);
+
+                    Edge leftUpEdge = null;
+                    Edge leftDownEdge = null;
+                    Edge rightUpEdge = null;
+                    Edge rightDownEdge = null;
+
+                    // TODO: 找到原始的左虛邊
+                    {
+                        LinkedList<Integer> edgeIndexs = null;
+
+                        edgeIndexs= VDleft.edgesAroundPolygon(nowTangentLeftGPIndex); // 左圖上切線的多邊形的所有邊
+                        for (int edgeIndex : edgeIndexs) {
+                            Edge edge = VDmerge.edges.get(edgeIndex);
+                            if (edge.deleted) {
+                                continue;
+                            }
+                            if (edge.real == false) {
+                                // TODO: 目標虛邊
+                                edge.deleted = true;
+                                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                                float[] midpointToStartVertexVector = new float[]{startVertex.x-midpointX, startVertex.y-midpointY};
+                                float dotProduct = TwoDPlaneAlgo.dotProduct(HPVectorUp, midpointToStartVertexVector);
+                                if (dotProduct > 0) {
+                                    // startvertex 在上(HPVectorUp方向)
+                                    leftUpEdge = new Edge(false, nowTangentLeftGPIndex, VDmerge.polygons.size()-1, edge.start_vertex, VDmerge.vertexs.size()-2
+                                    , edge.cw_predecessor, edge.ccw_predecessor, VDmerge.edges.size()+2, VDmerge.edges.size()+4);
+                                    leftDownEdge = new Edge(false, VDmerge.polygons.size()-1, nowTangentLeftGPIndex, edge.end_vertex, VDmerge.vertexs.size()-1
+                                    , edge.cw_successor, edge.ccw_successor, VDmerge.edges.size()+4, VDmerge.edges.size()+3);
+                                } else {
+                                    // endvertex 在上
+                                    leftUpEdge = new Edge(false, nowTangentLeftGPIndex, VDmerge.polygons.size()-1, edge.end_vertex, VDmerge.vertexs.size()-2
+                                    , edge.cw_successor, edge.ccw_successor, VDmerge.edges.size()+2, VDmerge.edges.size()+4);
+                                    leftDownEdge = new Edge(false, VDmerge.polygons.size()-1, nowTangentLeftGPIndex, edge.start_vertex, VDmerge.vertexs.size()-1
+                                    , edge.cw_predecessor, edge.ccw_predecessor, VDmerge.edges.size()+4, VDmerge.edges.size()+3);
+                                }
+                            }
+                        }
+                    }
+                    // TODO: 找到原始的右虛邊
+                    {
+                        LinkedList<Integer> edgeIndexs = null;
+
+                        edgeIndexs= VDright.edgesAroundPolygon(nowTangentRightGPIndex); // 右圖上切線的多邊形的所有邊
+                        for (int edgeIndex : edgeIndexs) {
+                            edgeIndex += VDleft.edges.size();
+                            Edge edge = VDmerge.edges.get(edgeIndex);
+                            if (edge.deleted) {
+                                continue;
+                            }
+                            if (edge.real == false) {
+                                // TODO: 目標虛邊
+                                edge.deleted = true;
+                                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                                float[] midpointToStartVertexVector = new float[]{startVertex.x-midpointX, startVertex.y-midpointY};
+                                float dotProduct = TwoDPlaneAlgo.dotProduct(HPVectorUp, midpointToStartVertexVector);
+                                if (dotProduct > 0) {
+                                    // startvertex 在上(HPVectorUp方向)
+                                    rightUpEdge = new Edge(false, VDmerge.polygons.size()-1, nowTangentRightGPIndex+VDleft.generatorPoints.size(), edge.start_vertex, VDmerge.vertexs.size()-2
+                                    , edge.cw_predecessor, edge.ccw_predecessor, VDmerge.edges.size()-4, VDmerge.edges.size());
+                                    rightDownEdge = new Edge(false, nowTangentRightGPIndex+VDleft.generatorPoints.size(), VDmerge.polygons.size()-1, edge.end_vertex, VDmerge.vertexs.size()-1
+                                    , edge.cw_successor, edge.ccw_successor, VDmerge.edges.size()+1, VDmerge.edges.size()+4);
+                                } else {
+                                    // endvertex 在上
+                                    rightUpEdge = new Edge(false, VDmerge.polygons.size()-1, nowTangentRightGPIndex+VDleft.generatorPoints.size(), edge.end_vertex, VDmerge.vertexs.size()-2
+                                    , edge.cw_successor, edge.ccw_successor, VDmerge.edges.size()-4, VDmerge.edges.size());
+                                    rightDownEdge = new Edge(false, nowTangentRightGPIndex+VDleft.generatorPoints.size(), VDmerge.polygons.size()-1, edge.start_vertex, VDmerge.vertexs.size()-1
+                                    , edge.cw_predecessor, edge.ccw_predecessor, VDmerge.edges.size()+1, VDmerge.edges.size()+4);
+                                }
+                            }
+                        }
+                    }
+                    Edge perpendicularEdge = new Edge(true, nowTangentRightGPIndex+VDleft.generatorPoints.size(), nowTangentLeftGPIndex, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2
+                    , VDmerge.edges.size()+3, VDmerge.edges.size()+1, VDmerge.edges.size(), VDmerge.edges.size()+2);
+
+                    VDmerge.edges.add(leftUpEdge);
+                    VDmerge.edges.add(leftDownEdge);
+                    VDmerge.edges.add(rightUpEdge);
+                    VDmerge.edges.add(rightDownEdge);
+                    VDmerge.edges.add(perpendicularEdge);
+
+                    voronoiTaskState.add(VDmerge);
+                    return;
+                }
 
             } else if (rightIntersectEdgeIndex==-1) {
                 // TODO: case2 只有左圖有交點
@@ -757,19 +874,6 @@ public class VoronoiAlgo {
 //        System.out.println("右圖 left: "+VDright.convexHull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.get(VDright.convexHull.left).getY());
 //        System.out.println("右圖 right: "+VDright.convexHull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.get(VDright.convexHull.right).getY());
 
-
-
-        // TODO: merge convex hull
-        {
-            // 合併convex hull
-            int[] upperTangent = new int[]{upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD};
-            int[] lowerTangent = new int[]{lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD};
-            ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
-//        System.out.println("after merge points");
-//        for (GeneratorPoint gp : VDmerge.convexHull.hull) {
-//            System.out.println(gp.getX()+","+gp.getY());
-//        }
-        }
 
 
         // merge完成
