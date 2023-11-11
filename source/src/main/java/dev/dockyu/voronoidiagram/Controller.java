@@ -365,30 +365,20 @@ public class Controller {
             this.model.taskPoints = this.model.tasks.poll();
             // 更新taskPoints顯示區
             this.updateTaskPointsArea();
-            // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
-            // merge直到結束(taskState只剩一個voronoi diagram)
-            while ( this.model.taskState.size()>1 ){
-                VoronoiAlgo.merge(this.model.taskState);
-            }
-            // 畫出目前task
-            CanvasAction.drawTaskState(this.canvas, this.model.taskState);
+            // 畫出目前的點
+            CanvasAction.clear(this.canvas);
+            CanvasAction.drawGeneratorPoints(this.canvas, this.model.taskPoints);
         }else if ( this.model.taskPoints.isEmpty() && !this.model.tasks.isEmpty() ) {
             System.out.println("狀況6");
             // 目前task是空的，還沒點或是被clear
             // 還有未來task，此時應該要載入下一個task
             // 載入下一個task
             this.model.taskPoints = this.model.tasks.poll();
-            // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
-            // merge直到結束(taskState只剩一個voronoi diagram)
-            while ( this.model.taskState.size()>1 ){
-                VoronoiAlgo.merge(this.model.taskState);
-            }
-            // 畫出目前task
-            CanvasAction.drawTaskState(this.canvas, this.model.taskState);
+            // 更新taskPoints顯示區
+            this.updateTaskPointsArea();
+            // 畫出目前的點
+            CanvasAction.clear(this.canvas);
+            CanvasAction.drawGeneratorPoints(this.canvas, this.model.taskPoints);
         }else {
             System.out.println("run 有未包含的情況");
         }
@@ -453,32 +443,20 @@ public class Controller {
             this.model.taskPoints = this.model.tasks.poll();
             // 更新taskPoints顯示區
             this.updateTaskPointsArea();
-            // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
-            // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
-            if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
-                // merge一次
-//                VoronoiAlgo.merge(this.model.taskState);
-            }
-            // 畫出目前task
-            CanvasAction.drawTaskState(this.canvas, this.model.taskState);
+            // 畫出目前的點
+            CanvasAction.clear(this.canvas);
+            CanvasAction.drawGeneratorPoints(this.canvas, this.model.taskPoints);
         }else if ( this.model.taskPoints.isEmpty() && !this.model.tasks.isEmpty() ) {
             System.out.println("狀況6");
             // 目前task是空的，還沒點或是被clear
             // 還有未來task，此時應該要載入下一個task
             // 載入下一個task
             this.model.taskPoints = this.model.tasks.poll();
-            // 先divide，用taskPoints建立初始狀態
-            this.sortTaskPoints();
-            VoronoiAlgo.divide(this.model.taskPoints, this.model.taskState, this.model.taskPoints.size());
-            // 搞不好初始狀態就是最終答案，所以要判斷是否可以merge
-            if ( this.model.taskState.size()>1 ) { // 有超過一個的小voronoi diagram可以合併
-                // merge一次
-//                VoronoiAlgo.merge(this.model.taskState);
-            }
-            // 畫出目前task
-            CanvasAction.drawTaskState(this.canvas, this.model.taskState);
+            // 更新taskPoints顯示區
+            this.updateTaskPointsArea();
+            // 畫出目前的點
+            CanvasAction.clear(this.canvas);
+            CanvasAction.drawGeneratorPoints(this.canvas, this.model.taskPoints);
         }else {
             System.out.println("step 有未包含的情況");
         }
