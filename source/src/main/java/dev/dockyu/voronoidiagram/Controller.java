@@ -176,6 +176,10 @@ public class Controller {
             // 目前狀態的所有sub Voronoi Diagram
             for (Edge edge : VD.edges) {
                 // sub Voronoi Diagram的所有edge
+                if (edge.deleted == true) {
+                    System.out.println("刪邊");
+                    continue;
+                }
                 if (edge.real) {
                     // 真實的邊，才需要輸出
                     Vertex start = VD.vertexs.get(edge.start_vertex);
@@ -244,8 +248,13 @@ public class Controller {
                             // 例外情況，相交在角落
                         }
                     }else {
-                        // 此edge沒有在畫布內顯示
+                        // 此edge沒有在畫布內顯示或是封閉存在畫布內
                         System.out.println("exportVoronoi() 狀況3");
+                        if (start_x>0 && start_x<canvasWidth && start_y>0 && start_y<canvasHeight) {
+                            // 封閉線段在畫布內
+                            intersections.add(new float[]{start_x, start_y});
+                            intersections.add(new float[]{end_x, end_y});
+                        }
                     }
                     // 已經將此edge要輸出的部分(兩個點)放入intersections
                     if (intersections.size()==2) {
