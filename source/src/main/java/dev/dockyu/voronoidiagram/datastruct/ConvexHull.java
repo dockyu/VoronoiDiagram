@@ -7,8 +7,15 @@ public class ConvexHull {
     public Integer right; // convex hull最右邊的點
     public Integer left; // convex hull最左邊的點
 
+    public boolean collinear; // 是否所有點共線
+
     public ConvexHull() {
         this.hull = new LinkedList<>();
+        this.collinear = false;
+    }
+
+    public void setCollinear() {
+        this.collinear = true;
     }
 
     public GeneratorPoint get(int index) {

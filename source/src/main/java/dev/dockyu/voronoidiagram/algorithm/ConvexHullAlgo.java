@@ -1,6 +1,7 @@
 package dev.dockyu.voronoidiagram.algorithm;
 
 import dev.dockyu.voronoidiagram.datastruct.ConvexHull;
+import dev.dockyu.voronoidiagram.datastruct.GeneratorPoint;
 
 public class ConvexHullAlgo {
 
@@ -28,7 +29,7 @@ public class ConvexHullAlgo {
                 rightStop = false; // 或許走了這步原本停止的右邊又可以繼續走
 
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
-                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow)) && isCollinear(CHleft, CHright)) {
                 // 如果都是無限大或無限小
                 // 左邊有上升就好
                 if (CHleft.get(leftNext).getX()>CHleft.get(leftNow).getX()
@@ -58,7 +59,7 @@ public class ConvexHullAlgo {
 //                System.out.println("右邊走");
                 leftStop = false; // 或許走了這步原本停止的左邊又可以繼續走
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNext))
-                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow)) && isCollinear(CHleft, CHright)) {
                 if (CHright.get(rightNext).getX()<CHright.get(rightNow).getX()
                         || (CHright.get(rightNext).getX()==CHright.get(rightNow).getX()&&CHright.get(rightNext).getY()<CHright.get(rightNow).getY())) {
                     // 如果斜率一樣
@@ -101,7 +102,7 @@ public class ConvexHullAlgo {
         int rightNext = CHright.getPreviousIndex(rightNow); // 走一步就是退一步
 
         while(true) {
-            // 左邊往回
+            // 左邊往前
             if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
                     > TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
                 // 左邊走一步變好
@@ -112,7 +113,7 @@ public class ConvexHullAlgo {
                 rightStop = false;
 
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
-                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow)) && isCollinear(CHleft, CHright)) {
                 if (CHleft.get(leftNext).getX()<CHleft.get(leftNow).getX()
                         ||(CHleft.get(leftNext).getX()==CHleft.get(leftNow).getX()&&CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY())) {
                     // 如果都是無限大或無限小
@@ -145,7 +146,7 @@ public class ConvexHullAlgo {
 
                 leftStop = false;
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNext))
-                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow))) {
+                    == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow)) && isCollinear(CHleft, CHright)) {
                 if (CHright.get(rightNext).getX()>CHright.get(rightNow).getX()
                         ||(CHright.get(rightNext).getX()==CHright.get(rightNow).getX()&&CHright.get(rightNext).getY()>CHright.get(rightNow).getY())){
                     // 如果都是無限大或無限小
@@ -225,5 +226,24 @@ public class ConvexHullAlgo {
             nowIndex = CHleft.getNextIndex(nowIndex);
         }
 
+        // TODO: 判斷是否共線
+        if (isCollinear(CHleft, CHright)) {
+            CHmerge.setCollinear();
+        }
+
+    }
+
+    private static boolean isCollinear(ConvexHull CHleft, ConvexHull CHright) {
+        // TODO: 判斷是否所有點共線
+        GeneratorPoint leftGPInCHleft = CHleft.hull.get(CHleft.left);
+        GeneratorPoint rightGPInCHleft = CHleft.hull.get(CHleft.right);
+        GeneratorPoint leftGPInCHright = CHright.hull.get(CHleft.left);
+        GeneratorPoint rightGPInCHright = CHright.hull.get(CHleft.right);
+        if (CHleft.collinear && CHright.collinear
+                && (leftGPInCHleft.getY()-rightGPInCHleft.getY())*(leftGPInCHright.getX()-rightGPInCHright.getX()) == (leftGPInCHright.getY()-rightGPInCHright.getY())*(leftGPInCHleft.getX()-rightGPInCHleft.getX())
+                && (rightGPInCHleft.getY()-leftGPInCHright.getY())*(leftGPInCHleft.getX()-rightGPInCHleft.getX()) == (leftGPInCHleft.getY()-rightGPInCHleft.getY())*(rightGPInCHleft.getX()-leftGPInCHright.getX())) {
+            return true;
+        }
+        return false;
     }
 }

@@ -115,7 +115,7 @@ public class VoronoiAlgo {
             }
         }
 
-
+        System.out.println("求上下切線開始");
         // TODO: 求上下切線
         int upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD;
         int lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD;
@@ -128,7 +128,16 @@ public class VoronoiAlgo {
             lowerTangentLeftGPIndexInLeftVD = lowerTangent[0];
             lowerTangentRightGPIndexInRightVD = lowerTangent[1];
         }
-
+        System.out.println("求上下切線結束");
+        GeneratorPoint GP = null;
+        GP = VDleft.generatorPoints.get(upperTangentLeftGPIndexInLeftVD);
+        System.out.println("左上:("+GP.getX()+","+GP.getY()+")");
+        GP = VDright.generatorPoints.get(upperTangentRightGPIndexInRightVD);
+        System.out.println("右上:("+GP.getX()+","+GP.getY()+")");
+        GP = VDleft.generatorPoints.get(lowerTangentLeftGPIndexInLeftVD);
+        System.out.println("左下:("+GP.getX()+","+GP.getY()+")");
+        GP = VDright.generatorPoints.get(lowerTangentRightGPIndexInRightVD);
+        System.out.println("右下:("+GP.getX()+","+GP.getY()+")");
         // TODO: merge convex hull
         {
             // 合併convex hull
@@ -388,6 +397,7 @@ public class VoronoiAlgo {
             } else if (rightIntersectEdgeIndex==-1) {
                 // TODO: case2 只有左圖有交點
                 intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, leftIntersectEdgeIndex);
+                System.out.println("交點("+intersectionFirst.x+","+intersectionFirst.y+")");
                 HyperPlane.add(intersectionFirst);
 
                 { // TODO: 左圖交點消點
@@ -403,6 +413,7 @@ public class VoronoiAlgo {
             } else if (leftIntersectEdgeIndex==-1) {
                 // TODO: case3 只有右圖有交點
                 intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, rightIntersectEdgeIndex);
+                System.out.println("交點("+intersectionFirst.x+","+intersectionFirst.y+")");
                 HyperPlane.add(intersectionFirst);
 
                 { // TODO: 右圖交點消點
@@ -420,6 +431,7 @@ public class VoronoiAlgo {
                 if (leftIntersection[1]>rightIntersection[1]) {
                     // TODO: case 4-1 左圖交點比較高
                     intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, leftIntersectEdgeIndex);
+                    System.out.println("交點("+intersectionFirst.x+","+intersectionFirst.y+")");
                     HyperPlane.add(intersectionFirst);
 
                     { // TODO: 左圖交點消點
@@ -435,6 +447,7 @@ public class VoronoiAlgo {
                 } else if (rightIntersection[1]>leftIntersection[1]) {
                     // TODO: case 4-2 右圖交點比較高
                     intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, rightIntersectEdgeIndex);
+                    System.out.println("交點("+intersectionFirst.x+","+intersectionFirst.y+")");
                     HyperPlane.add(intersectionFirst);
 
                     { // TODO: 右圖交點消點
@@ -451,6 +464,7 @@ public class VoronoiAlgo {
                 } else {
                     // TODO: case 4-3 左圖右圖交點一樣高
                     intersectionFirst = new Intersection(leftIntersection[0], leftIntersection[1], Intersection.Side.LEFT, leftIntersectEdgeIndex);
+                    System.out.println("交點("+intersectionFirst.x+","+intersectionFirst.y+")");
                     HyperPlane.add(intersectionFirst);
                     { // TODO: 左圖交點消點
                         Edge intersectionEdge = VDleft.edges.get(intersectionFirst.edgeIndex);
@@ -461,6 +475,7 @@ public class VoronoiAlgo {
                         deleteVertex(intersectionFirst, leftGP, rightGP, startVertex, endVertex);
                     }
                     intersectionFirst = new Intersection(rightIntersection[0], rightIntersection[1], Intersection.Side.RIGHT, rightIntersectEdgeIndex);
+                    System.out.println("交點("+intersectionFirst.x+","+intersectionFirst.y+")");
                     HyperPlane.add(intersectionFirst);
                     { // TODO: 右圖交點消點
                         Edge intersectionEdge = VDright.edges.get(intersectionFirst.edgeIndex);
@@ -535,6 +550,10 @@ public class VoronoiAlgo {
                     if (tempIntersection == null) { // 沒有交點
                         continue;
                     }
+                    // TODO: 上一筆左右都有交點，這一次要忽略
+                    if (tempIntersection[0]==HyperPlane.getLast().x && tempIntersection[1]==HyperPlane.getLast().y) {
+                        continue;
+                    }
                     // TODO: 判斷左圖的此交點有沒有比較高
                     if (tempIntersection[1] > intersectionLeft.y) {
 //                    System.out.println("左邊有更新");
@@ -566,6 +585,10 @@ public class VoronoiAlgo {
                     float[] tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(startPoint, HPVectorDown, startVertex, endVertex);
                     // TODO: 判斷有沒有交點
                     if (tempIntersection == null) { // 沒有交點
+                        continue;
+                    }
+                    // TODO: 上一筆左右都有交點，這一次要忽略
+                    if (tempIntersection[0]==HyperPlane.getLast().x && tempIntersection[1]==HyperPlane.getLast().y) {
                         continue;
                     }
                     // TODO: 判斷右圖的此交點有沒有比較高
@@ -632,7 +655,7 @@ public class VoronoiAlgo {
                     HyperPlane.add(intersectionRight);
                     nowTangentRightGPIndex = rightNextEdge(nowTangentRightGPIndex, intersectionRight.edgeIndex, VDright);  // 右邊找下一個生成點做切線
                 }
-
+//                System.out.println("交點("+HyperPlane.getLast().x+","+HyperPlane.getLast().y+")");
             }
         }
 

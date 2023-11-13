@@ -74,7 +74,7 @@ public class VoronoiBaseCase {
                 v3_y = (float) (midPoint12_y - delta * Math.sin(angle));
             }
             
-            // 建構三點共線的Voronoi Diagram
+            // TODO: 建構三點共線的Voronoi Diagram
 
             // generator point
             VD.generatorPoints.add(gp0);
@@ -121,6 +121,8 @@ public class VoronoiBaseCase {
             VD.convexHull.hull.add(gp2);
             VD.convexHull.left = 0;
             VD.convexHull.right = 2;
+
+            VD.convexHull.setCollinear();
 
         } else {
             // TODO: 三點不共線
@@ -303,6 +305,8 @@ public class VoronoiBaseCase {
         VD.convexHull.hull.add(gp1);
         VD.convexHull.left = 0;
         VD.convexHull.right = 1;
+
+        VD.convexHull.setCollinear();
 
 //        System.out.println("convex hull left: "+VD.convexHull.get(VD.convexHull.left).getX()+","+VD.convexHull.get(VD.convexHull.left).getY());
 //        System.out.println("convex hull right: "+VD.convexHull.get(VD.convexHull.right).getX()+","+VD.convexHull.get(VD.convexHull.right).getY());
