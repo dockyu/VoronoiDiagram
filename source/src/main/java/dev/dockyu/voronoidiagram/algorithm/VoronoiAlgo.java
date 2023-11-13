@@ -115,12 +115,13 @@ public class VoronoiAlgo {
             }
         }
 
-        System.out.println("求上下切線開始");
+//        System.out.println("求上下切線開始");
         // TODO: 求上下切線
         int upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD;
         int lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD;
         {
 //            System.out.println("find Tangent");
+            System.out.println("右邊convex hull left:("+VDright.convexHull.hull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.left).getY()+")");
             int[] upperTangent = ConvexHullAlgo.getUpperTangent(VDleft.convexHull, VDright.convexHull);
             upperTangentLeftGPIndexInLeftVD = upperTangent[0];
             upperTangentRightGPIndexInRightVD = upperTangent[1];
@@ -128,15 +129,15 @@ public class VoronoiAlgo {
             lowerTangentLeftGPIndexInLeftVD = lowerTangent[0];
             lowerTangentRightGPIndexInRightVD = lowerTangent[1];
         }
-        System.out.println("求上下切線結束");
+        System.out.println("上下切線");
         GeneratorPoint GP = null;
-        GP = VDleft.generatorPoints.get(upperTangentLeftGPIndexInLeftVD);
+        GP = VDleft.convexHull.hull.get(upperTangentLeftGPIndexInLeftVD);
         System.out.println("左上:("+GP.getX()+","+GP.getY()+")");
-        GP = VDright.generatorPoints.get(upperTangentRightGPIndexInRightVD);
+        GP = VDright.convexHull.hull.get(upperTangentRightGPIndexInRightVD);
         System.out.println("右上:("+GP.getX()+","+GP.getY()+")");
-        GP = VDleft.generatorPoints.get(lowerTangentLeftGPIndexInLeftVD);
+        GP = VDleft.convexHull.hull.get(lowerTangentLeftGPIndexInLeftVD);
         System.out.println("左下:("+GP.getX()+","+GP.getY()+")");
-        GP = VDright.generatorPoints.get(lowerTangentRightGPIndexInRightVD);
+        GP = VDright.convexHull.hull.get(lowerTangentRightGPIndexInRightVD);
         System.out.println("右下:("+GP.getX()+","+GP.getY()+")");
         // TODO: merge convex hull
         {
@@ -144,10 +145,10 @@ public class VoronoiAlgo {
             int[] upperTangent = new int[]{upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD};
             int[] lowerTangent = new int[]{lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD};
             ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
-            System.out.println("after merge points");
-            for (GeneratorPoint gp : VDmerge.convexHull.hull) {
-                System.out.println(gp.getX()+","+gp.getY());
-            }
+//            System.out.println("after merge points");
+//            for (GeneratorPoint gp : VDmerge.convexHull.hull) {
+//                System.out.println(gp.getX()+","+gp.getY());
+//            }
         }
 
         // TODO: 生成上下切線的4的點
@@ -751,7 +752,7 @@ public class VoronoiAlgo {
                 // 建點
                 Intersection intersection = HyperPlane.get(i);
                 Vertex vertex = new Vertex(VDmerge.edges.size(), false, intersection.x, intersection.y);
-                System.out.println("新的vertex:("+vertex.x+","+vertex.y+")");
+//                System.out.println("新的vertex:("+vertex.x+","+vertex.y+")");
                 VDmerge.vertexs.add(vertex);
                 if (intersection.isLeft()) {
                     int updateEdgeIndex = intersection.edgeIndex;
@@ -969,7 +970,7 @@ public class VoronoiAlgo {
         } else {
             // intersection不在vertex1和vertex2之間
             // 計算到每個頂點的距離
-            System.out.println("intersection不在vertex1和vertex2之間");
+//            System.out.println("intersection不在vertex1和vertex2之間");
             double distanceToVertex1 = distance(intersectionX, intersectionY, vertex1.x, vertex1.y);
             double distanceToVertex2 = distance(intersectionX, intersectionY, vertex2.x, vertex2.y);
 
@@ -977,26 +978,26 @@ public class VoronoiAlgo {
             if (distanceToVertex1 > distanceToVertex2) {
                 // vertex1離intersection更遠
                 if (vertex2.terminal) {
-                    System.out.println("延伸("+vertex2.x+","+vertex2.y+")");
+//                    System.out.println("延伸("+vertex2.x+","+vertex2.y+")");
                     // 計算延伸點
                     float[] extendedPoint = TwoDPlaneAlgo.extendWithVector(intersection.x, intersection.y,
                             intersection.x - vertex2.x, intersection.y - vertex2.y, 10f);
                     // 更新vertex2的位置
                     vertex2.x = extendedPoint[0];
                     vertex2.y = extendedPoint[1];
-                    System.out.println("變成("+vertex2.x+","+vertex2.y+")");
+//                    System.out.println("變成("+vertex2.x+","+vertex2.y+")");
                 }
             } else {
                 // vertex2離intersection更遠
                 if (vertex1.terminal) {
-                    System.out.println("延伸("+vertex1.x+","+vertex1.y+")");
+//                    System.out.println("延伸("+vertex1.x+","+vertex1.y+")");
                     // 計算延伸點
                     float[] extendedPoint = TwoDPlaneAlgo.extendWithVector(intersection.x, intersection.y,
                             intersection.x - vertex1.x, intersection.y - vertex1.y, 10f);
                     // 更新vertex2的位置
                     vertex1.x = extendedPoint[0];
                     vertex1.y = extendedPoint[1];
-                    System.out.println("變成("+vertex1.x+","+vertex1.y+")");
+//                    System.out.println("變成("+vertex1.x+","+vertex1.y+")");
                 }
             }
         }

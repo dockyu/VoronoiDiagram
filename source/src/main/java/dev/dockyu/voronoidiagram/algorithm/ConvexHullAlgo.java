@@ -67,16 +67,17 @@ public class ConvexHullAlgo {
 //                    System.out.println("error2");
                     rightNow = rightNext; // 走一步
                     rightNext = CHright.getNextIndex(rightNow); // 走一步
-//                System.out.println("右邊走");
+//                    System.out.println("右邊走");
                     leftStop = false; // 或許走了這步原本停止的左邊又可以繼續走
                 } else {
                     // 右邊走一步變差
-//                System.out.println("右邊停");
+//                    System.out.println("右邊停");
                     rightStop = true; // 右邊停止
                 }
 
             } else {
                 // 右邊走一步變差
+//                System.out.println("右邊點"+rightNow);
 //                System.out.println("右邊停");
                 rightStop = true; // 右邊停止
             }
@@ -88,6 +89,7 @@ public class ConvexHullAlgo {
             }
         }
         // 左邊的index 右邊的index
+//        System.out.println("右邊點"+rightNow);
         return new int[]{leftNow, rightNow};
     }
 
