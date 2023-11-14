@@ -49,9 +49,9 @@ public class VoronoiAlgo {
             VDright = voronoiTaskState.poll();
         }
 
-        for (Vertex vertex : VDright.vertexs) {
-            System.out.println("("+vertex.x+","+vertex.y+")");
-        }
+//        for (Vertex vertex : VDright.vertexs) {
+//            System.out.println("("+vertex.x+","+vertex.y+")");
+//        }
 
         VoronoiDiagram VDmerge = new VoronoiDiagram();
         // TODO: merge開始
@@ -76,7 +76,7 @@ public class VoronoiAlgo {
                 VDmerge.polygons.add(rightPolygon);
             }
         }
-
+//        System.out.println("polygon數量:"+VDmerge.polygons.size());
         // TODO: 合併 vertex
         {
             for (Vertex vertex : VDleft.vertexs) {
@@ -100,11 +100,18 @@ public class VoronoiAlgo {
                     leftEdge.right_polygon = VDmerge.polygons.size()-1;
                 }
                 VDmerge.edges.add(leftEdge);
+                Vertex startVertex = VDmerge.vertexs.get(leftEdge.start_vertex);
+                Vertex endVertex = VDmerge.vertexs.get(leftEdge.end_vertex);
+                System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
+                System.out.println("左polygon "+edge.left_polygon);
+                System.out.println("右polygon "+edge.right_polygon);
+                System.out.println("-------");
+
             }
             for (Edge edge : VDright.edges) {
                 Edge rightEdge = new Edge(edge);
-                rightEdge.right_polygon += (VDleft.polygons.size()-1);
-                rightEdge.left_polygon += (VDleft.polygons.size()-1);
+                rightEdge.right_polygon += (VDleft.generatorPoints.size());
+                rightEdge.left_polygon += (VDleft.generatorPoints.size());
                 rightEdge.start_vertex += VDleft.vertexs.size();
                 rightEdge.end_vertex += VDleft.vertexs.size();
                 rightEdge.ccw_predecessor += VDleft.edges.size();
@@ -121,7 +128,7 @@ public class VoronoiAlgo {
         int lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD;
         {
 //            System.out.println("find Tangent");
-            System.out.println("右邊convex hull left:("+VDright.convexHull.hull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.left).getY()+")");
+//            System.out.println("右邊convex hull left:("+VDright.convexHull.hull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.left).getY()+")");
             int[] upperTangent = ConvexHullAlgo.getUpperTangent(VDleft.convexHull, VDright.convexHull);
             upperTangentLeftGPIndexInLeftVD = upperTangent[0];
             upperTangentRightGPIndexInRightVD = upperTangent[1];
@@ -129,16 +136,48 @@ public class VoronoiAlgo {
             lowerTangentLeftGPIndexInLeftVD = lowerTangent[0];
             lowerTangentRightGPIndexInRightVD = lowerTangent[1];
         }
-        System.out.println("上下切線");
+//        System.out.println("上下切線");
         GeneratorPoint GP = null;
         GP = VDleft.convexHull.hull.get(upperTangentLeftGPIndexInLeftVD);
-        System.out.println("左上:("+GP.getX()+","+GP.getY()+")");
+//        System.out.println("左上test:("+GP.getX()+","+GP.getY()+")");
+        for (int i=0; i<VDleft.generatorPoints.size(); i++) {
+            GeneratorPoint GPnow = VDleft.generatorPoints.get(i);
+            if (GP.getX()==GPnow.getX()&&GP.getY()==GPnow.getY()) {
+                upperTangentLeftGPIndexInLeftVD = i;
+//                System.out.println("找到左上");
+            }
+        }
+
         GP = VDright.convexHull.hull.get(upperTangentRightGPIndexInRightVD);
-        System.out.println("右上:("+GP.getX()+","+GP.getY()+")");
+//        System.out.println("右上test:("+GP.getX()+","+GP.getY()+")");
+        for (int i=0; i<VDright.generatorPoints.size(); i++) {
+            GeneratorPoint GPnow = VDright.generatorPoints.get(i);
+//            System.out.println("嘗試找右上");
+            if (GP.getX()==GPnow.getX()&&GP.getY()==GPnow.getY()) {
+                upperTangentRightGPIndexInRightVD = i;
+//                System.out.println("找到右上");
+            }
+        }
+
+
         GP = VDleft.convexHull.hull.get(lowerTangentLeftGPIndexInLeftVD);
-        System.out.println("左下:("+GP.getX()+","+GP.getY()+")");
+//        System.out.println("左下:("+GP.getX()+","+GP.getY()+")");
+        for (int i=0; i<VDleft.generatorPoints.size(); i++) {
+            GeneratorPoint GPnow = VDleft.generatorPoints.get(i);
+            if (GP.getX()==GPnow.getX()&&GP.getY()==GPnow.getY()) {
+                lowerTangentLeftGPIndexInLeftVD = i;
+            }
+        }
+
         GP = VDright.convexHull.hull.get(lowerTangentRightGPIndexInRightVD);
-        System.out.println("右下:("+GP.getX()+","+GP.getY()+")");
+//        System.out.println("右下test:("+GP.getX()+","+GP.getY()+")");
+        for (int i=0; i<VDright.generatorPoints.size(); i++) {
+            GeneratorPoint GPnow = VDright.generatorPoints.get(i);
+            if (GP.getX()==GPnow.getX()&&GP.getY()==GPnow.getY()) {
+                lowerTangentRightGPIndexInRightVD = i;
+            }
+        }
+
         // TODO: merge convex hull
         {
             // 合併convex hull
@@ -165,6 +204,17 @@ public class VoronoiAlgo {
                 VDright.generatorPoints.get(lowerTangentRightGPIndexInRightVD)
         );
 
+//        System.out.println("左convexhull left("+VDleft.convexHull.hull.get(VDleft.convexHull.left).getX()+","+VDleft.convexHull.hull.get(VDleft.convexHull.left).getY()+")");
+//        System.out.println("左convexhull right("+VDleft.convexHull.hull.get(VDleft.convexHull.right).getX()+","+VDleft.convexHull.hull.get(VDleft.convexHull.right).getY()+")");
+//        System.out.println("右convexhull left("+VDright.convexHull.hull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.left).getY()+")");
+//        System.out.println("右convexhull right("+VDright.convexHull.hull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.right).getY()+")");
+//
+//        System.out.println("左上("+upperTangentLeftGP.getX()+","+upperTangentLeftGP.getY()+")");
+        System.out.println("右上GP index:"+upperTangentRightGPIndexInRightVD);
+        System.out.println("右上("+upperTangentRightGP.getX()+","+upperTangentRightGP.getY()+")");
+//        System.out.println("左下("+lowerTangentLeftGP.getX()+","+lowerTangentLeftGP.getY()+")");
+//        System.out.println("右下("+lowerTangentRightGP.getX()+","+lowerTangentRightGP.getY()+")");
+
 
         // TODO: 找上切線的中垂線
         float[] midpointOfUpperTangent = new float[]{ // 上切線中點，也是中垂線上一點
@@ -178,6 +228,7 @@ public class VoronoiAlgo {
 //        System.out.println("find terminal vertex");
         LinkedList<Integer> terminalVertexsInLeftVDIndex = VDleft.vertexsAroundPolygon(VDleft.generatorPoints.size()); // 左圖外圍的所有點
         LinkedList<Integer> terminalVertexsInRightVDIndex = VDright.vertexsAroundPolygon(VDright.generatorPoints.size()); // 右圖外圍的所有點
+//        System.out.println("右圖外圍的所有點的數量:"+terminalVertexsInRightVDIndex.size());
 
         // TODO: 找所有無限延伸的邊
         LinkedList<Integer> infinityEdgesInLeftVDIndex = new LinkedList<>(); // 左圖無限延伸的邊
@@ -190,6 +241,9 @@ public class VoronoiAlgo {
                 edgesAroundVertexIndex = VDleft.edgesAroundVertex(terminalVertexIndex); // 無限點旁的所有邊
                 for (int infinityEdgeIndex : edgesAroundVertexIndex) {
                     Edge infinityEdge = VDleft.edges.get(infinityEdgeIndex);
+                    if (infinityEdge.deleted == true) {
+                        continue;
+                    }
                     if (infinityEdge.real == true) {
                         infinityEdgesInLeftVDIndex.add(infinityEdgeIndex);
                     }
@@ -200,16 +254,29 @@ public class VoronoiAlgo {
                 edgesAroundVertexIndex = VDright.edgesAroundVertex(terminalVertexIndex);
                 for ( int infinityEdgeIndex : edgesAroundVertexIndex) {
                     Edge infinityEdge = VDright.edges.get(infinityEdgeIndex);
-                    infinityEdgesInRightVDIndex.add(infinityEdgeIndex);
+                    if (infinityEdge.deleted == true) {
+                        continue;
+                    }
+                    if (infinityEdge.real == true) {
+                        infinityEdgesInRightVDIndex.add(infinityEdgeIndex);
+                    }
+
                 }
             }
 
         }
+        System.out.println("左邊無限edge數量:"+infinityEdgesInLeftVDIndex.size());
+        System.out.println("右邊無限edge數量:"+infinityEdgesInRightVDIndex.size());
+
+        infinityEdgesInLeftVDIndex = VDleft.edgesAroundPolygon(upperTangentLeftGPIndexInLeftVD);
+        infinityEdgesInRightVDIndex = VDright.edgesAroundPolygon(upperTangentRightGPIndexInRightVD);
 
         // TODO: 判斷無限延伸線是不是會和HP相交
         LinkedList<Intersection> HyperPlane = new LinkedList<>();
         int nowTangentLeftGPIndex = upperTangentLeftGPIndexInLeftVD; // 目前中垂線的左圖生成點
         int nowTangentRightGPIndex = upperTangentRightGPIndexInRightVD; // 目前中垂線的右圖生成點
+        System.out.println("左圖Polygon編號:"+nowTangentLeftGPIndex);
+        System.out.println("右圖Polygon編號:"+nowTangentRightGPIndex);
         {
             int leftIntersectEdgeIndex = -1; // 左圖有最高交點的邊
             float[] leftIntersection = new float[]{0, Float.NEGATIVE_INFINITY}; // 左圖最高的交點
@@ -260,6 +327,8 @@ public class VoronoiAlgo {
                 if (infinityEdge.real == false) { // 是假的邊
                     continue;
                 }
+                System.out.println("右圖找到一條edge");
+                System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
                 // TODO: 判斷有沒有交點
                 // 把HP分成兩次求交點
                 tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(midpointOfUpperTangent, HPVectorUp, startVertex, endVertex);
@@ -459,7 +528,7 @@ public class VoronoiAlgo {
                         GeneratorPoint rightGP = VDright.generatorPoints.get(nowTangentRightGPIndex);
                         deleteVertex(intersectionFirst, leftGP, rightGP, startVertex, endVertex);
                     }
-
+                    System.out.println("右邊找下一個生成點做切線");
                     nowTangentRightGPIndex = rightNextEdge(nowTangentRightGPIndex, rightIntersectEdgeIndex, VDright);  // 右邊找下一個生成點做切線
 
                 } else {
@@ -492,6 +561,16 @@ public class VoronoiAlgo {
             }
         }
 
+        if (HyperPlane.getLast().isLeft()) {
+            System.out.println("交於左圖");
+            Vertex s = VDleft.vertexs.get(VDleft.edges.get(HyperPlane.getLast().edgeIndex).start_vertex);
+            Vertex e = VDleft.vertexs.get(VDleft.edges.get(HyperPlane.getLast().edgeIndex).end_vertex);
+            System.out.println("有交點的edge:"+s.x+","+s.y+")");
+            System.out.println("有交點的edge:"+e.x+","+e.y+")");
+            System.out.println("交點:("+HyperPlane.getLast().x+","+HyperPlane.getLast().y+")");
+        } else if (HyperPlane.getLast().isRight()) {
+            System.out.println("交於右圖");
+        }
 
 
         // TODO: 一直找下一個交點
@@ -506,6 +585,8 @@ public class VoronoiAlgo {
             while (nowTangentLeftGPIndex!=lowerTangentLeftGPIndexInLeftVD || nowTangentRightGPIndex!=lowerTangentRightGPIndexInRightVD) {
 //            System.out.println("LowerTangent 左:"+lowerTangent[0]+" 右:"+lowerTangent[1]);
 //            System.out.println("現在切線 左:"+tangent[0]+" 右:"+tangent[1]);
+                System.out.println("左圖Polygon編號:"+nowTangentLeftGPIndex);
+                System.out.println("右圖Polygon編號:"+nowTangentRightGPIndex);
 
                 // TODO: 找下一條中垂線
                 // 中垂線出發點，中垂線由剛剛的交點出發
@@ -514,7 +595,7 @@ public class VoronoiAlgo {
                 HPVectorDown = TwoDPlaneAlgo.getNormalVector(
                         VDright.generatorPoints.get(nowTangentRightGPIndex), VDleft.generatorPoints.get(nowTangentLeftGPIndex)
                 );
-//            System.out.println("中垂向量 ("+HPVectorDown[0]+","+HPVectorDown[1]+")");
+                System.out.println("下一條中垂線的向量 ("+HPVectorDown[0]+","+HPVectorDown[1]+")");
 
                 // TODO: 找有可能與中垂線相交的邊
                 leftPossibleEdges.clear();
@@ -524,7 +605,7 @@ public class VoronoiAlgo {
 //                System.out.println("左圖有可能與中垂線相交的邊數量: "+leftPossibleEdges.size());
                 // TODO: 找右圖有可能與中垂線相交的邊
                 rightPossibleEdges = VDright.edgesAroundPolygon(nowTangentRightGPIndex);
-//                System.out.println("右圖有可能與中垂線相交的邊數量: "+rightPossibleEdges.size());
+                System.out.println("右圖有可能與中垂線相交的邊數量: "+rightPossibleEdges.size());
 
                 // TODO: 找最高交點
                 intersectionLeft = new Intersection(0, Float.NEGATIVE_INFINITY, Intersection.Side.LEFT, -1);
@@ -543,6 +624,7 @@ public class VoronoiAlgo {
                     if (leftEdge.real == false) {
                         continue;
                     }
+                    System.out.println("左圖的polygon找到一條edge");
                     Vertex startVertex = VDleft.vertexs.get(leftEdge.start_vertex);
                     Vertex endVertex = VDleft.vertexs.get(leftEdge.end_vertex);
 
@@ -568,7 +650,7 @@ public class VoronoiAlgo {
                 }
                 // TODO: 右圖找最高交點
                 for (int rightEdgeIndex : rightPossibleEdges) {
-                    if (!HyperPlane.getLast().isLeft() && rightEdgeIndex == HyperPlane.getLast().edgeIndex) {
+                    if (HyperPlane.getLast().isRight() && rightEdgeIndex == HyperPlane.getLast().edgeIndex) {
                         // 出發點不算
                         continue;
                     }
@@ -580,12 +662,14 @@ public class VoronoiAlgo {
                     if (rightEdge.real == false) {
                         continue;
                     }
-
+                    System.out.println("右圖的polygon找到一條edge");
                     Vertex startVertex = VDright.vertexs.get(rightEdge.start_vertex);
                     Vertex endVertex = VDright.vertexs.get(rightEdge.end_vertex);
+                    System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
                     float[] tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(startPoint, HPVectorDown, startVertex, endVertex);
                     // TODO: 判斷有沒有交點
                     if (tempIntersection == null) { // 沒有交點
+                        System.out.println("沒有交點");
                         continue;
                     }
                     // TODO: 上一筆左右都有交點，這一次要忽略
@@ -606,6 +690,13 @@ public class VoronoiAlgo {
                 // TODO: 比較左右誰比較高，放進HP
 //                System.out.println(intersectionLeft.x+","+intersectionLeft.y);
 //                System.out.println(intersectionRight.x+","+intersectionRight.y);
+                if (intersectionLeft.edgeIndex==-1) {
+                    System.out.println("左圖找不到交點");
+                }
+                if (intersectionRight.edgeIndex==-1) {
+                    System.out.println("右圖找不到交點");
+                }
+
                 if (intersectionLeft.y > intersectionRight.y) {
                     // 左邊先有交點
 //                    System.out.println("左邊先有交點");
@@ -656,7 +747,7 @@ public class VoronoiAlgo {
                     HyperPlane.add(intersectionRight);
                     nowTangentRightGPIndex = rightNextEdge(nowTangentRightGPIndex, intersectionRight.edgeIndex, VDright);  // 右邊找下一個生成點做切線
                 }
-//                System.out.println("交點("+HyperPlane.getLast().x+","+HyperPlane.getLast().y+")");
+                System.out.println("交點("+HyperPlane.getLast().x+","+HyperPlane.getLast().y+")");
             }
         }
 
@@ -673,6 +764,8 @@ public class VoronoiAlgo {
         int previousEdgeNums = VDmerge.edges.size();
         nowTangentLeftGPIndex = upperTangentLeftGPIndexInLeftVD;
         nowTangentRightGPIndex = upperTangentRightGPIndexInRightVD;
+        GeneratorPoint GPleftup = VDleft.generatorPoints.get(upperTangentLeftGPIndexInLeftVD);
+        System.out.println("左圖上切線的GP: index "+upperTangentLeftGPIndexInLeftVD+" :("+GPleftup.getX()+","+GPleftup.getY()+")");
 
         // TODO: 建立上無限點
         {
@@ -680,6 +773,7 @@ public class VoronoiAlgo {
             float upperTerminalVertexXY[] = TwoDPlaneAlgo.extendWithVector(HyperPlane.get(0).x, HyperPlane.get(0).y,
                     normVector[0], normVector[1], 10f);
             Vertex upperTerminalVertex = new Vertex(previousEdgeNums, true, upperTerminalVertexXY[0], upperTerminalVertexXY[1]);
+            System.out.println("上無限點座標 ("+upperTerminalVertex.x+","+upperTerminalVertex.y+")");
             VDmerge.vertexs.add(upperTerminalVertex);
         }
 
@@ -692,8 +786,10 @@ public class VoronoiAlgo {
 
             edgeIndexs= VDleft.edgesAroundPolygon(upperTangentLeftGPIndexInLeftVD); // 左圖上切線的多邊形的所有邊
 
+            System.out.println("左Polygon的所有邊");
             // 左圖虛邊更新
             for (int edgeIndex : edgeIndexs) {
+                System.out.println(edgeIndex+",");
                 if (VDmerge.edges.get(edgeIndex).real==false) {
                     upperTerminal[0] = edgeIndex;
                 }
@@ -712,6 +808,12 @@ public class VoronoiAlgo {
                 Edge edge = VDmerge.edges.get(upperTerminal[0]); // 左邊的上虛邊
                 Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
                 Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+
+                System.out.println("左圖上虛邊index"+upperTerminal[0]);
+                System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
+                System.out.println("左polygon "+edge.left_polygon);
+                System.out.println("右polygon "+edge.right_polygon);
+                System.out.println("-------");
 
                 if (startVertex.deleted) {
                     edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
@@ -747,7 +849,6 @@ public class VoronoiAlgo {
         {
             nowTangentLeftGPIndex = upperTangentLeftGPIndexInLeftVD;
             nowTangentRightGPIndex = upperTangentRightGPIndexInRightVD;
-
             for (int i=0; i<HyperPlane.size(); i++) {
                 // 建點
                 Intersection intersection = HyperPlane.get(i);
@@ -769,12 +870,20 @@ public class VoronoiAlgo {
                         updateEdge.ccw_successor = VDmerge.edges.size()+1;
                     }
 
-                    Edge edge = new Edge(true, nowTangentRightGPIndex + (VDleft.polygons.size()-1), nowTangentLeftGPIndex, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2,
-                            updateEdgeIndex, VDmerge.edges.size()+1, upperEdge[0], upperEdge[1]);
+                    Edge edge = new Edge(true, nowTangentRightGPIndex + VDleft.generatorPoints.size(), nowTangentLeftGPIndex, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2, VDmerge.edges.size()+1, updateEdgeIndex, upperEdge[0], upperEdge[1]);
+
+                    System.out.println("建立新的edge");
+                    Vertex ss = VDmerge.vertexs.get(edge.start_vertex);
+                    Vertex ee = VDmerge.vertexs.get(edge.end_vertex);
+                    System.out.println("從("+ss.x+","+ss.y+")到("+ee.x+","+ee.y+")");
+                    System.out.println("左polygon "+edge.left_polygon);
+                    System.out.println("右polygon "+edge.right_polygon);
+                    System.out.println("-------");
+
                     VDmerge.edges.add(edge);
                     upperEdge[0] = updateEdgeIndex;
                     upperEdge[1] = VDmerge.edges.size()-1;
-                    nowTangentLeftGPIndex = leftNextEdge(nowTangentLeftGPIndex, updateEdgeIndex, VDmerge);
+                    nowTangentLeftGPIndex = leftNextEdge(nowTangentLeftGPIndex, intersection.edgeIndex, VDleft);
                 } else if (intersection.isRight()) {
                     int updateEdgeIndex = intersection.edgeIndex+VDleft.edges.size();
                     Edge updateEdge = VDmerge.edges.get(updateEdgeIndex);
@@ -791,12 +900,20 @@ public class VoronoiAlgo {
                         updateEdge.cw_successor = VDmerge.edges.size()+1;
                     }
 
-                    Edge edge = new Edge(true, nowTangentRightGPIndex+(VDleft.polygons.size()-1), nowTangentLeftGPIndex, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2,
-                            VDmerge.edges.size()+1, updateEdgeIndex, upperEdge[0], upperEdge[1]);
+                    Edge edge = new Edge(true, nowTangentRightGPIndex+VDleft.generatorPoints.size(), nowTangentLeftGPIndex, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2, updateEdgeIndex, VDmerge.edges.size()+1, upperEdge[0], upperEdge[1]);
+
+                    System.out.println("建立新的edge");
+                    Vertex ss = VDmerge.vertexs.get(edge.start_vertex);
+                    Vertex ee = VDmerge.vertexs.get(edge.end_vertex);
+                    System.out.println("從("+ss.x+","+ss.y+")到("+ee.x+","+ee.y+")");
+                    System.out.println("左polygon "+edge.left_polygon);
+                    System.out.println("右polygon "+edge.right_polygon);
+                    System.out.println("-------");
+
                     VDmerge.edges.add(edge);
                     upperEdge[0] = VDmerge.edges.size()-1;
                     upperEdge[1] = updateEdgeIndex;
-                    nowTangentRightGPIndex = rightNextEdge(nowTangentRightGPIndex, updateEdgeIndex, VDmerge);
+                    nowTangentRightGPIndex = rightNextEdge(nowTangentRightGPIndex, intersection.edgeIndex, VDright);
                 }
             }
         }
@@ -873,7 +990,7 @@ public class VoronoiAlgo {
             // TODO: 建邊
             {
 //                System.out.println("x:"+VDmerge.vertexs.get(VDmerge.vertexs.size()-1).x);
-                Edge edge = new Edge(true, lowerTangentRightGPIndexInRightVD, lowerTangentLeftGPIndexInLeftVD, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2
+                Edge edge = new Edge(true, lowerTangentRightGPIndexInRightVD+VDleft.generatorPoints.size(), lowerTangentLeftGPIndexInLeftVD, VDmerge.vertexs.size()-1, VDmerge.vertexs.size()-2
                         , lowerTerminal[1], lowerTerminal[0], upperEdge[0], upperEdge[1]);
                 VDmerge.edges.add(edge);
             }
@@ -899,9 +1016,35 @@ public class VoronoiAlgo {
 //        System.out.println("右圖 right: "+VDright.convexHull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.get(VDright.convexHull.right).getY());
 
 
-
         // merge完成
         voronoiTaskState.add(VDmerge);
+        {
+            for (int i=0; i<VDmerge.edges.size(); i++) {
+                Edge edge = VDmerge.edges.get(i);
+                if (edge.deleted) {
+                    continue;
+                }
+                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                System.out.println("edge "+i);
+                System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
+                System.out.println("左polygon "+edge.left_polygon);
+                System.out.println("右polygon "+edge.right_polygon);
+                System.out.println("起點順時針: "+edge.cw_predecessor);
+                System.out.println("起點逆時針: "+edge.ccw_predecessor);
+                System.out.println("終點順時針: "+edge.cw_successor);
+                System.out.println("終點逆時針: "+edge.ccw_successor);
+                System.out.println("-------");
+            }
+
+            for (int i=0; i<VDmerge.generatorPoints.size(); i++) {
+                GeneratorPoint GPt = VDmerge.generatorPoints.get(i);
+                System.out.println("polygon "+i);
+                System.out.println("polygon "+i+" 的GP("+GPt.getX()+","+GPt.getY()+")");
+                System.out.println("polygon "+i+" 儲存的edge: "+VDmerge.polygons.get(i).edge_around_polygon);
+                System.out.println("-------");
+            }
+        }
 
     }
 

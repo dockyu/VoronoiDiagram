@@ -276,6 +276,7 @@ public class VoronoiBaseCase {
 
         // generator point
         VD.generatorPoints.add(gp0);
+        System.out.println("gp0:("+gp0.getX()+","+gp0.getY()+")");
         VD.generatorPoints.add(gp1);
 
         // vertex
@@ -307,6 +308,20 @@ public class VoronoiBaseCase {
         VD.convexHull.right = 1;
 
         VD.convexHull.setCollinear();
+
+        for (int i=0; i<VD.edges.size(); i++) {
+            Edge edge = VD.edges.get(i);
+            if (edge.deleted) {
+                continue;
+            }
+            Vertex startVertex = VD.vertexs.get(edge.start_vertex);
+            Vertex endVertex = VD.vertexs.get(edge.end_vertex);
+            System.out.println("edge "+i);
+            System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
+            System.out.println("左polygon "+edge.left_polygon);
+            System.out.println("右polygon "+edge.right_polygon);
+            System.out.println("-------");
+        }
 
 //        System.out.println("convex hull left: "+VD.convexHull.get(VD.convexHull.left).getX()+","+VD.convexHull.get(VD.convexHull.left).getY());
 //        System.out.println("convex hull right: "+VD.convexHull.get(VD.convexHull.right).getX()+","+VD.convexHull.get(VD.convexHull.right).getY());

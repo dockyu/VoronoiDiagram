@@ -89,7 +89,7 @@ public class ConvexHullAlgo {
             }
         }
         // 左邊的index 右邊的index
-//        System.out.println("右邊點"+rightNow);
+//        System.out.println("右邊上點("+CHright.get(rightNow).getX()+","+CHright.get(rightNow).getY()+")");
         return new int[]{leftNow, rightNow};
     }
 
@@ -177,6 +177,7 @@ public class ConvexHullAlgo {
                 break; // 跳出
             }
         }
+//        System.out.println("右邊下點("+CHright.get(rightNow).getX()+","+CHright.get(rightNow).getY()+")");
         // 左邊的index 右邊的index
         return new int[]{leftNow, rightNow};
     }
