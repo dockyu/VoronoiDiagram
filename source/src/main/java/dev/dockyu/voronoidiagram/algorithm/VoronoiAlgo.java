@@ -124,21 +124,38 @@ public class VoronoiAlgo {
 
 //        System.out.println("求上下切線開始");
         // TODO: 求上下切線
-        int upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD;
-        int lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD;
+
+        int upperTangentInLeftConvexHull, upperTangentInRightConvexHull;
+        int lowerTangentInLeftConvexHull, lowerTangentInRightConvexHull;
         {
 //            System.out.println("find Tangent");
 //            System.out.println("右邊convex hull left:("+VDright.convexHull.hull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.hull.get(VDright.convexHull.left).getY()+")");
             int[] upperTangent = ConvexHullAlgo.getUpperTangent(VDleft.convexHull, VDright.convexHull);
-            upperTangentLeftGPIndexInLeftVD = upperTangent[0];
-            upperTangentRightGPIndexInRightVD = upperTangent[1];
+            upperTangentInLeftConvexHull = upperTangent[0];
+            upperTangentInRightConvexHull = upperTangent[1];
             int[] lowerTangent = ConvexHullAlgo.getLowerTangent(VDleft.convexHull, VDright.convexHull);
-            lowerTangentLeftGPIndexInLeftVD = lowerTangent[0];
-            lowerTangentRightGPIndexInRightVD = lowerTangent[1];
+            lowerTangentInLeftConvexHull = lowerTangent[0];
+            lowerTangentInRightConvexHull = lowerTangent[1];
+        }
+
+        // TODO: merge convex hull
+        {
+            // 合併convex hull
+            int[] upperTangent = new int[]{upperTangentInLeftConvexHull, upperTangentInRightConvexHull};
+            int[] lowerTangent = new int[]{lowerTangentInLeftConvexHull, lowerTangentInRightConvexHull};
+            ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
+//            System.out.println("after merge points");
+//            for (GeneratorPoint gp : VDmerge.convexHull.hull) {
+//                System.out.println(gp.getX()+","+gp.getY());
+//            }
         }
 //        System.out.println("上下切線");
+        int upperTangentLeftGPIndexInLeftVD=-1, upperTangentRightGPIndexInRightVD=-1;
+        int lowerTangentLeftGPIndexInLeftVD=-1, lowerTangentRightGPIndexInRightVD=-1;
+
+
         GeneratorPoint GP = null;
-        GP = VDleft.convexHull.hull.get(upperTangentLeftGPIndexInLeftVD);
+        GP = VDleft.convexHull.hull.get(upperTangentInLeftConvexHull);
 //        System.out.println("左上test:("+GP.getX()+","+GP.getY()+")");
         for (int i=0; i<VDleft.generatorPoints.size(); i++) {
             GeneratorPoint GPnow = VDleft.generatorPoints.get(i);
@@ -148,7 +165,7 @@ public class VoronoiAlgo {
             }
         }
 
-        GP = VDright.convexHull.hull.get(upperTangentRightGPIndexInRightVD);
+        GP = VDright.convexHull.hull.get(upperTangentInRightConvexHull);
 //        System.out.println("右上test:("+GP.getX()+","+GP.getY()+")");
         for (int i=0; i<VDright.generatorPoints.size(); i++) {
             GeneratorPoint GPnow = VDright.generatorPoints.get(i);
@@ -160,7 +177,7 @@ public class VoronoiAlgo {
         }
 
 
-        GP = VDleft.convexHull.hull.get(lowerTangentLeftGPIndexInLeftVD);
+        GP = VDleft.convexHull.hull.get(lowerTangentInLeftConvexHull);
 //        System.out.println("左下:("+GP.getX()+","+GP.getY()+")");
         for (int i=0; i<VDleft.generatorPoints.size(); i++) {
             GeneratorPoint GPnow = VDleft.generatorPoints.get(i);
@@ -169,25 +186,13 @@ public class VoronoiAlgo {
             }
         }
 
-        GP = VDright.convexHull.hull.get(lowerTangentRightGPIndexInRightVD);
+        GP = VDright.convexHull.hull.get(lowerTangentInRightConvexHull);
 //        System.out.println("右下test:("+GP.getX()+","+GP.getY()+")");
         for (int i=0; i<VDright.generatorPoints.size(); i++) {
             GeneratorPoint GPnow = VDright.generatorPoints.get(i);
             if (GP.getX()==GPnow.getX()&&GP.getY()==GPnow.getY()) {
                 lowerTangentRightGPIndexInRightVD = i;
             }
-        }
-
-        // TODO: merge convex hull
-        {
-            // 合併convex hull
-            int[] upperTangent = new int[]{upperTangentLeftGPIndexInLeftVD, upperTangentRightGPIndexInRightVD};
-            int[] lowerTangent = new int[]{lowerTangentLeftGPIndexInLeftVD, lowerTangentRightGPIndexInRightVD};
-            ConvexHullAlgo.merge(VDmerge.convexHull, VDleft.convexHull, VDright.convexHull, upperTangent, lowerTangent);
-//            System.out.println("after merge points");
-//            for (GeneratorPoint gp : VDmerge.convexHull.hull) {
-//                System.out.println(gp.getX()+","+gp.getY());
-//            }
         }
 
         // TODO: 生成上下切線的4的點

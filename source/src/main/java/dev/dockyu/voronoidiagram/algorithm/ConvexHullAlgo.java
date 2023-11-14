@@ -240,8 +240,8 @@ public class ConvexHullAlgo {
         // TODO: 判斷是否所有點共線
         GeneratorPoint leftGPInCHleft = CHleft.hull.get(CHleft.left);
         GeneratorPoint rightGPInCHleft = CHleft.hull.get(CHleft.right);
-        GeneratorPoint leftGPInCHright = CHright.hull.get(CHleft.left);
-        GeneratorPoint rightGPInCHright = CHright.hull.get(CHleft.right);
+        GeneratorPoint leftGPInCHright = CHright.hull.get(CHright.left);
+        GeneratorPoint rightGPInCHright = CHright.hull.get(CHright.right);
         if (CHleft.collinear && CHright.collinear
                 && (leftGPInCHleft.getY()-rightGPInCHleft.getY())*(leftGPInCHright.getX()-rightGPInCHright.getX()) == (leftGPInCHright.getY()-rightGPInCHright.getY())*(leftGPInCHleft.getX()-rightGPInCHleft.getX())
                 && (rightGPInCHleft.getY()-leftGPInCHright.getY())*(leftGPInCHleft.getX()-rightGPInCHleft.getX()) == (leftGPInCHleft.getY()-rightGPInCHleft.getY())*(rightGPInCHleft.getX()-leftGPInCHright.getX())) {
