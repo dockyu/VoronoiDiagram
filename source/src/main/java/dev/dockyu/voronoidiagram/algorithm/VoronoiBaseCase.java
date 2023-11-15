@@ -259,17 +259,33 @@ public class VoronoiBaseCase {
 
         } else {
             // TODO: 中垂線斜斜的
-            float slope = (gp1.getY() - gp0.getY()) / (gp1.getX() - gp0.getX());
-            float perpSlope = -1 / slope; // 中垂線斜率
+//            float slope = (gp1.getY() - gp0.getY()) / (gp1.getX() - gp0.getX());
+//            float perpSlope = -1 / slope; // 中垂線斜率
+//
+//            // 利用三角函數計算v0和v1的座標
+//            float angle = (float)Math.atan(perpSlope);  // 斜率轉換為角度
+//            System.out.println("角度"+angle);
+//            System.out.println("cos:"+(float)Math.cos(angle));
+//            System.out.println("sin:"+(float)Math.sin(angle));
+//
+//            v0_x = midPoint_x - delta * (float)Math.cos(angle);
+//            v0_y = midPoint_y - delta * (float)Math.sin(angle);
+//
+//            v1_x = midPoint_x + delta * (float)Math.cos(angle);
+//            v1_y = midPoint_y + delta * (float)Math.sin(angle);
 
-            // 利用三角函數計算v0和v1的座標
-            float angle = (float)Math.atan(perpSlope);  // 斜率轉換為角度
+            float[] v0Vector = TwoDPlaneAlgo.getNormalVector(gp1, gp0);
+            float[] v0Coordinate = TwoDPlaneAlgo.extendWithVector(midPoint_x, midPoint_y, v0Vector[0], v0Vector[1], delta);
 
-            v0_x = midPoint_x - delta * (float)Math.cos(angle);
-            v0_y = midPoint_y - delta * (float)Math.sin(angle);
+            v0_x = v0Coordinate[0];
+            v0_y = v0Coordinate[1];
 
-            v1_x = midPoint_x + delta * (float)Math.cos(angle);
-            v1_y = midPoint_y + delta * (float)Math.sin(angle);
+            float[] v1Vector = TwoDPlaneAlgo.getNormalVector(gp0, gp1);
+            float[] v1Coordinate = TwoDPlaneAlgo.extendWithVector(midPoint_x, midPoint_y, v1Vector[0], v1Vector[1], delta);
+
+            v1_x = v1Coordinate[0];
+            v1_y = v1Coordinate[1];
+
         }
 
         VoronoiDiagram VD = new VoronoiDiagram();
@@ -286,7 +302,7 @@ public class VoronoiBaseCase {
         VD.vertexs.add(v1);
 
         // polygon
-        Polygon p0 = new Polygon(1);
+        Polygon p0 = new Polygon(0);
         Polygon p1 = new Polygon(0);
         Polygon p2 = new Polygon(2);
         VD.polygons.add(p0);

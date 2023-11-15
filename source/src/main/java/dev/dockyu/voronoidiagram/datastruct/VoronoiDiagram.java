@@ -29,6 +29,7 @@ public class VoronoiDiagram {
         int edgeStart = edgeIndex;
 
         do {
+            System.out.println("edgesAroundPolygon test");
             edges.add(edgeIndex);
             if (polygonIndex == this.edges.get(edgeIndex).left_polygon) {
                 // polygon在edge左邊

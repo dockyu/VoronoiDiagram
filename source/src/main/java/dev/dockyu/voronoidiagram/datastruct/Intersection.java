@@ -6,10 +6,15 @@ public class Intersection {
     public enum Side {
         LEFT, RIGHT
     }
+    public enum DeletedVertex {
+        START, END
+    }
     public float x;
     public float y;
     public int edgeIndex;
     private Side side;
+
+    private DeletedVertex deletedVertex;
 
     // 建構函數，用來初始化屬性
     public Intersection(float x, float y, Side side, int edgeIndex) {
@@ -17,6 +22,7 @@ public class Intersection {
         this.y = y;
         this.side = side;
         this.edgeIndex = edgeIndex;
+        this.deletedVertex = null;
     }
 
     // 判斷是否為左
@@ -34,5 +40,21 @@ public class Intersection {
 
     public void setRight() {
         this.side = Side.RIGHT;
+    }
+
+    public boolean isDeletedStart() {
+        return this.deletedVertex == DeletedVertex.START;
+    }
+
+    public boolean isDeletedEnd() {
+        return this.deletedVertex == DeletedVertex.END;
+    }
+
+    public void setDeletedStart() {
+        this.deletedVertex = DeletedVertex.START;
+    }
+
+    public void setDeletedEnd() {
+        this.deletedVertex = DeletedVertex.END;
     }
 }
