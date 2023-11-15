@@ -1081,6 +1081,50 @@ public class VoronoiAlgo {
 //        System.out.println("右圖 left: "+VDright.convexHull.get(VDright.convexHull.left).getX()+","+VDright.convexHull.get(VDright.convexHull.left).getY());
 //        System.out.println("右圖 right: "+VDright.convexHull.get(VDright.convexHull.right).getX()+","+VDright.convexHull.get(VDright.convexHull.right).getY());
 
+        // TODO: 刪掉 兩個vertex有任一個被deleted的edge
+        {
+            for (Edge edge : VDmerge.edges) {
+                if (edge.deleted == false) {
+                    Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                    Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                    if (startVertex.deleted || endVertex.deleted) {
+                        edge.deleted = true;
+                    }
+                }
+            }
+
+            // TODO: 更新polygon儲存deleted的edge
+            for (int polygonIndex=0; polygonIndex<VDmerge.polygons.size()-1; polygonIndex++) {
+                Polygon polygon = VDmerge.polygons.get(polygonIndex);
+                Edge edge = VDmerge.edges.get(polygon.edge_around_polygon);
+                if (edge.deleted == true) {
+                    if (polygonIndex >= (VDleft.polygons.size()-1)) {
+                        // 右圖的polygon
+                        int rightPolygonIndex = polygonIndex-(VDleft.polygons.size()-1);
+                        LinkedList<Integer> edges = VDright.edgesAroundPolygon(rightPolygonIndex);
+                        for (int edgeIndex : edges) {
+                            edgeIndex += VDleft.edges.size();
+                            Edge newEdge = VDmerge.edges.get(edgeIndex);
+                            if (newEdge.deleted==false && (newEdge.left_polygon==polygonIndex||newEdge.right_polygon==polygonIndex) && newEdge.real==true ) {
+                                polygon.edge_around_polygon = edgeIndex;
+                                break;
+                            }
+                        }
+                    } else {
+                        // 左圖的polygon
+                        int leftPolygonIndex = polygonIndex;
+                        LinkedList<Integer> edges = VDleft.edgesAroundPolygon(leftPolygonIndex);
+                        for (int edgeIndex : edges) {
+                            Edge newEdge = VDmerge.edges.get(edgeIndex);
+                            if (newEdge.deleted==false && (newEdge.left_polygon==polygonIndex||newEdge.right_polygon==polygonIndex) && newEdge.real==true ) {
+                                polygon.edge_around_polygon = edgeIndex;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // merge完成
         voronoiTaskState.add(VDmerge);
