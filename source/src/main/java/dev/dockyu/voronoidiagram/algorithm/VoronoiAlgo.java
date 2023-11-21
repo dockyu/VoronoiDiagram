@@ -300,7 +300,7 @@ public class VoronoiAlgo {
 
             float[] tempIntersection; // 暫存交點
 
-            // TODO: 找左邊無限edge和上切線中垂線交點
+            // TODO: 找左邊edge和上切線中垂線交點
             for (int edgeIndex : infinityEdgesInLeftVDIndex) { // 左邊所有無限延伸的edge
                 Edge infinityEdge = VDleft.edges.get(edgeIndex); // 其中一個無限edge
                 Vertex startVertex = VDleft.vertexs.get(infinityEdge.start_vertex);
@@ -327,6 +327,27 @@ public class VoronoiAlgo {
 //                System.out.println("左圖找到更高的點 ("+tempIntersection[0]+","+tempIntersection[0]+")");
                     leftIntersectEdgeIndex = edgeIndex;
                     leftIntersection = tempIntersection;
+                }
+
+                // TODO: 判斷兩edge同時和HP相交
+                if (tempIntersection[1] == leftIntersection[1]) {
+                    // 找兩個edge要換的下一個GP
+                    int tempIntersectionNextGPIndex = leftNextEdge(nowTangentLeftGPIndex, edgeIndex, VDleft); // edge1換下一個GP
+                    int leftIntersectionNextGPIndex = leftNextEdge(nowTangentLeftGPIndex, leftIntersectEdgeIndex, VDleft); // edge2換下一個GP
+
+                    GeneratorPoint tempIntersectionNextGP = VDleft.generatorPoints.get(tempIntersectionNextGPIndex);
+                    GeneratorPoint leftIntersectionNextGP = VDleft.generatorPoints.get(leftIntersectionNextGPIndex);
+
+
+                    if ((tempIntersectionNextGP.getX()==leftIntersectionNextGP.getX()) && (tempIntersectionNextGP.getY()<leftIntersectionNextGP.getY())) {
+                        leftIntersectEdgeIndex = edgeIndex;
+                        leftIntersection = tempIntersection;
+                    }
+                    if (tempIntersectionNextGP.getX()>leftIntersectionNextGP.getX()) {
+                        // 新GP較右
+                        leftIntersectEdgeIndex = edgeIndex;
+                        leftIntersection = tempIntersection;
+                    }
                 }
             }
 
@@ -359,6 +380,27 @@ public class VoronoiAlgo {
 //                System.out.println("右圖找到交點");
                     rightIntersectEdgeIndex = edgeIndex;
                     rightIntersection = tempIntersection;
+                }
+
+                // TODO: 判斷兩edge同時和HP相交
+                if (tempIntersection[1] == rightIntersection[1]) {
+                    // 找兩個edge要換的下一個GP
+                    int tempIntersectionNextGPIndex = rightNextEdge(nowTangentRightGPIndex, edgeIndex, VDright); // edge1換下一個GP
+                    int rightIntersectionNextGPIndex = rightNextEdge(nowTangentRightGPIndex, rightIntersectEdgeIndex, VDright); // edge2換下一個GP
+
+                    GeneratorPoint tempIntersectionNextGP = VDright.generatorPoints.get(tempIntersectionNextGPIndex);
+                    GeneratorPoint rightIntersectionNextGP = VDright.generatorPoints.get(rightIntersectionNextGPIndex);
+
+
+                    if ((tempIntersectionNextGP.getX()==rightIntersectionNextGP.getX()) && (tempIntersectionNextGP.getY()<rightIntersectionNextGP.getY())) {
+                        rightIntersectEdgeIndex = edgeIndex;
+                        rightIntersection = tempIntersection;
+                    }
+                    if (tempIntersectionNextGP.getX()<rightIntersectionNextGP.getX()) {
+                        // 新GP較左
+                        rightIntersectEdgeIndex = edgeIndex;
+                        rightIntersection = tempIntersection;
+                    }
                 }
             }
 
@@ -674,6 +716,30 @@ public class VoronoiAlgo {
 //                    System.out.println("左邊有可能交點，左邊第"+leftEdgeIndex+"條");
 //                    System.out.println("("+intersectionLeft.x+","+intersectionLeft.y+")");
                     }
+                    // TODO: 判斷兩edge同時和HP相交
+                    if (tempIntersection[1] == intersectionLeft.y) {
+                        // 找兩個edge要換的下一個GP
+                        int tempIntersectionNextGPIndex = leftNextEdge(nowTangentLeftGPIndex, leftEdgeIndex, VDleft); // edge1換下一個GP
+                        int leftIntersectionNextGPIndex = leftNextEdge(nowTangentLeftGPIndex, intersectionLeft.edgeIndex, VDleft); // edge2換下一個GP
+
+                        GeneratorPoint tempIntersectionNextGP = VDleft.generatorPoints.get(tempIntersectionNextGPIndex);
+                        GeneratorPoint leftIntersectionNextGP = VDleft.generatorPoints.get(leftIntersectionNextGPIndex);
+
+
+                        if ((tempIntersectionNextGP.getX()==leftIntersectionNextGP.getX()) && (tempIntersectionNextGP.getY()<leftIntersectionNextGP.getY())) {
+                            intersectionLeft.x = tempIntersection[0];
+                            intersectionLeft.y = tempIntersection[1];
+                            intersectionLeft.setLeft();
+                            intersectionLeft.edgeIndex = leftEdgeIndex;
+                        }
+                        if (tempIntersectionNextGP.getX()>leftIntersectionNextGP.getX()) {
+                            // 新GP較右
+                            intersectionLeft.x = tempIntersection[0];
+                            intersectionLeft.y = tempIntersection[1];
+                            intersectionLeft.setLeft();
+                            intersectionLeft.edgeIndex = leftEdgeIndex;
+                        }
+                    }
                 }
                 // TODO: 右圖找最高交點
                 for (int rightEdgeIndex : rightPossibleEdges) {
@@ -710,6 +776,34 @@ public class VoronoiAlgo {
                         intersectionRight.y = tempIntersection[1];
                         intersectionRight.setRight();
                         intersectionRight.edgeIndex = rightEdgeIndex;
+                    }
+
+                    // TODO: 判斷兩edge同時和HP相交
+                    if (tempIntersection[1] == intersectionRight.y) {
+                        // 找兩個edge要換的下一個GP
+                        int tempIntersectionNextGPIndex = rightNextEdge(nowTangentRightGPIndex, rightEdgeIndex, VDright); // edge1換下一個GP
+                        int rightIntersectionNextGPIndex = rightNextEdge(nowTangentRightGPIndex, intersectionRight.edgeIndex, VDright); // edge2換下一個GP
+
+                        GeneratorPoint tempIntersectionNextGP = VDright.generatorPoints.get(tempIntersectionNextGPIndex);
+                        System.out.println("新GP:("+tempIntersectionNextGP.getX()+","+tempIntersectionNextGP.getY()+")");
+                        GeneratorPoint rightIntersectionNextGP = VDright.generatorPoints.get(rightIntersectionNextGPIndex);
+                        System.out.println("舊GP:("+rightIntersectionNextGP.getX()+","+rightIntersectionNextGP.getY()+")");
+
+                        if ((tempIntersectionNextGP.getX()==rightIntersectionNextGP.getX()) && (tempIntersectionNextGP.getY()<rightIntersectionNextGP.getY())) {
+                            intersectionRight.x = tempIntersection[0];
+                            intersectionRight.y = tempIntersection[1];
+                            intersectionRight.setRight();
+                            intersectionRight.edgeIndex = rightEdgeIndex;
+                        }
+
+                        if (tempIntersectionNextGP.getX()<rightIntersectionNextGP.getX()) {
+                            // 新GP較左
+                            intersectionRight.x = tempIntersection[0];
+                            intersectionRight.y = tempIntersection[1];
+                            intersectionRight.setRight();
+                            intersectionRight.edgeIndex = rightEdgeIndex;
+                        }
+
                     }
                 }
 
