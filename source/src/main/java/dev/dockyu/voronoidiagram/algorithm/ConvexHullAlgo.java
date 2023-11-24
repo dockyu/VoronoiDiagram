@@ -23,7 +23,7 @@ public class ConvexHullAlgo {
             leftNext = CHleft.getPreviousIndex(leftNow);
         }
         // 右邊升到最高
-        while (CHright.get(rightNow).getX()==CHright.get(rightNext).getX() && CHright.get(rightNext).getY()>CHright.get(rightNow).getY()) {
+        while (CHright.get(rightNow).getX()==CHright.get(rightNext).getX() && CHright.get(rightNext).getY()<CHright.get(rightNow).getY()) {
             rightNow = rightNext;
             rightNext = CHright.getNextIndex(rightNow);
         }
@@ -115,7 +115,7 @@ public class ConvexHullAlgo {
         int rightNext = CHright.getPreviousIndex(rightNow); // 走一步就是退一步
 
         // 左邊升到最高
-        while (CHleft.get(leftNow).getX()==CHleft.get(leftNext).getX() && CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY()) {
+        while (CHleft.get(leftNow).getX()==CHleft.get(leftNext).getX() && CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY()) {
             leftNow = leftNext;
             leftNext = CHleft.getNextIndex(leftNow);
         }

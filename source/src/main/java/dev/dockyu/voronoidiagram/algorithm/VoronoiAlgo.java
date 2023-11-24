@@ -693,10 +693,16 @@ public class VoronoiAlgo {
                     if (leftEdge.real == false) {
                         continue;
                     }
-                    System.out.println("左圖的polygon找到一條edge");
+
                     Vertex startVertex = VDleft.vertexs.get(leftEdge.start_vertex);
                     Vertex endVertex = VDleft.vertexs.get(leftEdge.end_vertex);
 
+                    // 此次merge leftedge已經在之前的步驟被歸到右邊的polygon的around edge
+                    if (startVertex.deleted==true || endVertex.deleted==true) {
+                        continue;
+                    }
+
+                    System.out.println("左圖的polygon找到一條edge");
                     float[] tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(startPoint, HPVectorDown, startVertex, endVertex);
                     // TODO: 判斷有沒有交點
                     if (tempIntersection == null) { // 沒有交點
@@ -755,9 +761,16 @@ public class VoronoiAlgo {
                     if (rightEdge.real == false) {
                         continue;
                     }
-                    System.out.println("右圖的polygon找到一條edge");
+
                     Vertex startVertex = VDright.vertexs.get(rightEdge.start_vertex);
                     Vertex endVertex = VDright.vertexs.get(rightEdge.end_vertex);
+
+                    // 此次merge rightedge已經在之前的步驟被歸到左邊的polygon的around edge
+                    if (startVertex.deleted==true || endVertex.deleted==true) {
+                        continue;
+                    }
+
+                    System.out.println("右圖的polygon找到一條edge");
                     System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
                     float[] tempIntersection = TwoDPlaneAlgo.isIntersectWithHP(startPoint, HPVectorDown, startVertex, endVertex);
                     // TODO: 判斷有沒有交點
@@ -1177,15 +1190,57 @@ public class VoronoiAlgo {
 
         // TODO: 刪掉 兩個vertex有任一個被deleted的edge
         {
-            for (Edge edge : VDmerge.edges) {
-                if (edge.deleted == false) {
-                    Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
-                    Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
-                    if (startVertex.deleted || endVertex.deleted) {
-                        edge.deleted = true;
+
+//            for (Edge edge : VDmerge.edges) {
+//                if (edge.deleted == false) {
+//                    Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+//                    Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+//                    if (startVertex.deleted || endVertex.deleted) {
+//                        edge.deleted = true;
+//                    }
+//                }
+//            }
+
+            int needDeleteEdge = 0;
+            do {
+                needDeleteEdge = 0;
+                for (Edge edge : VDmerge.edges) {
+                    if (edge.deleted == false) {
+                        Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+                        Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                        if (startVertex.deleted || endVertex.deleted) {
+                            edge.deleted = true;
+                            if (edge.real) {
+                                startVertex.deleted = true;
+                                endVertex.deleted = true;
+                            }
+                            needDeleteEdge++;
+                        }
                     }
                 }
-            }
+//                for (Edge edge : VDmerge.edges) {
+//
+//                    if (edge.deleted == false) {
+//                        Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
+//                        Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+//                        if (startVertex.deleted && endVertex.deleted) {
+//                            edge.deleted = true;
+//                            needDeleteEdge++;
+//                        }
+//                        if (startVertex.deleted && !endVertex.deleted) {
+//                            // start被刪
+//                            edge.deleted = true;
+//                            needDeleteEdge++;
+//                        }
+//                        if (!startVertex.deleted && endVertex.deleted) {
+//                            // end被刪
+//                            edge.deleted = true;
+//                            needDeleteEdge++;
+//                        }
+//                    }
+//                }
+
+            } while(needDeleteEdge != 0);
 
             // TODO: 更新polygon儲存deleted的edge
             for (int polygonIndex=0; polygonIndex<VDmerge.polygons.size()-1; polygonIndex++) {
