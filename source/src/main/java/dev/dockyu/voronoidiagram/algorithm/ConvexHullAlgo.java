@@ -17,6 +17,17 @@ public class ConvexHullAlgo {
         int rightNow = CHright.left;
         int rightNext = CHright.getNextIndex(rightNow); // 走一步就是向前一步
 
+        // 左邊升到最高
+        while (CHleft.get(leftNow).getX()==CHleft.get(leftNext).getX() && CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY()) {
+            leftNow = leftNext;
+            leftNext = CHleft.getPreviousIndex(leftNow);
+        }
+        // 右邊升到最高
+        while (CHright.get(rightNow).getX()==CHright.get(rightNext).getX() && CHright.get(rightNext).getY()>CHright.get(rightNow).getY()) {
+            rightNow = rightNext;
+            rightNext = CHright.getNextIndex(rightNow);
+        }
+
         while(true) {
             // 左邊往回
             if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
@@ -30,7 +41,7 @@ public class ConvexHullAlgo {
 
             } else if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
                     == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow)) && isCollinear(CHleft, CHright)) {
-                // 如果都是無限大或無限小
+                // 左右VoronoiDiagram完全共線
                 // 左邊有上升就好
                 if (CHleft.get(leftNext).getX()>CHleft.get(leftNow).getX()
                         || (CHleft.get(leftNext).getX()==CHleft.get(leftNow).getX() && CHleft.get(leftNext).getY()>CHleft.get(leftNow).getY())) {
@@ -103,6 +114,17 @@ public class ConvexHullAlgo {
         int rightNow = CHright.left;
         int rightNext = CHright.getPreviousIndex(rightNow); // 走一步就是退一步
 
+        // 左邊升到最高
+        while (CHleft.get(leftNow).getX()==CHleft.get(leftNext).getX() && CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY()) {
+            leftNow = leftNext;
+            leftNext = CHleft.getNextIndex(leftNow);
+        }
+        // 右邊升到最高
+        while (CHright.get(rightNow).getX()==CHright.get(rightNext).getX() && CHright.get(rightNext).getY()<CHright.get(rightNow).getY()) {
+            rightNow = rightNext;
+            rightNext = CHright.getPreviousIndex(rightNow);
+        }
+
         while(true) {
             // 左邊往前
             if ( TwoDPlaneAlgo.getSlope(CHleft.get(leftNext),CHright.get(rightNow))
@@ -118,7 +140,7 @@ public class ConvexHullAlgo {
                     == TwoDPlaneAlgo.getSlope(CHleft.get(leftNow),CHright.get(rightNow)) && isCollinear(CHleft, CHright)) {
                 if (CHleft.get(leftNext).getX()<CHleft.get(leftNow).getX()
                         ||(CHleft.get(leftNext).getX()==CHleft.get(leftNow).getX()&&CHleft.get(leftNext).getY()<CHleft.get(leftNow).getY())) {
-                    // 如果都是無限大或無限小
+                    // 左右VoronoiDiagram完全共線
                     // 左邊有下降就好
 //                    System.out.println("error3");
                     leftNow = leftNext; // 走一步
