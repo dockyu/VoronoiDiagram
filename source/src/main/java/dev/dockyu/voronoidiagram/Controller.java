@@ -12,15 +12,13 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 import javafx.stage.FileChooser;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Controller {
     private Model model;
@@ -52,7 +50,52 @@ public class Controller {
     @FXML
     private TextArea taskPointsArea; // taskPoints顯示區
 
+    @FXML
+    private TextField randomGPNums; // 隨機創建GP的數量
+
+    @FXML
+    private Button random;
+
+
+
     // 以下是元件被觸發會做的事
+    @FXML
+    protected void randomCreateTask() {
+        System.out.println("Controller.java randomCreateTask()");
+
+        String input = randomGPNums.getText(); // 從 TextField 獲取輸入
+        try {
+            // TODO: 輸入的是數字，開始隨機生成
+            int number = Integer.parseInt(input); // 嘗試將輸入轉換為整數
+            System.out.println("create " + number + " random GP");
+
+            Random rand = new Random();
+            LinkedList<GeneratorPoint> randomGPList = new LinkedList<GeneratorPoint>();
+            while (randomGPList.size() < number) {
+                int x = rand.nextInt((int) canvas.getWidth());
+                int y = rand.nextInt((int) canvas.getHeight());
+                GeneratorPoint newPoint = new GeneratorPoint(x, y);
+                randomGPList.add(newPoint);
+            }
+
+            // 清空先前任務(taskPoints, taskState)
+            this.model.taskPoints.clear();
+            this.model.taskState.clear();
+            // 清空canvas
+            CanvasAction.clear(this.canvas);
+            // 取得新任務
+            this.model.taskPoints = randomGPList;
+            // 畫出新任務的點
+            CanvasAction.drawGeneratorPoints(this.canvas, this.model.taskPoints);
+            // 更新taskPoints顯示區
+            this.updateTaskPointsArea();
+
+        } catch (NumberFormatException e) {
+            System.out.println("輸入的不是一個有效的數字");
+            // 處理非數字輸入的情況
+        }
+    }
+
     @FXML
     protected void importTasks() {
 //        System.out.println("importInput button click");
