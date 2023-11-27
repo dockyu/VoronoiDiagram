@@ -21,17 +21,15 @@ divide all generator points to a complete tree
     + delete vertex and edge left from intersection in right voronoi diagram
 
 ### Convex Hull
-divide and conquer
++ divide and conquer
++ record the rightmost and leftmost point in a convex hull
+    + connect rightmost point at left and leftmost point at right as a temp tangent
+    + use temp tangent find upper and lower tangent step by step
 
 ## Time Complexity
-time complexity is *O(log(n))*
+time complexity is **`O(log(n))`**
 
 ## Demo
-
-##### 150 points
-`test/150_points.txt`
-![150 points](doc/pic/150GP.png)
-
-##### 170 points
-`test/170_points.txt`
-![170 points](doc/pic/170GP.png)
+|[150 points](test/150_points.txt)|[170 points](test/170_points.txt)|
+|-|-|
+|![150 points](doc/pic/150GP.png)|![170 points](doc/pic/170GP.png)|
