@@ -18,7 +18,7 @@ divide all generator points to a complete tree
 divide and conquer
 
 ## Time Complexity
-time complexity is O(n)
+time complexity is *O(log(n))*
 
 ## Demo
 
