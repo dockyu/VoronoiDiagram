@@ -22,5 +22,9 @@ time complexity is O(n)
 
 ## Demo
 
+##### 125 points
 ![125 points](doc/pic/125GP.png)
+##### 130 points
 ![130 points](doc/pic/130GP.png)
+##### 150 points
+![150 points](doc/pic/150GP.png)
