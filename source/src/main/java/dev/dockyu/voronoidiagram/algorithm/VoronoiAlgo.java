@@ -938,86 +938,65 @@ public class VoronoiAlgo {
             edgeIndexs= VDleft.edgesAroundPolygon(upperTangentLeftGPIndexInLeftVD); // 左圖上切線的多邊形的所有邊
 
             System.out.println("左Polygon的所有邊");
-            // 左圖虛邊更新
             for (int edgeIndex : edgeIndexs) {
-                System.out.println(edgeIndex+",");
-                if (VDmerge.edges.get(edgeIndex).real==false) {
+                if (VDleft.edges.get(edgeIndex).real == false) {
                     upperTerminal[0] = edgeIndex;
                 }
             }
             edgeIndexs = VDright.edgesAroundPolygon(upperTangentRightGPIndexInRightVD); // 右圖上切線的多邊形的所有邊
-            // 右圖虛邊更新
             for (int edgeIndex : edgeIndexs) {
-                edgeIndex += VDleft.edges.size()  ;
-                if (VDmerge.edges.get(edgeIndex).real==false) {
+                if (VDright.edges.get(edgeIndex).real == false) {
                     upperTerminal[1] = edgeIndex;
                 }
             }
 
             // TODO: 更新左圖上虛邊
             {
-                Edge edge = VDmerge.edges.get(upperTerminal[0]); // 左邊的上虛邊
-                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
-                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                Edge edgeL = VDleft.edges.get(upperTerminal[0]); // 左邊的上虛邊
+                Edge edgeM = VDmerge.edges.get(upperTerminal[0]);
 
-                System.out.println("左圖上虛邊index"+upperTerminal[0]);
-                System.out.println("從("+startVertex.x+","+startVertex.y+")到("+endVertex.x+","+endVertex.y+")");
-                System.out.println("左polygon "+edge.left_polygon);
-                System.out.println("右polygon "+edge.right_polygon);
-                System.out.println("-------");
+                if (edgeL.right_polygon == VDleft.polygons.size()-1) {
+                    Vertex startVertexM = VDmerge.vertexs.get(edgeM.start_vertex); // 刪舊的start
+                    startVertexM.deleted = true;
 
-                Intersection firstIntersection = HyperPlane.get(leftFirstIntersection); // 左邊第一個交點
-                Edge firstEdge = VDmerge.edges.get(firstIntersection.edgeIndex); // 左邊第一個交點的邊
-                Vertex firstDeletedVertex = null;
-                if (firstIntersection.isDeletedStart()) {
-                    firstDeletedVertex = VDmerge.vertexs.get(firstEdge.start_vertex);
-                } else if (firstIntersection.isDeletedEnd()){
-                    firstDeletedVertex = VDmerge.vertexs.get(firstEdge.end_vertex);
-                }
+                    edgeM.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                    edgeM.cw_predecessor = upperTerminal[1]+VDleft.edges.size(); // 右邊的虛邊
+                    edgeM.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                } else if (edgeL.left_polygon == VDleft.polygons.size()-1) {
+                    Vertex endVertexM = VDmerge.vertexs.get(edgeM.end_vertex); // 刪舊的end
+                    endVertexM.deleted = true;
 
-
-                if (startVertex.x==firstDeletedVertex.x && startVertex.y==firstDeletedVertex.y) {
-                    edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
-                    edge.cw_predecessor = upperTerminal[1]; // 右邊的虛邊
-                    edge.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
-                } else if (endVertex.x==firstDeletedVertex.x && endVertex.y==firstDeletedVertex.y) {
-                    edge.end_vertex = VDmerge.vertexs.size()-1;
-                    edge.cw_successor = upperTerminal[1];
-                    edge.ccw_successor = VDmerge.edges.size();
+                    edgeM.end_vertex = VDmerge.vertexs.size()-1;
+                    edgeM.cw_successor = upperTerminal[1]+VDleft.edges.size();
+                    edgeM.ccw_successor = VDmerge.edges.size();
                 }
             }
             // TODO: 更新右圖上虛邊
             {
-                Edge edge = VDmerge.edges.get(upperTerminal[1]); // 右邊的上虛邊
-                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
-                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                Edge edgeR = VDright.edges.get(upperTerminal[1]); // 右邊的上虛邊
+                Edge edgeM = VDmerge.edges.get(upperTerminal[1]+VDleft.edges.size());
 
-                Intersection firstIntersection = HyperPlane.get(rightFirstIntersection); // 右邊第一個交點
-                Edge firstEdge = VDmerge.edges.get(firstIntersection.edgeIndex+VDleft.edges.size()); // 右邊第一個交點的邊
-                Vertex firstDeletedVertex = null;
-                if (firstIntersection.isDeletedStart()) {
-                    firstDeletedVertex = VDmerge.vertexs.get(firstEdge.start_vertex);
-                } else if (firstIntersection.isDeletedEnd()){
-                    firstDeletedVertex = VDmerge.vertexs.get(firstEdge.end_vertex);
-                }
-                System.out.println("第一個交點消掉("+firstDeletedVertex.x+","+firstDeletedVertex.y+")");
+                if (edgeR.left_polygon == VDright.polygons.size()-1) {
+                    Vertex startVertexM = VDmerge.vertexs.get(edgeM.start_vertex); // 刪舊的start
+                    startVertexM.deleted = true;
 
-                if (startVertex.x==firstDeletedVertex.x && startVertex.y==firstDeletedVertex.y) {
-                    System.out.println("更新右上虛邊的start vertex ("+startVertex.x+","+startVertex.y+")");
-                    edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
-                    edge.ccw_predecessor = upperTerminal[0];
-                    edge.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
-                } else if (endVertex.x==firstDeletedVertex.x && endVertex.y==firstDeletedVertex.y) {
-                    System.out.println("更新右上虛邊的end vertex ("+endVertex.x+","+endVertex.y+")");
-                    edge.end_vertex = VDmerge.vertexs.size()-1;
-                    edge.ccw_successor = upperTerminal[0];
-                    edge.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edgeM.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                    edgeM.ccw_predecessor = upperTerminal[0];
+                    edgeM.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                } else if (edgeR.right_polygon == VDright.polygons.size()-1) {
+                    Vertex endVertexM = VDmerge.vertexs.get(edgeM.end_vertex); // 刪舊的end
+                    endVertexM.deleted = true;
+
+                    edgeM.end_vertex = VDmerge.vertexs.size()-1;
+                    edgeM.ccw_successor = upperTerminal[0];
+                    edgeM.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
                 }
             }
 
         }
 
         int[] upperEdge = upperTerminal;
+        upperEdge[1] += VDleft.edges.size();
         // TODO: HP交點建vertex & edge
         {
             nowTangentLeftGPIndex = upperTangentLeftGPIndexInLeftVD;
@@ -1110,54 +1089,62 @@ public class VoronoiAlgo {
 
             edgeIndexs = VDleft.edgesAroundPolygon(lowerTangentLeftGPIndexInLeftVD); // 左圖下切線的多邊形的所有邊
 
-            // 找左圖虛邊
+            // 找左圖下虛邊
             for (int edgeIndex : edgeIndexs) {
-                Edge edge = VDmerge.edges.get(edgeIndex);
-                if (edge.real == false) {
+                if (VDleft.edges.get(edgeIndex).real == false) {
                     lowerTerminal[0] = edgeIndex;
                 }
             }
             edgeIndexs = VDright.edgesAroundPolygon(lowerTangentRightGPIndexInRightVD); // 右圖下切線的多邊形的所有邊
-            // 找右圖虛邊
+            // 找右圖下虛邊
             for (int edgeIndex : edgeIndexs) {
-                edgeIndex += VDleft.edges.size();
-                Edge edge = VDmerge.edges.get(edgeIndex);
-                if (edge.real == false) {
+                if (VDright.edges.get(edgeIndex).real == false) {
                     lowerTerminal[1] = edgeIndex;
                 }
             }
             // TODO: 更新左圖下虛邊
             {
-                Edge edge = VDmerge.edges.get(lowerTerminal[0]); // 左邊的下虛邊
-                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
-                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                Edge edgeL = VDleft.edges.get(lowerTerminal[0]); // 左邊的上虛邊
+                Edge edgeM = VDmerge.edges.get(lowerTerminal[0]);
 
-                if (startVertex.deleted) {
-                    edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
-                    edge.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
-                    edge.ccw_predecessor = lowerTerminal[1]; // 右邊的虛邊
-                } else if (endVertex.deleted) {
-                    edge.end_vertex = VDmerge.vertexs.size()-1;
-                    edge.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
-                    edge.ccw_successor = lowerTerminal[1]; // 右邊的虛邊
+                if (edgeL.left_polygon == VDleft.polygons.size()-1) {
+                    Vertex startVertexM = VDmerge.vertexs.get(edgeM.start_vertex); // 刪舊的start
+                    startVertexM.deleted = true;
+
+                    edgeM.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                    edgeM.cw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edgeM.ccw_predecessor = lowerTerminal[1]+VDleft.edges.size(); // 右邊的虛邊
+                } else if (edgeL.right_polygon == VDleft.polygons.size()-1) {
+                    Vertex endVertexM = VDmerge.vertexs.get(edgeM.end_vertex); // 刪舊的end
+                    endVertexM.deleted = true;
+
+                    edgeM.end_vertex = VDmerge.vertexs.size()-1;
+                    edgeM.cw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edgeM.ccw_successor = lowerTerminal[1]+VDleft.edges.size(); // 右邊的虛邊
                 }
             }
             // TODO: 更新右圖下虛邊
             {
-                Edge edge = VDmerge.edges.get(lowerTerminal[1]); // 右邊的下虛邊
-                Vertex startVertex = VDmerge.vertexs.get(edge.start_vertex);
-                Vertex endVertex = VDmerge.vertexs.get(edge.end_vertex);
+                Edge edgeR = VDright.edges.get(lowerTerminal[1]); // 右邊的上虛邊
+                Edge edgeM = VDmerge.edges.get(lowerTerminal[1]+VDleft.edges.size());
 
-                if (startVertex.deleted) {
-                    edge.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
-                    edge.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
-                    edge.cw_predecessor = lowerTerminal[0]; // 左邊的虛邊
-                } else if (endVertex.deleted) {
-                    edge.end_vertex = VDmerge.vertexs.size()-1;
-                    edge.ccw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
-                    edge.cw_successor = lowerTerminal[0]; // 左邊的虛邊
+                if (edgeR.right_polygon == VDright.polygons.size()-1) {
+                    Vertex startVertexM = VDmerge.vertexs.get(edgeM.start_vertex); // 刪舊的start
+                    startVertexM.deleted = true;
+
+                    edgeM.start_vertex = VDmerge.vertexs.size()-1; // 剛剛建HP的上假點
+                    edgeM.ccw_predecessor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edgeM.cw_predecessor = lowerTerminal[0]; // 左邊的虛邊
+                } else if (edgeR.left_polygon == VDright.polygons.size()-1) {
+                    Vertex endVertexM = VDmerge.vertexs.get(edgeM.end_vertex); // 刪舊的end
+                    endVertexM.deleted = true;
+
+                    edgeM.end_vertex = VDmerge.vertexs.size()-1;
+                    edgeM.ccw_successor = VDmerge.edges.size(); // 待會要建的HP的邊
+                    edgeM.cw_successor = lowerTerminal[0]; // 左邊的虛邊
                 }
             }
+            lowerTerminal[1] += VDleft.edges.size();
 
 //            System.out.println("test5");
             // TODO: 建邊
