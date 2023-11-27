@@ -26,12 +26,21 @@ public class Controller {
     public Controller(Model model) {
         this.model = model;
     }
+
+    @FXML
+    private void initialize() {
+        // TODO: @FXML 注入後執行的初始化
+        cursorCoordinateArea.setEditable(false); //畫鼠座標顯示區 不可更改
+        taskPointsArea.setEditable(false); // taskPoints顯示區 不可更改
+    }
     
     // 以下是視窗的原件，包含button和canvas
     @FXML
     private Button importInput;
     @FXML
     private Button importOutput;
+    @FXML
+    private Button exportInput;
     @FXML
     private Button exportOutput;
     @FXML
@@ -192,6 +201,37 @@ public class Controller {
             }
             // 畫出輸入圖形
             CanvasAction.drawImportFile(this.canvas, importGeneratorPoints, importEdges);
+        }
+    }
+
+    @FXML
+    protected void exportTask() {
+        System.out.println("Controller.java exportTask()");
+
+        if (this.model.taskPoints.isEmpty()) {
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("save");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            try {
+                PrintWriter writer = new PrintWriter(selectedFile);
+                writer.println(this.model.taskPoints.size());
+
+                for (GeneratorPoint GP : this.model.taskPoints) {
+                    writer.println((int)GP.getX() + " " + (int)GP.getY());
+                }
+
+                writer.println(0);
+
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

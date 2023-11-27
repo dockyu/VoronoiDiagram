@@ -9,12 +9,12 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1015.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button fx:id="importInput" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" onAction="#importTasks" text="import input file" />
+      <Button fx:id="importInput" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" onAction="#importTasks" prefHeight="32.0" prefWidth="149.0" text="import input file" />
       <Button fx:id="importVoronoi" layoutX="13.0" layoutY="72.0" mnemonicParsing="false" onAction="#importVoronoi" text="import ouput file" />
       <Button fx:id="run" layoutX="14.0" layoutY="219.0" mnemonicParsing="false" onAction="#run" text="run" />
       <Button fx:id="step" layoutX="16.0" layoutY="281.0" mnemonicParsing="false" onAction="#step" text="step by step" />
       <Button fx:id="clear" layoutX="16.0" layoutY="349.0" mnemonicParsing="false" onAction="#clear" text="clear" />
-      <Button fx:id="exportVoronoi" layoutX="14.0" layoutY="122.0" mnemonicParsing="false" onAction="#exportVoronoi" text="export ouput file" />
+      <Button fx:id="exportVoronoi" layoutX="14.0" layoutY="170.0" mnemonicParsing="false" onAction="#exportVoronoi" text="export ouput file" />
       <StackPane layoutX="212.0" layoutY="31.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: #A6FFA6;">
 
          <children>
@@ -26,5 +26,6 @@
       <TextField fx:id="randomGPNums" layoutX="827.0" layoutY="72.0" prefHeight="32.0" prefWidth="82.0" />
       <TextArea fx:id="cursorCoordinateArea" layoutX="28.0" layoutY="573.0" prefHeight="29.0" prefWidth="170.0" />
       <Button fx:id="random" layoutX="925.0" layoutY="72.0" mnemonicParsing="false" onAction="#randomCreateTask" prefHeight="32.0" prefWidth="82.0" text="random" />
+      <Button fx:id="exportInput" layoutX="14.0" layoutY="123.0" mnemonicParsing="false" onAction="#exportTask" prefHeight="32.0" prefWidth="149.0" text="export input file" />
    </children>
 </Pane>
