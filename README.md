@@ -1,6 +1,12 @@
 # VoronoiDiagram
 voronoi diagram with JavaFx
 
+## Execution Guide
+
+1. Download [Latest Release](https://github.com/dockyu/VoronoiDiagram/releases/latest)
+2. Extract the zip
+3. Execute `VoronoiDiagram_<version>/bin/VoronoiDiagramApp.bat`
+
 ## Algorithm
 Divide and Conquer
 
@@ -22,9 +28,10 @@ time complexity is *O(log(n))*
 
 ## Demo
 
-##### 125 points
-![125 points](doc/pic/125GP.png)
-##### 130 points
-![130 points](doc/pic/130GP.png)
 ##### 150 points
+`test/150_points.txt`
 ![150 points](doc/pic/150GP.png)
+
+##### 170 points
+`test/170_points.txt`
+![170 points](doc/pic/170GP.png)
