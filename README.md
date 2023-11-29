@@ -30,6 +30,6 @@ divide all generator points to a complete tree
 time complexity is **`O(log(n))`**
 
 ## Demo
-|[150 points](test/150_points.txt)|[170 points](test/170_points.txt)|
+|[170 points](test/170_points.txt)|[205 points](test/205_points.txt)|
 |-|-|
-|![150 points](doc/pic/150GP.png)|![170 points](doc/pic/170GP.png)|
+|![170 points](doc/pic/170GP.png)|![205 points](doc/pic/205GP.png)|
