@@ -1,6 +1,6 @@
 # VoronoiDiagram
 
-[繁體中文](./doc/readme/README_TC.md) | English | [Español](./doc/readme/README_ES.md)
+[繁體中文](./doc/readme_multi-language/README_TC.md) | English | [Español](./doc/readme_multi-language/README_ES.md)
 
 voronoi diagram with JavaFx
 
