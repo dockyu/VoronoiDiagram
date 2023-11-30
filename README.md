@@ -1,4 +1,7 @@
 # VoronoiDiagram
+
+[繁體中文](./doc/readme/README_TC.md) | English | [Español](./doc/readme/README_ES.md)
+
 voronoi diagram with JavaFx
 
 ## Execution Guide
