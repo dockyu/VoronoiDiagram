@@ -30,7 +30,7 @@ Divide and Conquer
     + 逐步使用臨時切線找到上切線和下切線
 
 ## 時間複雜度
-時間複雜度為 **`O(log(n))`**
+時間複雜度為 **`O(nlog(n))`**
 
 ## 演示
 |[170點](../../test/170_points.txt)|[205點](../../test/205_points.txt)|

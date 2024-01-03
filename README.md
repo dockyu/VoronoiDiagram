@@ -30,7 +30,7 @@ divide all generator points to a complete tree
     + use temp tangent find upper and lower tangent step by step
 
 ## Time Complexity
-time complexity is **`O(log(n))`**
+time complexity is **`O(nlog(n))`**
 
 ## Demo
 |[170 points](test/170_points.txt)|[205 points](test/205_points.txt)|

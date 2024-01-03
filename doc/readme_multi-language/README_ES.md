@@ -30,7 +30,7 @@ Dividir todos los puntos generadores en un árbol completo
     + Usar la tangente temporal para encontrar la tangente superior e inferior paso a paso
 
 ## Complejidad Temporal
-La complejidad temporal es **`O(log(n))`**
+La complejidad temporal es **`O(nlog(n))`**
 
 ## Demostración
 |[170 puntos](../../test/170_points.txt)|[205 puntos](../../test/205_points.txt)|
